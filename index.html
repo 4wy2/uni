@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مُوجّه | محرك بحث الجامعات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;900&display=swap');
+        body { font-family: 'Tajawal', sans-serif; background-color: #050505; color: white; scroll-behavior: smooth; }
+        .glass { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); }
+        .uni-card:hover { border-color: #6366f1; transform: translateY(-5px); box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.2); }
+    </style>
+</head>
+<body>
+
+    <div class="min-h-screen">
+        <header class="max-w-6xl mx-auto px-6 py-16 text-center">
+            <h1 class="text-6xl font-black mb-6 bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">مُوجّه</h1>
+            <p class="text-gray-400 text-lg mb-12">ابحث عن مستقبلُك الأكاديمي بدقة واحترافية</p>
+            
+            <div class="max-w-2xl mx-auto relative group">
+                <input type="text" id="searchInput" placeholder="ابحث باسم الجامعة أو المدينة..." 
+                class="w-full glass py-5 px-8 rounded-3xl outline-none focus:ring-2 ring-indigo-500/50 transition-all text-lg pr-14 text-white">
+                <i class="fa-solid fa-magnifying-glass absolute right-6 top-6 text-gray-500 group-focus-within:text-indigo-400 transition-colors"></i>
+            </div>
+        </header>
+
+        <main class="max-w-6xl mx-auto px-6 pb-20">
+            <div id="uniGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                </div>
+        </main>
+    </div>
+
+    <script>
+        // قائمة مختصرة فقط لأسماء الجامعات (لغرض البحث السريع)
+        // البيانات الكبيرة موجودة في ملفات الـ JSON داخل مجلد data
+        const universityList = [
+            { id: 'kfupm', name: 'جامعة الملك فهد للبترول والمعادن', location: 'الظهران', employment: '93%' },
+            { id: 'ksu', name: 'جامعة الملك سعود', location: 'الرياض', employment: '74%' },
+            { id: 'kau', name: 'جامعة الملك عبدالعزيز', location: 'جدة', employment: '60%' }
+            // أضف أي جامعة جديدة هنا فقط ليظهر لها كرت في الرئيسية
+        ];
+
+        function renderCards(data) {
+            const grid = document.getElementById('uniGrid');
+            grid.innerHTML = data.map(u => `
+                <div onclick="goToDetails('${u.id}')" class="uni-card glass p-8 rounded-[2.5rem] cursor-pointer transition-all border border-white/5">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="p-4 bg-indigo-500/10 rounded-2xl text-indigo-400">
+                            <i class="fa-solid fa-graduation-cap text-2xl"></i>
+                        </div>
+                        <span class="text-[10px] bg-white/5 px-3 py-1 rounded-full text-gray-400 uppercase tracking-widest">${u.location}</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 leading-tight">${u.name}</h3>
+                    <div class="flex gap-2 mt-auto">
+                        <span class="text-[10px] font-bold bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-lg">توظيف ${u.employment}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function goToDetails(id) {
+            // يوجه المستخدم لصفحة التفاصيل مع تمرير المعرف
+            window.location.href = `details.html?id=${id}`;
+        }
+
+        // تفعيل محرك البحث
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase();
+            const filtered = universityList.filter(u => 
+                u.name.toLowerCase().includes(val) || 
+                u.location.toLowerCase().includes(val)
+            );
+            renderCards(filtered);
+        });
+
+        // التشغيل الأولي
+        renderCards(universityList);
+    </script>
+</body>
+</html>
