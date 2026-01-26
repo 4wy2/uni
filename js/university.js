@@ -1,6 +1,15 @@
 async function loadUniversityDetails() {
     const params = new URLSearchParams(window.location.search);
     const uniId = params.get('id');
+    // داخل دالة loadUniversityDetails
+const uniImage = document.getElementById('uniImage');
+
+// التحقق: إذا كان حقل الصورة موجودًا في الـ JSON استخدمه، وإلا استخدم صورة "قيد التجهيز"
+if (data.image && data.image !== "") {
+    uniImage.src = data.image;
+} else {
+    uniImage.src = 'assets/pic/default-bg.jpg'; // صورة عامة لكل الجامعات التي ليس لها صورة
+}
 
     if (!uniId) {
         window.location.href = 'index.html';
