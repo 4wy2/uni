@@ -1,73 +1,26 @@
-// متغير عالمي لتخزين بيانات الجامعة الحالية لاستخدامه في الحاسبة
+// متغير لتخزين بيانات الجامعة الحالية
 let currentUniData = null;
 
 /**
- * 1. دالة حاسبة النسبة الموزونة
- */
-function calculateRatio() {
-    const q = parseFloat(document.getElementById('qodratInp').value) || 0;
-    const t = parseFloat(document.getElementById('tahsiliInp').value) || 0;
-    const s = parseFloat(document.getElementById('schoolInp').value) || 0;
-
-    if (q === 0 || t === 0 || s === 0) {
-        alert("لطفاً أدخل جميع الدرجات (القدرات، التحصيلي، الثانوية)");
-        return;
-    }
-
-    // الأوزان الافتراضية (مسار عام: 30-30-40)
-    let weightS = 0.30, weightQ = 0.30, weightT = 0.40;
-
-    // تخصيص الأوزان بناءً على بيانات الجامعة في الـ JSON إذا وجدت
-    if (currentUniData && currentUniData.weights) {
-        weightS = currentUniData.weights.school || 0;
-        weightQ = currentUniData.weights.qodrat || 0;
-        weightT = currentUniData.weights.tahsili || 0;
-    } 
-    // شرط احتياطي لجامعة الملك فهد إذا لم تتوفر أوزانها في الملف بعد
-    else if (window.location.href.includes('id=kfupm')) {
-        weightS = 0; weightQ = 0.50; weightT = 0.50;
-    }
-
-    const result = (s * weightS) + (q * weightQ) + (t * weightT);
-
-    const resultDiv = document.getElementById('calcResult');
-    const resultText = document.getElementById('finalResult');
-    
-    resultText.innerText = result.toFixed(2) + "%";
-    resultDiv.classList.remove('hidden');
-    
-    // التمرير للنتيجة بسلاسة لكي يراها المستخدم
-    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-
-/**
- * 2. الدالة الرئيسية لجلب البيانات من ملفات الـ JSON
+ * 1. دالة جلب البيانات وعرضها
  */
 async function loadUniversityDetails() {
-    // جلب الـ ID من رابط الصفحة (مثلاً: details.html?id=ksu)
     const params = new URLSearchParams(window.location.search);
     const uniId = params.get('id');
 
-    // إذا لم يوجد ID، العودة للرئيسية
     if (!uniId) {
         window.location.href = 'index.html';
         return;
     }
 
     try {
-        // جلب ملف الـ JSON بناءً على الـ ID
         const response = await fetch(`data/unis/${uniId}.json`);
-        
-        if (!response.ok) {
-            throw new Error('تعذر العثور على ملف الجامعة. تأكد من وجود المجلد data/unis/ واسم الملف صحيح.');
-        }
+        if (!response.ok) throw new Error('University not found');
         
         const data = await response.json();
-        currentUniData = data; // تخزين البيانات لاستخدامها في الحاسبة لاحقاً
+        currentUniData = data;
 
-        // --- تحديث الواجهة بالبيانات ---
-
-        // العنوان والإحصائيات
+        // تحديث البيانات الأساسية
         document.title = `${data.name} | مُوجّه`;
         document.getElementById('uniName').textContent = data.name;
         document.getElementById('uniLocation').querySelector('span').textContent = data.location;
@@ -76,7 +29,7 @@ async function loadUniversityDetails() {
         document.getElementById('statGlobal').textContent = data.stats.rank_global;
         document.getElementById('statAccept').textContent = data.stats.acceptance_rate;
 
-        // مسارات القبول
+        // تعبئة المسارات
         const pathsGrid = document.getElementById('pathsGrid');
         pathsGrid.innerHTML = data.admission_paths.map(path => `
             <div class="glass-card p-6 rounded-3xl border border-white/5">
@@ -86,7 +39,7 @@ async function loadUniversityDetails() {
             </div>
         `).join('');
 
-        // الكليات والتخصصات
+        // تعبئة الكليات
         const collegesGrid = document.getElementById('collegesGrid');
         collegesGrid.innerHTML = data.colleges.map(item => `
             <div class="glass-card p-6 rounded-3xl">
@@ -101,41 +54,27 @@ async function loadUniversityDetails() {
             </div>
         `).join('');
 
-        // نسب القبول (إظهار القسم فقط إذا كانت البيانات موجودة)
-        const ratiosSection = document.getElementById('ratiosSection');
-        const ratiosContainer = document.getElementById('ratiosContainer');
+        // ميزة "الذكاء التلقائي": جلب الدرجات من الذاكرة والحساب فوراً
+        const savedQ = localStorage.getItem('qodrat');
+        const savedT = localStorage.getItem('tahsili');
+        const savedS = localStorage.getItem('school');
 
+        if (savedQ || savedT || savedS) {
+            document.getElementById('qodratInp').value = savedQ || '';
+            document.getElementById('tahsiliInp').value = savedT || '';
+            document.getElementById('schoolInp').value = savedS || '';
+            
+            // إذا كانت كل الدرجات موجودة، احسب الموزونة تلقائياً
+            if (savedQ && savedT && savedS) {
+                calculateRatio();
+            }
+        }
+
+        // إظهار قسم النسب إذا توفرت
+        const ratiosSection = document.getElementById('ratiosSection');
         if (data.major_ratios && data.major_ratios.length > 0) {
             ratiosSection.classList.remove('hidden');
-            ratiosContainer.innerHTML = data.major_ratios.map(section => `
-                <div class="mb-8 last:mb-0">
-                    <h4 class="text-indigo-400 font-bold mb-4 flex items-center gap-2 italic">
-                        <i class="fa-solid fa-caret-left"></i> ${section.category}
-                    </h4>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-right">
-                            <thead>
-                                <tr class="text-gray-500 text-xs border-b border-white/5">
-                                    <th class="py-3 px-4">التخصص / المسار</th>
-                                    <th class="py-3 px-4 text-center">طلاب</th>
-                                    <th class="py-3 px-4 text-center">طالبات</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${section.items.map(item => `
-                                    <tr class="border-b border-white/5 hover:bg-white/5 transition">
-                                        <td class="py-4 px-4 text-gray-300 font-medium">${item.name}</td>
-                                        <td class="py-4 px-4 text-center text-blue-400 font-bold">${item.male || '--'}</td>
-                                        <td class="py-4 px-4 text-center text-pink-400 font-bold">${item.female || '--'}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            `).join('');
-        } else {
-            ratiosSection.classList.add('hidden');
+            renderRatios(data.major_ratios);
         }
 
         // المميزات
@@ -146,11 +85,69 @@ async function loadUniversityDetails() {
         `).join('');
 
     } catch (error) {
-        console.error("خطأ تقني:", error);
-        // عرض رسالة خطأ للمستخدم داخل الصفحة إذا تعذر جلب البيانات
-        document.getElementById('uniName').textContent = "خطأ في تحميل البيانات";
+        console.error("Error loading details:", error);
     }
 }
 
-// تشغيل الدالة فور تحميل الصفحة
+/**
+ * 2. دالة حساب النسبة الموزونة
+ */
+function calculateRatio() {
+    const q = parseFloat(document.getElementById('qodratInp').value) || 0;
+    const t = parseFloat(document.getElementById('tahsiliInp').value) || 0;
+    const s = parseFloat(document.getElementById('schoolInp').value) || 0;
+
+    // حفظ أي تعديل يجريه الطالب هنا ليتزامن مع بقية الجامعات
+    localStorage.setItem('qodrat', q);
+    localStorage.setItem('tahsili', t);
+    localStorage.setItem('school', s);
+
+    // الأوزان: الأولوية لما هو موجود في JSON الجامعة، وإلا نستخدم افتراضي
+    let wQ = 0.30, wT = 0.40, wS = 0.30;
+    if (currentUniData && currentUniData.weights) {
+        wQ = currentUniData.weights.qodrat;
+        wT = currentUniData.weights.tahsili;
+        wS = currentUniData.weights.school;
+    }
+
+    const result = (q * wQ) + (t * wT) + (s * wS);
+
+    const resultDiv = document.getElementById('calcResult');
+    document.getElementById('finalResult').innerText = result.toFixed(2) + "%";
+    resultDiv.classList.remove('hidden');
+}
+
+/**
+ * 3. دالة رسم جداول النسب
+ */
+function renderRatios(ratios) {
+    const container = document.getElementById('ratiosContainer');
+    container.innerHTML = ratios.map(section => `
+        <div class="mb-8 last:mb-0">
+            <h4 class="text-indigo-400 font-bold mb-4 italic">${section.category}</h4>
+            <div class="overflow-x-auto">
+                <table class="w-full text-right">
+                    <thead>
+                        <tr class="text-xs text-gray-500 border-b border-white/5">
+                            <th class="py-2">التخصص</th>
+                            <th class="text-center">طلاب</th>
+                            <th class="text-center">طالبات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${section.items.map(item => `
+                            <tr class="border-b border-white/5">
+                                <td class="py-3 text-sm">${item.name}</td>
+                                <td class="text-center text-blue-400 font-bold">${item.male || '--'}</td>
+                                <td class="text-center text-pink-400 font-bold">${item.female || '--'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `).join('');
+}
+
+// البدء عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', loadUniversityDetails);
