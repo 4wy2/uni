@@ -1,9 +1,5 @@
-// متغير لتخزين بيانات الجامعة الحالية
 let currentUniData = null;
 
-/**
- * 1. دالة جلب البيانات وعرضها
- */
 async function loadUniversityDetails() {
     const params = new URLSearchParams(window.location.search);
     const uniId = params.get('id');
@@ -15,13 +11,12 @@ async function loadUniversityDetails() {
 
     try {
         const response = await fetch(`data/unis/${uniId}.json`);
-        if (!response.ok) throw new Error('University not found');
+        if (!response.ok) throw new Error('Data file not found');
         
         const data = await response.json();
         currentUniData = data;
 
-        // تحديث البيانات الأساسية
-        document.title = `${data.name} | مُوجّه`;
+        // 1. تعبئة البيانات النصية
         document.getElementById('uniName').textContent = data.name;
         document.getElementById('uniLocation').querySelector('span').textContent = data.location;
         document.getElementById('statEmp').textContent = data.stats.employment;
@@ -29,106 +24,75 @@ async function loadUniversityDetails() {
         document.getElementById('statGlobal').textContent = data.stats.rank_global;
         document.getElementById('statAccept').textContent = data.stats.acceptance_rate;
 
-        // تعبئة المسارات
-        const pathsGrid = document.getElementById('pathsGrid');
-        pathsGrid.innerHTML = data.admission_paths.map(path => `
+        // 2. الحساب التلقائي (الذكاء التلقائي)
+        runAutoCalculation(data.weights);
+
+        // 3. عرض المسارات
+        document.getElementById('pathsGrid').innerHTML = data.admission_paths.map(path => `
             <div class="glass-card p-6 rounded-3xl border border-white/5">
-                <h4 class="font-bold text-indigo-400 mb-2">${path.name}</h4>
-                <p class="text-sm text-white mb-2">${path.formula}</p>
-                <p class="text-xs text-gray-500">${path.note}</p>
+                <h4 class="font-bold text-indigo-400 mb-1">${path.name}</h4>
+                <p class="text-xs text-white opacity-80">${path.formula}</p>
             </div>
         `).join('');
 
-        // تعبئة الكليات
-        const collegesGrid = document.getElementById('collegesGrid');
-        collegesGrid.innerHTML = data.colleges.map(item => `
+        // 4. عرض الكليات
+        document.getElementById('collegesGrid').innerHTML = data.colleges.map(item => `
             <div class="glass-card p-6 rounded-3xl">
-                <h4 class="text-lg font-bold text-gray-200 border-b border-white/5 pb-3 mb-4">${item.college}</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    ${item.majors.map(major => `
-                        <div class="flex items-center gap-2 text-gray-400 text-sm">
-                            <i class="fa-solid fa-check text-indigo-500 text-[10px]"></i> ${major}
-                        </div>
-                    `).join('')}
+                <h4 class="text-sm font-bold text-gray-400 border-b border-white/5 pb-3 mb-4">${item.college}</h4>
+                <div class="grid grid-cols-2 gap-2">
+                    ${item.majors.map(m => `<div class="text-xs text-gray-300 flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500 text-[8px]"></i> ${m}</div>`).join('')}
                 </div>
             </div>
         `).join('');
 
-        // ميزة "الذكاء التلقائي": جلب الدرجات من الذاكرة والحساب فوراً
-        const savedQ = localStorage.getItem('qodrat');
-        const savedT = localStorage.getItem('tahsili');
-        const savedS = localStorage.getItem('school');
-
-        if (savedQ || savedT || savedS) {
-            document.getElementById('qodratInp').value = savedQ || '';
-            document.getElementById('tahsiliInp').value = savedT || '';
-            document.getElementById('schoolInp').value = savedS || '';
-            
-            // إذا كانت كل الدرجات موجودة، احسب الموزونة تلقائياً
-            if (savedQ && savedT && savedS) {
-                calculateRatio();
-            }
-        }
-
-        // إظهار قسم النسب إذا توفرت
-        const ratiosSection = document.getElementById('ratiosSection');
+        // 5. عرض نسب القبول إذا وجدت
         if (data.major_ratios && data.major_ratios.length > 0) {
-            ratiosSection.classList.remove('hidden');
-            renderRatios(data.major_ratios);
+            document.getElementById('ratiosSection').classList.remove('hidden');
+            renderRatiosTable(data.major_ratios);
         }
-
-        // المميزات
-        document.getElementById('featuresList').innerHTML = data.features.map(f => `
-            <div class="glass-card p-4 rounded-2xl text-sm text-gray-300">
-                <i class="fa-solid fa-circle-check text-indigo-500 ml-2"></i> ${f}
-            </div>
-        `).join('');
 
     } catch (error) {
-        console.error("Error loading details:", error);
+        console.error("Error:", error);
     }
 }
 
-/**
- * 2. دالة حساب النسبة الموزونة
- */
-function calculateRatio() {
-    const q = parseFloat(document.getElementById('qodratInp').value) || 0;
-    const t = parseFloat(document.getElementById('tahsiliInp').value) || 0;
-    const s = parseFloat(document.getElementById('schoolInp').value) || 0;
+// دالة الحساب بدون تدخل المستخدم
+function runAutoCalculation(weights) {
+    const q = parseFloat(localStorage.getItem('qodrat')) || 0;
+    const t = parseFloat(localStorage.getItem('tahsili')) || 0;
+    const s = parseFloat(localStorage.getItem('school')) || 0;
 
-    // حفظ أي تعديل يجريه الطالب هنا ليتزامن مع بقية الجامعات
-    localStorage.setItem('qodrat', q);
-    localStorage.setItem('tahsili', t);
-    localStorage.setItem('school', s);
+    if (q > 0 && t > 0 && s > 0 && weights) {
+        const total = (q * weights.qodrat) + (t * weights.tahsili) + (s * weights.school);
+        
+        const resultSection = document.getElementById('autoResultSection');
+        const finalResult = document.getElementById('finalResult');
+        const weightLabels = document.getElementById('weightLabels');
 
-    // الأوزان: الأولوية لما هو موجود في JSON الجامعة، وإلا نستخدم افتراضي
-    let wQ = 0.30, wT = 0.40, wS = 0.30;
-    if (currentUniData && currentUniData.weights) {
-        wQ = currentUniData.weights.qodrat;
-        wT = currentUniData.weights.tahsili;
-        wS = currentUniData.weights.school;
+        finalResult.innerText = total.toFixed(2) + "%";
+        
+        // عرض المعايير المستخدمة أسفل الرقم
+        weightLabels.innerHTML = `
+            <span>قدرات ${weights.qodrat * 100}%</span> • 
+            <span>تحصيلي ${weights.tahsili * 100}%</span> • 
+            <span>ثانوي ${weights.school * 100}%</span>
+        `;
+
+        resultSection.classList.remove('hidden');
+        resultSection.classList.add('animate-pulse'); // تأثير بصري بسيط
+        setTimeout(() => resultSection.classList.remove('animate-pulse'), 2000);
     }
-
-    const result = (q * wQ) + (t * wT) + (s * wS);
-
-    const resultDiv = document.getElementById('calcResult');
-    document.getElementById('finalResult').innerText = result.toFixed(2) + "%";
-    resultDiv.classList.remove('hidden');
 }
 
-/**
- * 3. دالة رسم جداول النسب
- */
-function renderRatios(ratios) {
+function renderRatiosTable(ratios) {
     const container = document.getElementById('ratiosContainer');
     container.innerHTML = ratios.map(section => `
         <div class="mb-8 last:mb-0">
-            <h4 class="text-indigo-400 font-bold mb-4 italic">${section.category}</h4>
+            <h4 class="text-indigo-400 font-bold mb-4 text-sm"><i class="fa-solid fa-caret-left ml-1"></i> ${section.category}</h4>
             <div class="overflow-x-auto">
-                <table class="w-full text-right">
+                <table class="w-full text-right text-xs">
                     <thead>
-                        <tr class="text-xs text-gray-500 border-b border-white/5">
+                        <tr class="text-gray-500 border-b border-white/5">
                             <th class="py-2">التخصص</th>
                             <th class="text-center">طلاب</th>
                             <th class="text-center">طالبات</th>
@@ -136,8 +100,8 @@ function renderRatios(ratios) {
                     </thead>
                     <tbody>
                         ${section.items.map(item => `
-                            <tr class="border-b border-white/5">
-                                <td class="py-3 text-sm">${item.name}</td>
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                <td class="py-3 font-medium text-gray-300">${item.name}</td>
                                 <td class="text-center text-blue-400 font-bold">${item.male || '--'}</td>
                                 <td class="text-center text-pink-400 font-bold">${item.female || '--'}</td>
                             </tr>
@@ -149,5 +113,4 @@ function renderRatios(ratios) {
     `).join('');
 }
 
-// البدء عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', loadUniversityDetails);
