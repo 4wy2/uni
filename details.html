@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تفاصيل الجامعة | مُوجّه</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;900&display=swap');
+        body { font-family: 'Tajawal', sans-serif; background-color: #050505; color: white; }
+        .glass { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); }
+    </style>
+</head>
+<body class="p-6">
+    <div class="max-w-6xl mx-auto">
+        <button onclick="location.href='index.html'" class="text-indigo-400 mb-10 hover:underline">← العودة للبحث</button>
+        
+        <div id="loader" class="text-center py-20">جاري تحميل البيانات الدقيقة...</div>
+        
+        <div id="mainContent" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-8">
+                    <section class="glass p-10 rounded-[2.5rem]">
+                        <h1 id="uniName" class="text-5xl font-black mb-4"></h1>
+                        <p id="uniAbout" class="text-gray-400 leading-relaxed"></p>
+                    </section>
+
+                    <div id="collegesContainer" class="space-y-6"></div>
+                </div>
+
+                <div class="space-y-8">
+                    <div class="bg-indigo-600 p-8 rounded-[2.5rem] text-center shadow-2xl">
+                        <div class="text-sm opacity-80 mb-1">نسبة التوظيف</div>
+                        <div id="uniEmployment" class="text-5xl font-black"></div>
+                    </div>
+
+                    <section class="glass p-8 rounded-[2.5rem]">
+                        <h3 class="font-bold mb-4 text-indigo-400">أبرز المميزات</h3>
+                        <ul id="uniPerks" class="space-y-3 text-sm text-gray-400"></ul>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadUni() {
+            const id = new URLSearchParams(window.location.search).get('id');
+            if(!id) return;
+
+            try {
+                const res = await fetch(`./data/${id}.json`);
+                const u = await res.json();
+
+                document.getElementById('uniName').textContent = u.name;
+                document.getElementById('uniAbout').textContent = u.about;
+                document.getElementById('uniEmployment').textContent = u.employment;
+
+                // عرض المميزات
+                document.getElementById('uniPerks').innerHTML = u.perks.map(p => `<li>✓ ${p}</li>`).join('');
+
+                // عرض الكليات والتخصصات
+                document.getElementById('collegesContainer').innerHTML = u.colleges.map(c => `
+                    <div class="glass p-8 rounded-[2rem]">
+                        <h3 class="text-xl font-bold mb-6 text-indigo-400">${c.college}</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            ${c.majors.map(m => `
+                                <div class="flex justify-between p-3 bg-white/5 rounded-xl border border-white/5 text-sm">
+                                    <span>${m.n}</span>
+                                    <span class="font-bold text-indigo-300">${m.r}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('');
+
+                document.getElementById('loader').classList.add('hidden');
+                document.getElementById('mainContent').classList.remove('hidden');
+            } catch (e) {
+                document.getElementById('loader').textContent = "خطأ: لم يتم العثور على بيانات هذه الجامعة.";
+            }
+        }
+        loadUni();
+    </script>
+</body>
+</html>
