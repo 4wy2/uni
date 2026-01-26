@@ -1,52 +1,45 @@
-async function loadUniversityDetails() {
-    // 1. استخراج الـ ID من الرابط (مثلاً: ?id=kfupm)
-    const params = new URLSearchParams(window.location.search);
-    const uniId = params.get('id');
-
-    if (!uniId) {
-        window.location.href = 'index.html'; // حماية: إذا لا يوجد ID ارجع للرئيسية
-        return;
-    }
+async function load() {
+    const id = new URLSearchParams(window.location.search).get('id');
+    if(!id) return location.href = 'index.html';
 
     try {
-        // 2. جلب ملف الـ JSON الخاص بالجامعة
-        const response = await fetch(`data/unis/${uniId}.json`);
-        if (!response.ok) throw new Error('University not found');
-        const data = await response.json();
+        const res = await fetch(`data/unis/${id}.json`);
+        const data = await res.json();
 
-        // 3. تعبئة البيانات الأساسية
-        document.title = `${data.name} | مُوجّه`;
-        document.getElementById('uniName').textContent = data.name;
-        document.getElementById('uniLocation').querySelector('span').textContent = data.location;
-        document.getElementById('uniEmployment').textContent = data.stats.employment;
+        // تعبئة النصوص الأساسية
+        document.getElementById('uniName').innerText = data.name;
+        document.getElementById('uniLocation').querySelector('span').innerText = data.location;
+        document.getElementById('statEmp').innerText = data.stats.employment;
+        document.getElementById('statLocal').innerText = data.stats.rank_local;
+        document.getElementById('statGlobal').innerText = data.stats.rank_global;
+        document.getElementById('statAccept').innerText = data.stats.acceptance_rate;
 
-        // 4. تعبئة متطلبات القبول
-        const admissionContainer = document.getElementById('admissionList');
-        data.admission.forEach(item => {
-            const div = document.createElement('div');
-            div.className = "p-4 bg-white/5 rounded-2xl";
-            div.innerHTML = `
-                <p class="text-xs text-gray-500 mb-1">${item.type}</p>
-                <p class="font-bold text-indigo-400">${item.value}</p>
-            `;
-            admissionContainer.appendChild(div);
-        });
+        // تعبئة المسارات
+        document.getElementById('pathsGrid').innerHTML = data.admission_paths.map(p => `
+            <div class="glass-card p-6 rounded-3xl">
+                <h4 class="font-bold text-indigo-400 mb-1">${p.name}</h4>
+                <p class="text-sm mb-2">${p.formula}</p>
+                <p class="text-xs text-gray-500">${p.note}</p>
+            </div>
+        `).join('');
 
-        // 5. تعبئة التخصصات
-        const majorsGrid = document.getElementById('majorsGrid');
-        data.majors.forEach(major => {
-            majorsGrid.innerHTML += `
-                <div class="flex justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
-                    <span class="text-gray-300">${major.name}</span>
-                    <span class="font-bold text-indigo-400">${major.ratio}</span>
+        // تعبئة الكليات
+        document.getElementById('collegesGrid').innerHTML = data.colleges.map(c => `
+            <div class="glass-card p-6 rounded-3xl">
+                <h4 class="font-bold text-lg mb-4 text-gray-200 border-b border-white/5 pb-2">${c.college}</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    ${c.majors.map(m => `<div class="text-sm text-gray-400"><i class="fa-solid fa-check text-indigo-500 mr-2"></i>${m}</div>`).join('')}
                 </div>
-            `;
-        });
+            </div>
+        `).join('');
 
-    } catch (error) {
-        console.error("خطأ:", error);
-        document.getElementById('uniName').textContent = "الجامعة غير موجودة";
-    }
+        // تعبئة المميزات
+        document.getElementById('featuresList').innerHTML = data.features.map(f => `
+            <div class="glass-card p-4 rounded-2xl text-sm text-gray-300">
+                <i class="fa-solid fa-circle-check text-indigo-500 ml-2"></i> ${f}
+            </div>
+        `).join('');
+
+    } catch (e) { console.error("University Not Found"); }
 }
-
-loadUniversityDetails();
+load();
