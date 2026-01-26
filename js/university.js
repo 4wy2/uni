@@ -2,7 +2,7 @@
 let currentUniData = null;
 
 /**
- * دالة حاسبة النسبة الموزونة
+ * 1. دالة حاسبة النسبة الموزونة
  */
 function calculateRatio() {
     const q = parseFloat(document.getElementById('qodratInp').value) || 0;
@@ -14,17 +14,17 @@ function calculateRatio() {
         return;
     }
 
-    // الأوزان الافتراضية (مسار عام)
+    // الأوزان الافتراضية (مسار عام: 30-30-40)
     let weightS = 0.30, weightQ = 0.30, weightT = 0.40;
 
-    // تخصيص الأوزان بناءً على الجامعة (إذا كانت البيانات متوفرة في JSON)
+    // تخصيص الأوزان بناءً على بيانات الجامعة في الـ JSON إذا وجدت
     if (currentUniData && currentUniData.weights) {
         weightS = currentUniData.weights.school || 0;
         weightQ = currentUniData.weights.qodrat || 0;
         weightT = currentUniData.weights.tahsili || 0;
     } 
-    // شرط خاص بجامعة الملك فهد (في حال لم تكن الأوزان في الـ JSON بعد)
-    else if (window.location.href.includes('kfupm')) {
+    // شرط احتياطي لجامعة الملك فهد إذا لم تتوفر أوزانها في الملف بعد
+    else if (window.location.href.includes('id=kfupm')) {
         weightS = 0; weightQ = 0.50; weightT = 0.50;
     }
 
@@ -36,47 +36,47 @@ function calculateRatio() {
     resultText.innerText = result.toFixed(2) + "%";
     resultDiv.classList.remove('hidden');
     
-    // التمرير للنتيجة بسلاسة
+    // التمرير للنتيجة بسلاسة لكي يراها المستخدم
     resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 /**
- * الدالة الرئيسية لجلب وعرض بيانات الجامعة
+ * 2. الدالة الرئيسية لجلب البيانات من ملفات الـ JSON
  */
 async function loadUniversityDetails() {
+    // جلب الـ ID من رابط الصفحة (مثلاً: details.html?id=ksu)
     const params = new URLSearchParams(window.location.search);
     const uniId = params.get('id');
 
+    // إذا لم يوجد ID، العودة للرئيسية
     if (!uniId) {
         window.location.href = 'index.html';
         return;
     }
 
     try {
+        // جلب ملف الـ JSON بناءً على الـ ID
         const response = await fetch(`data/unis/${uniId}.json`);
-        if (!response.ok) throw new Error('University file not found');
+        
+        if (!response.ok) {
+            throw new Error('تعذر العثور على ملف الجامعة. تأكد من وجود المجلد data/unis/ واسم الملف صحيح.');
+        }
         
         const data = await response.json();
-        currentUniData = data; // تخزين البيانات للاستخدام في الحاسبة
+        currentUniData = data; // تخزين البيانات لاستخدامها في الحاسبة لاحقاً
 
-        // 1. تحديث العنوان والبيانات الأساسية
+        // --- تحديث الواجهة بالبيانات ---
+
+        // العنوان والإحصائيات
         document.title = `${data.name} | مُوجّه`;
         document.getElementById('uniName').textContent = data.name;
         document.getElementById('uniLocation').querySelector('span').textContent = data.location;
-        
-        // 2. تعبئة الإحصائيات
         document.getElementById('statEmp').textContent = data.stats.employment;
         document.getElementById('statLocal').textContent = data.stats.rank_local;
         document.getElementById('statGlobal').textContent = data.stats.rank_global;
         document.getElementById('statAccept').textContent = data.stats.acceptance_rate;
 
-        // 3. التعامل مع الصورة (إذا وجدت في الـ HTML)
-        const uniImage = document.getElementById('uniImage');
-        if (uniImage) {
-            uniImage.src = data.image || 'assets/pic/default-bg.jpg';
-        }
-
-        // 4. تعبئة مسارات القبول
+        // مسارات القبول
         const pathsGrid = document.getElementById('pathsGrid');
         pathsGrid.innerHTML = data.admission_paths.map(path => `
             <div class="glass-card p-6 rounded-3xl border border-white/5">
@@ -86,7 +86,7 @@ async function loadUniversityDetails() {
             </div>
         `).join('');
 
-        // 5. تعبئة الكليات والتخصصات
+        // الكليات والتخصصات
         const collegesGrid = document.getElementById('collegesGrid');
         collegesGrid.innerHTML = data.colleges.map(item => `
             <div class="glass-card p-6 rounded-3xl">
@@ -101,7 +101,7 @@ async function loadUniversityDetails() {
             </div>
         `).join('');
 
-        // 6. تعبئة نسب القبول (التحديث الذكي)
+        // نسب القبول (إظهار القسم فقط إذا كانت البيانات موجودة)
         const ratiosSection = document.getElementById('ratiosSection');
         const ratiosContainer = document.getElementById('ratiosContainer');
 
@@ -113,7 +113,7 @@ async function loadUniversityDetails() {
                         <i class="fa-solid fa-caret-left"></i> ${section.category}
                     </h4>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-right border-collapse">
+                        <table class="w-full text-right">
                             <thead>
                                 <tr class="text-gray-500 text-xs border-b border-white/5">
                                     <th class="py-3 px-4">التخصص / المسار</th>
@@ -138,7 +138,7 @@ async function loadUniversityDetails() {
             ratiosSection.classList.add('hidden');
         }
 
-        // 7. المميزات
+        // المميزات
         document.getElementById('featuresList').innerHTML = data.features.map(f => `
             <div class="glass-card p-4 rounded-2xl text-sm text-gray-300">
                 <i class="fa-solid fa-circle-check text-indigo-500 ml-2"></i> ${f}
@@ -146,9 +146,11 @@ async function loadUniversityDetails() {
         `).join('');
 
     } catch (error) {
-        console.error("خطأ في معالجة البيانات:", error);
+        console.error("خطأ تقني:", error);
+        // عرض رسالة خطأ للمستخدم داخل الصفحة إذا تعذر جلب البيانات
+        document.getElementById('uniName').textContent = "خطأ في تحميل البيانات";
     }
 }
 
-// تشغيل الدالة عند تحميل الصفحة
-loadUniversityDetails();
+// تشغيل الدالة فور تحميل الصفحة
+document.addEventListener('DOMContentLoaded', loadUniversityDetails);
