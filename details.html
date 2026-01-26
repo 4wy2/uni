@@ -10,10 +10,7 @@
     <style>
         body { font-family: 'Tajawal', sans-serif; background-color: #050505; color: white; scroll-behavior: smooth; }
         .glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(10px); }
-        .input-field { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; }
-        .input-field:focus { border-color: #6366f1; box-shadow: 0 0 15px rgba(99, 102, 241, 0.1); outline: none; }
-        /* إخفاء أسهم الأرقام */
-        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .result-gradient { background: radial-gradient(circle at center, rgba(99, 102, 241, 0.15) 0%, transparent 70%); }
     </style>
 </head>
 <body>
@@ -24,100 +21,45 @@
         </a>
     </nav>
 
-    <main class="max-w-5xl mx-auto px-6 pb-20">
+    <main class="max-w-4xl mx-auto px-6 pb-20">
         
-        <section class="text-center mb-16">
-            <div class="w-24 h-24 bg-indigo-500/10 rounded-3xl mx-auto mb-6 flex items-center justify-center border border-indigo-500/20 shadow-2xl shadow-indigo-500/10">
-                <i class="fa-solid fa-graduation-cap text-4xl text-indigo-500"></i>
+        <section id="autoResultSection" class="hidden mb-12 relative">
+            <div class="result-gradient absolute inset-0 -z-10"></div>
+            <div class="glass-card p-10 rounded-[3rem] border-2 border-indigo-500/30 text-center shadow-2xl shadow-indigo-500/10">
+                <p class="text-indigo-400 font-bold text-sm mb-2 tracking-widest uppercase">موزونتك المتوقعة هنا</p>
+                <h2 id="finalResult" class="text-7xl md:text-8xl font-black text-white mb-4">00.00%</h2>
+                <div id="weightLabels" class="flex justify-center gap-3 text-[10px] text-gray-500 font-medium">
+                    </div>
             </div>
-            <h1 id="uniName" class="text-4xl md:text-5xl font-black mb-4 tracking-tight">--</h1>
-            <p id="uniLocation" class="text-gray-400 flex justify-center items-center gap-2 mb-10">
-                <i class="fa-solid fa-location-dot text-indigo-500"></i> <span>--</span>
+        </section>
+
+        <section class="text-center mb-16">
+            <h1 id="uniName" class="text-4xl md:text-5xl font-black mb-3">--</h1>
+            <p id="uniLocation" class="text-gray-400 flex justify-center items-center gap-2 mb-8">
+                <i class="fa-solid fa-location-dot text-indigo-500 text-sm"></i> <span>--</span>
             </p>
             
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="glass-card p-4 rounded-2xl border-b-2 border-b-indigo-500/50">
-                    <p class="text-[10px] text-gray-500 uppercase mb-1">التوظيف</p>
-                    <p id="statEmp" class="font-bold text-indigo-400">--</p>
-                </div>
-                <div class="glass-card p-4 rounded-2xl border-b-2 border-b-indigo-500/50">
-                    <p class="text-[10px] text-gray-500 uppercase mb-1">تصنيف محلي</p>
-                    <p id="statLocal" class="font-bold text-indigo-400">--</p>
-                </div>
-                <div class="glass-card p-4 rounded-2xl border-b-2 border-b-indigo-500/50">
-                    <p class="text-[10px] text-gray-500 uppercase mb-1">تصنيف عالمي</p>
-                    <p id="statGlobal" class="font-bold text-indigo-400">--</p>
-                </div>
-                <div class="glass-card p-4 rounded-2xl border-b-2 border-b-indigo-500/50">
-                    <p class="text-[10px] text-gray-500 uppercase mb-1">نسبة القبول</p>
-                    <p id="statAccept" class="font-bold text-indigo-400">--</p>
-                </div>
+                <div class="glass-card p-4 rounded-2xl"><p class="text-[10px] text-gray-500 mb-1">التوظيف</p><p id="statEmp" class="font-bold text-indigo-400">--</p></div>
+                <div class="glass-card p-4 rounded-2xl"><p class="text-[10px] text-gray-500 mb-1">محلي</p><p id="statLocal" class="font-bold text-indigo-400">--</p></div>
+                <div class="glass-card p-4 rounded-2xl"><p class="text-[10px] text-gray-500 mb-1">عالمي</p><p id="statGlobal" class="font-bold text-indigo-400">--</p></div>
+                <div class="glass-card p-4 rounded-2xl"><p class="text-[10px] text-gray-500 mb-1">القبول</p><p id="statAccept" class="font-bold text-indigo-400">--</p></div>
             </div>
         </section>
 
-        <section id="calculatorSection" class="mb-16">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="w-10 h-10 bg-indigo-500/20 rounded-xl flex items-center justify-center">
-                    <i class="fa-solid fa-calculator text-indigo-500"></i>
-                </div>
-                <h3 class="text-2xl font-bold">فرصتك في هذه الجامعة</h3>
-            </div>
-            
-            <div class="glass-card p-8 rounded-[2.5rem] border border-white/5 relative">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="space-y-2">
-                        <label class="text-xs text-gray-400 mr-2">درجة القدرات</label>
-                        <input type="number" id="qodratInp" placeholder="0" class="input-field w-full p-4 rounded-2xl text-center text-xl font-bold">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-xs text-gray-400 mr-2">درجة التحصيلي</label>
-                        <input type="number" id="tahsiliInp" placeholder="0" class="input-field w-full p-4 rounded-2xl text-center text-xl font-bold">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-xs text-gray-400 mr-2">نسبة الثانوية</label>
-                        <input type="number" id="schoolInp" placeholder="0" class="input-field w-full p-4 rounded-2xl text-center text-xl font-bold">
-                    </div>
-                </div>
-
-                <div id="calcResult" class="hidden animate-in fade-in duration-500">
-                    <div class="bg-indigo-600/10 border border-indigo-500/20 p-8 rounded-3xl text-center">
-                        <p class="text-indigo-300 text-sm mb-2">نسبتك الموزونة بناءً على معايير هذه الجامعة:</p>
-                        <div class="text-5xl font-black text-white" id="finalResult">00.00%</div>
-                    </div>
-                </div>
-
-                <button onclick="calculateRatio()" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-500 py-5 rounded-2xl font-bold text-lg transition-all shadow-lg shadow-indigo-600/20 active:scale-95">
-                    تحديث الحساب
-                </button>
-            </div>
-        </section>
-
-        <section class="mb-16">
-            <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
-                <i class="fa-solid fa-route text-indigo-500"></i> مسارات القبول المتاحة
-            </h3>
+        <section class="mb-12">
+            <h3 class="text-xl font-bold mb-6 flex items-center gap-2"><i class="fa-solid fa-route text-indigo-500"></i> مسارات التقديم</h3>
             <div id="pathsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </section>
 
-        <section class="mb-16">
-            <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
-                <i class="fa-solid fa-building-columns text-indigo-500"></i> الكليات والأقسام
-            </h3>
+        <section class="mb-12">
+            <h3 class="text-xl font-bold mb-6 flex items-center gap-2"><i class="fa-solid fa-building-columns text-indigo-500"></i> الكليات والتخصصات</h3>
             <div id="collegesGrid" class="space-y-4"></div>
         </section>
 
-        <section id="ratiosSection" class="mb-16 hidden">
-            <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
-                <i class="fa-solid fa-chart-line text-indigo-500"></i> أدنى نسب قبول العام الماضي
-            </h3>
+        <section id="ratiosSection" class="mb-12 hidden">
+            <h3 class="text-xl font-bold mb-6 flex items-center gap-2"><i class="fa-solid fa-chart-line text-indigo-500"></i> أدنى نسب قبول (العام الماضي)</h3>
             <div id="ratiosContainer" class="glass-card p-6 md:p-10 rounded-[2.5rem]"></div>
-        </section>
-
-        <section>
-            <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
-                <i class="fa-solid fa-star text-indigo-500"></i> لماذا هذه الجامعة؟
-            </h3>
-            <div id="featuresList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
         </section>
 
     </main>
