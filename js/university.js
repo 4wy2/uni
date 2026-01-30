@@ -4,6 +4,7 @@ async function loadUniversityDetails() {
     const params = new URLSearchParams(window.location.search);
     const uniId = params.get('id');
 
+    // العودة للرئيسية إذا لم يتم العثور على ID الجامعة
     if (!uniId) {
         window.location.href = 'index.html';
         return;
@@ -11,7 +12,7 @@ async function loadUniversityDetails() {
 
     try {
         const response = await fetch(`data/unis/${uniId}.json`);
-        if (!response.ok) throw new Error('Data file not found');
+        if (!response.ok) throw new Error('بيانات الجامعة غير موجودة');
         
         const data = await response.json();
         currentUniData = data;
@@ -19,68 +20,40 @@ async function loadUniversityDetails() {
         // 1. تعبئة البيانات الأساسية والنبذة
         document.title = `${data.name} | مُوجّه`;
         document.getElementById('uniName').textContent = data.name;
-        document.getElementById('uniLocation').querySelector('span').textContent = data.location;
-        document.getElementById('uniAbout').textContent = data.about || "لا توجد نبذة متوفرة حالياً.";
+        document.getElementById('uniLocation').textContent = data.location;
+        document.getElementById('uniAbout').textContent = data.about || "لا توجد نبذة متوفرة حالياً لهذه الجامعة.";
         
-        // التنافسية
-        document.getElementById('competencyBadge').innerHTML = `<i class="fa-solid fa-fire-flame-curved ml-1"></i> تنافسية: ${data.competitiveness || 'متوسطة'}`;
+        // التنافسية (Badge)
+        document.getElementById('uniCompetency').textContent = data.competitiveness || "متوسطة";
 
-        // 2. الإحصائيات (التوظيف، التصنيف، الفروع)
+        // 2. الإحصائيات (التوظيف، التصنيف، القبول)
         document.getElementById('statEmp').textContent = data.stats?.employment || "--";
         document.getElementById('statLocal').textContent = data.stats?.rank_local ? `#${data.stats.rank_local}` : "--";
-        document.getElementById('statGlobal').textContent = data.stats?.rank_global ? `#${data.stats.rank_global}` : "--";
-        document.getElementById('statCampuses').textContent = (data.campuses && data.campuses.length > 0) ? data.campuses.join(' • ') : "الفرع الرئيسي";
+        document.getElementById('statAccept').textContent = data.stats?.acceptance_rate || "--";
 
-        // 3. الحساب التلقائي (الذكاء التلقائي)
+        // 3. الحساب التلقائي (الذكاء التلقائي للموزونة)
         runAutoCalculation(data.weights);
 
-        // 4. شروط القبول
-        if (data.admission_terms) {
-            document.getElementById('termsList').innerHTML = data.admission_terms.map(term => `
-                <li class="feature-item p-3 rounded-xl border border-white/5 flex items-start gap-3 text-sm text-gray-300">
-                    <i class="fa-solid fa-circle-check text-indigo-500 mt-1 text-[10px]"></i> ${term}
-                </li>
-            `).join('');
-        }
-
-        // 5. مسارات التقديم
-        document.getElementById('pathsGrid').innerHTML = data.admission_paths.map(path => `
-            <div class="glass-card p-5 rounded-2xl border border-indigo-500/10">
-                <h4 class="font-bold text-indigo-400 mb-1 text-sm">${path.name}</h4>
-                <p class="text-[10px] text-gray-400 mb-2">${path.formula}</p>
-                <p class="text-[11px] text-gray-500 leading-relaxed">${path.note || ''}</p>
-            </div>
-        `).join('');
-
-        // 6. الكليات والتخصصات
-        document.getElementById('collegesGrid').innerHTML = data.colleges.map(item => `
-            <div class="glass-card p-6 rounded-3xl border border-white/5 hover:border-indigo-500/30 transition-all">
-                <h4 class="text-xs font-black text-indigo-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-graduation-cap"></i> ${item.college}
-                </h4>
-                <div class="grid grid-cols-1 gap-y-2">
-                    ${item.majors.map(m => `
-                        <div class="text-xs text-gray-400 flex items-center gap-2 hover:text-white transition-colors cursor-default">
-                            <span class="w-1 h-1 rounded-full bg-indigo-500/50"></span> ${m}
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `).join('');
-
-        // 7. البيئة الجامعية والمزايا
-        if (data.features) {
-            document.getElementById('featuresGrid').innerHTML = data.features.map(feat => `
-                <div class="feature-item p-4 rounded-2xl border border-white/5 flex items-center gap-4">
-                    <div class="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 text-[10px]">
-                        <i class="fa-solid fa-star"></i>
+        // 4. الكليات والتخصصات (عرض متجاوب)
+        const collegesGrid = document.getElementById('collegesGrid');
+        if (data.colleges) {
+            collegesGrid.innerHTML = data.colleges.map(item => `
+                <div class="glass-card p-5 rounded-3xl border border-white/5 hover:border-indigo-500/30 transition-all">
+                    <h4 class="text-[10px] font-black text-indigo-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-graduation-cap"></i> ${item.college}
+                    </h4>
+                    <div class="space-y-2">
+                        ${item.majors.map(m => `
+                            <div class="text-xs text-gray-400 flex items-center gap-2">
+                                <span class="w-1 h-1 rounded-full bg-indigo-500/40"></span> ${m}
+                            </div>
+                        `).join('')}
                     </div>
-                    <span class="text-xs text-gray-300 font-medium">${feat}</span>
                 </div>
             `).join('');
         }
 
-        // 8. عرض نسب القبول إذا وجدت
+        // 5. عرض نسب القبول (نظام الكروت للجوال بدلاً من الجداول)
         if (data.major_ratios && data.major_ratios.length > 0) {
             document.getElementById('ratiosSection').classList.remove('hidden');
             renderRatiosTable(data.major_ratios);
@@ -88,9 +61,11 @@ async function loadUniversityDetails() {
 
     } catch (error) {
         console.error("Error loading university data:", error);
+        alert("عذراً، حدث خطأ أثناء تحميل بيانات الجامعة.");
     }
 }
 
+// دالة الحساب التلقائي للموزونة بناءً على مخزن المتصفح
 function runAutoCalculation(weights) {
     const q = parseFloat(localStorage.getItem('qodrat')) || 0;
     const t = parseFloat(localStorage.getItem('tahsili')) || 0;
@@ -103,6 +78,8 @@ function runAutoCalculation(weights) {
         const weightLabels = document.getElementById('weightLabels');
 
         finalResult.innerText = total.toFixed(2) + "%";
+        
+        // عرض الأوزان المستخدمة في الحساب
         weightLabels.innerHTML = `
             <span class="bg-indigo-500/10 px-2 py-1 rounded-lg">قدرات ${Math.round(weights.qodrat * 100)}%</span>
             <span class="bg-indigo-500/10 px-2 py-1 rounded-lg">تحصيلي ${Math.round(weights.tahsili * 100)}%</span>
@@ -113,35 +90,34 @@ function runAutoCalculation(weights) {
     }
 }
 
+// تحويل الجداول إلى كروت مرنة سهلة القراءة في الجوال
 function renderRatiosTable(ratios) {
     const container = document.getElementById('ratiosContainer');
     container.innerHTML = ratios.map(section => `
-        <div class="mb-10 last:mb-0">
-            <h4 class="text-indigo-400 font-bold mb-5 text-sm flex items-center gap-2">
-                <span class="w-2 h-2 bg-indigo-500 rounded-full"></span> ${section.category}
+        <div class="mb-8">
+            <h4 class="text-[10px] font-black text-gray-500 mb-4 px-2 tracking-[0.2em] uppercase flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span> ${section.category}
             </h4>
-            <div class="overflow-hidden rounded-2xl border border-white/5">
-                <table class="w-full text-right text-xs">
-                    <thead>
-                        <tr class="bg-white/5 text-gray-400">
-                            <th class="py-4 px-4 font-bold tracking-wider">التخصص</th>
-                            <th class="text-center font-bold tracking-wider">طلاب</th>
-                            <th class="text-center font-bold tracking-wider">طالبات</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-white/5">
-                        ${section.items.map(item => `
-                            <tr class="hover:bg-indigo-500/5 transition-colors">
-                                <td class="py-4 px-4 font-medium text-gray-300">${item.name}</td>
-                                <td class="text-center text-indigo-400 font-black">${item.male || '--'}</td>
-                                <td class="text-center text-pink-400 font-black">${item.female || '--'}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
+            <div class="grid grid-cols-1 gap-3">
+                ${section.items.map(item => `
+                    <div class="glass-card p-4 rounded-2xl flex justify-between items-center hover:bg-white/[0.04] transition-all">
+                        <span class="text-xs md:text-sm font-medium text-gray-300">${item.name}</span>
+                        <div class="flex gap-4 border-r border-white/5 pr-4 mr-2">
+                            <div class="text-center">
+                                <p class="text-[8px] text-gray-500 mb-0.5 uppercase">طلاب</p>
+                                <p class="text-sm font-black text-indigo-400">${item.male || '--'}</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-[8px] text-gray-500 mb-0.5 uppercase">طالبات</p>
+                                <p class="text-sm font-black text-pink-400">${item.female || '--'}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
             </div>
         </div>
     `).join('');
 }
 
+// بدء التشغيل عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', loadUniversityDetails);
