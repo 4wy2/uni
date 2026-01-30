@@ -12,13 +12,15 @@
         .glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(10px); transition: 0.3s ease; }
         .uni-card:hover { transform: translateY(-5px); border-color: rgba(99, 102, 241, 0.4); box-shadow: 0 20px 40px -20px rgba(99, 102, 241, 0.3); }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .badge-pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
     </style>
 </head>
 <body class="min-h-screen pb-20">
 
     <header class="pt-16 pb-10 px-6 text-center">
-        <h1 class="text-5xl font-black mb-4 bg-gradient-to-l from-indigo-400 to-indigo-600 bg-clip-text text-transparent">مُوجّه</h1>
-        <p class="text-gray-400">أدخل درجاتك مرة واحدة، وشاهد موزونتك في كل الجامعات فوراً.</p>
+        <h1 class="text-5xl font-black mb-4 bg-gradient-to-l from-indigo-400 to-indigo-600 bg-clip-text text-transparent italic">مُوجّه</h1>
+        <p class="text-gray-400 max-w-xl mx-auto text-sm md:text-base leading-relaxed">أدخل درجاتك مرة واحدة، وسيقوم "مُوجّه" بحساب فرص قبولك وتحديث موزونتك في كل الجامعات السعودية فوراً.</p>
     </header>
 
     <section class="max-w-3xl mx-auto px-6 mb-16">
@@ -26,15 +28,15 @@
             <div class="grid grid-cols-3 gap-6 text-center">
                 <div class="space-y-2">
                     <label class="block text-[10px] text-gray-500 font-bold uppercase tracking-widest">قدرات</label>
-                    <input type="number" id="globalQ" placeholder="0" oninput="saveAndCalc()" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-center text-2xl font-black outline-none focus:ring-2 ring-indigo-500 transition-all">
+                    <input type="number" id="globalQ" placeholder="0" oninput="saveAndCalc()" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-center text-2xl font-black outline-none focus:ring-2 ring-indigo-500 transition-all placeholder:opacity-20">
                 </div>
                 <div class="space-y-2">
                     <label class="block text-[10px] text-gray-500 font-bold uppercase tracking-widest">تحصيلي</label>
-                    <input type="number" id="globalT" placeholder="0" oninput="saveAndCalc()" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-center text-2xl font-black outline-none focus:ring-2 ring-indigo-500 transition-all">
+                    <input type="number" id="globalT" placeholder="0" oninput="saveAndCalc()" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-center text-2xl font-black outline-none focus:ring-2 ring-indigo-500 transition-all placeholder:opacity-20">
                 </div>
                 <div class="space-y-2">
                     <label class="block text-[10px] text-gray-500 font-bold uppercase tracking-widest">ثانوي</label>
-                    <input type="number" id="globalS" placeholder="0" oninput="saveAndCalc()" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-center text-2xl font-black outline-none focus:ring-2 ring-indigo-500 transition-all">
+                    <input type="number" id="globalS" placeholder="0" oninput="saveAndCalc()" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-center text-2xl font-black outline-none focus:ring-2 ring-indigo-500 transition-all placeholder:opacity-20">
                 </div>
             </div>
         </div>
@@ -46,7 +48,6 @@
     </main>
 
     <script>
-        // حفظ الدرجات وتحديث الموزونات فوراً
         function saveAndCalc() {
             const q = document.getElementById('globalQ').value;
             const t = document.getElementById('globalT').value;
@@ -59,28 +60,27 @@
             updateCalculations();
         }
 
-        // تحديث أرقام الموزونة الظاهرة على الكروت
         function updateCalculations() {
             const q = parseFloat(localStorage.getItem('qodrat')) || 0;
             const t = parseFloat(localStorage.getItem('tahsili')) || 0;
             const s = parseFloat(localStorage.getItem('school')) || 0;
 
-            document.querySelectorAll('.ratio-display').forEach(el => {
+            document.querySelectorAll('.ratio-container').forEach(container => {
+                const display = container.querySelector('.ratio-display');
                 if (q > 0 && t > 0 && s > 0) {
-                    const wQ = parseFloat(el.dataset.wq);
-                    const wT = parseFloat(el.dataset.wt);
-                    const wS = parseFloat(el.dataset.ws);
+                    const wQ = parseFloat(display.dataset.wq) || 0;
+                    const wT = parseFloat(display.dataset.wt) || 0;
+                    const wS = parseFloat(display.dataset.ws) || 0;
                     const res = (q * wQ) + (t * wT) + (s * wS);
                     
-                    el.innerHTML = `<span class="text-indigo-400 font-black">${res.toFixed(2)}%</span>`;
-                    el.parentElement.classList.remove('opacity-0');
+                    display.innerHTML = `<span class="text-indigo-400 font-black">${res.toFixed(2)}%</span>`;
+                    container.classList.remove('opacity-0', 'translate-y-2');
                 } else {
-                    el.parentElement.classList.add('opacity-0');
+                    container.classList.add('opacity-0', 'translate-y-2');
                 }
             });
         }
 
-        // جلب الجامعات من ملف JSON
         async function loadUniversities() {
             try {
                 const response = await fetch('data/universities.json');
@@ -88,37 +88,49 @@
                 const grid = document.getElementById('unisGrid');
                 
                 grid.innerHTML = unis.map(uni => `
-                    <a href="details.html?id=${uni.id}" class="uni-card glass-card p-8 rounded-[2.5rem] block relative group">
-                        <div class="absolute top-6 left-6 opacity-0 transition-opacity duration-500">
-                            <div class="ratio-display bg-indigo-500/10 border border-indigo-500/20 px-3 py-1 rounded-xl text-sm" 
-                                 data-wq="${uni.weights.qodrat}" data-wt="${uni.weights.tahsili}" data-ws="${uni.weights.school}">
+                    <a href="details.html?id=${uni.id}" class="uni-card glass-card p-8 rounded-[2.5rem] block relative group overflow-hidden">
+                        <div class="ratio-container absolute top-6 left-6 opacity-0 translate-y-2 transition-all duration-500">
+                            <div class="ratio-display bg-indigo-500/10 border border-indigo-500/20 px-3 py-1 rounded-xl text-xs" 
+                                 data-wq="${uni.weights?.qodrat || 0}" 
+                                 data-wt="${uni.weights?.tahsili || 0}" 
+                                 data-ws="${uni.weights?.school || 0}">
                             </div>
                         </div>
 
-                        <div class="w-14 h-14 bg-indigo-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 transition-all">
+                        ${uni.high_employment ? `
+                            <div class="absolute -right-12 top-6 bg-green-500/10 border border-green-500/20 px-12 py-1 rotate-45 text-[8px] font-bold text-green-400 uppercase tracking-widest">
+                                توظيف عالٍ
+                            </div>
+                        ` : ''}
+
+                        <div class="w-14 h-14 bg-indigo-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 transition-all shadow-inner">
                             <i class="fa-solid fa-university text-indigo-500 text-2xl"></i>
                         </div>
                         
                         <h3 class="text-xl font-bold mb-2 group-hover:text-indigo-400 transition-colors">${uni.name}</h3>
-                        <p class="text-gray-500 text-sm mb-6 flex items-center gap-2">
-                            <i class="fa-solid fa-location-dot text-xs"></i> ${uni.location}
+                        <p class="text-gray-500 text-xs mb-6 flex items-center gap-2">
+                            <i class="fa-solid fa-location-dot text-indigo-500/50"></i> ${uni.location}
                         </p>
                         
                         <div class="pt-4 border-t border-white/5 flex justify-between items-center">
-                            <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">${uni.region}</span>
-                            <i class="fa-solid fa-arrow-left text-indigo-500 text-xs"></i>
+                            <div class="flex flex-col">
+                                <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">${uni.region}</span>
+                                <span class="text-[9px] text-indigo-400/60 mt-1">${uni.tags || 'تخصصات متنوعة'}</span>
+                            </div>
+                            <div class="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-indigo-500 transition-all group-hover:border-indigo-500">
+                                <i class="fa-solid fa-arrow-left text-white text-[10px]"></i>
+                            </div>
                         </div>
                     </a>
                 `).join('');
 
                 updateCalculations();
             } catch (err) {
-                console.error("خطأ في جلب البيانات:", err);
-                document.getElementById('unisGrid').innerHTML = "<p class='text-center col-span-full text-red-400'>تأكد من وجود ملف data/universities.json</p>";
+                console.error("Error:", err);
+                grid.innerHTML = `<div class="col-span-full text-center p-10 glass-card rounded-3xl border-red-500/20 text-red-400">فشل تحميل البيانات. تأكد من تشغيل السيرفر المحلي.</div>`;
             }
         }
 
-        // تنفيذ عند التحميل
         window.onload = () => {
             document.getElementById('globalQ').value = localStorage.getItem('qodrat') || '';
             document.getElementById('globalT').value = localStorage.getItem('tahsili') || '';
