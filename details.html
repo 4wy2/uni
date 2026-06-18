@@ -19,65 +19,81 @@
 
   <style>
     :root{
-      --bg:#f5f1ff;
-      --bg-2:#ede7fb;
+      --bg:#f7f3ff;
+      --bg-soft:#efe8ff;
       --ink:#241b45;
-      --muted:#706891;
-      --faint:#a09abf;
+      --muted:#6d648f;
+      --faint:#9b94b9;
 
-      --card:rgba(255,255,255,.82);
-      --card-solid:#ffffff;
-      --card-2:rgba(255,255,255,.55);
+      --card:#ffffff;
+      --card-soft:#fbf9ff;
+      --card-glass:rgba(255,255,255,.78);
 
-      --line:rgba(92,70,160,.14);
-      --line-strong:rgba(106,79,207,.30);
+      --line:rgba(106,79,207,.14);
+      --line-strong:rgba(106,79,207,.28);
 
       --primary:#6a4fcf;
       --primary-2:#8b5cf6;
       --primary-3:#4a3a9e;
-      --cyan:#13b8d8;
-      --pink:#e45bb5;
-      --gold:#c99a2e;
+
+      --gold:#b8902f;
+      --gold-soft:rgba(184,144,47,.13);
+
       --green:#16a34a;
+      --green-soft:rgba(22,163,74,.12);
 
-      --shadow:0 24px 70px -42px rgba(76,45,150,.42);
-      --shadow-strong:0 28px 90px -45px rgba(81,50,180,.60);
+      --blue:#2563eb;
+      --blue-soft:rgba(37,99,235,.12);
 
-      --hero-gradient:
-        radial-gradient(650px 330px at 78% -5%, rgba(139,92,246,.28), transparent 66%),
-        radial-gradient(500px 280px at 10% 0%, rgba(19,184,216,.16), transparent 60%),
-        radial-gradient(440px 260px at 50% 20%, rgba(228,91,181,.12), transparent 65%);
+      --pink:#db4fa5;
+      --pink-soft:rgba(219,79,165,.12);
+
+      --shadow:0 18px 50px -34px rgba(74,40,140,.38);
+      --shadow-strong:0 28px 90px -46px rgba(74,40,140,.55);
+
+      --hero:
+        radial-gradient(700px 360px at 88% -10%, rgba(139,92,246,.25), transparent 65%),
+        radial-gradient(520px 300px at 6% 0%, rgba(37,99,235,.13), transparent 60%),
+        linear-gradient(180deg,#f9f6ff,#f0eaff);
     }
 
     [data-theme="dark"]{
-      --bg:#100f1d;
-      --bg-2:#17142b;
-      --ink:#f7f4ff;
+      --bg:#111021;
+      --bg-soft:#18142f;
+      --ink:#f7f3ff;
       --muted:#aaa2ca;
-      --faint:#706a91;
+      --faint:#746e91;
 
-      --card:rgba(255,255,255,.065);
-      --card-solid:rgba(255,255,255,.075);
-      --card-2:rgba(255,255,255,.045);
+      --card:rgba(255,255,255,.075);
+      --card-soft:rgba(255,255,255,.05);
+      --card-glass:rgba(255,255,255,.07);
 
       --line:rgba(255,255,255,.10);
-      --line-strong:rgba(167,139,250,.34);
+      --line-strong:rgba(167,139,250,.32);
 
       --primary:#a78bfa;
       --primary-2:#8b5cf6;
       --primary-3:#6d4fd0;
-      --cyan:#22d3ee;
-      --pink:#f472b6;
+
       --gold:#e7c873;
+      --gold-soft:rgba(231,200,115,.12);
+
       --green:#4ade80;
+      --green-soft:rgba(74,222,128,.11);
 
-      --shadow:0 28px 80px -48px rgba(92,72,230,.72);
-      --shadow-strong:0 34px 100px -48px rgba(124,95,214,.75);
+      --blue:#60a5fa;
+      --blue-soft:rgba(96,165,250,.10);
 
-      --hero-gradient:
-        radial-gradient(650px 330px at 78% -5%, rgba(139,92,246,.36), transparent 66%),
-        radial-gradient(500px 280px at 10% 0%, rgba(34,211,238,.13), transparent 60%),
-        radial-gradient(440px 260px at 50% 20%, rgba(244,114,182,.11), transparent 65%);
+      --pink:#f472b6;
+      --pink-soft:rgba(244,114,182,.11);
+
+      --shadow:0 22px 65px -42px rgba(92,72,230,.62);
+      --shadow-strong:0 32px 100px -48px rgba(124,95,214,.72);
+
+      --hero:
+        radial-gradient(700px 360px at 88% -10%, rgba(139,92,246,.34), transparent 65%),
+        radial-gradient(520px 300px at 6% 0%, rgba(96,165,250,.10), transparent 60%),
+        linear-gradient(180deg,#111021,#18142f);
     }
 
     *{
@@ -91,12 +107,10 @@
     }
 
     body{
-      font-family:"Tajawal", system-ui, sans-serif;
-      background:
-        var(--hero-gradient),
-        linear-gradient(180deg,var(--bg),var(--bg-2));
-      color:var(--ink);
+      font-family:"Tajawal",system-ui,sans-serif;
       min-height:100vh;
+      background:var(--hero);
+      color:var(--ink);
       overflow-x:hidden;
       -webkit-font-smoothing:antialiased;
       -webkit-tap-highlight-color:transparent;
@@ -106,31 +120,22 @@
       content:"";
       position:fixed;
       inset:0;
-      z-index:-2;
       pointer-events:none;
+      z-index:-2;
       background-image:
-        linear-gradient(rgba(106,79,207,.055) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(106,79,207,.055) 1px, transparent 1px);
-      background-size:58px 58px;
-      mask-image:radial-gradient(75% 55% at 50% 0%, #000, transparent 80%);
+        linear-gradient(rgba(106,79,207,.055) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(106,79,207,.055) 1px,transparent 1px);
+      background-size:64px 64px;
+      mask-image:radial-gradient(72% 54% at 50% 0%,#000,transparent 80%);
     }
 
-    body::after{
-      content:"";
-      position:fixed;
-      width:420px;
-      height:420px;
-      left:-160px;
-      bottom:-160px;
-      z-index:-1;
-      pointer-events:none;
-      border-radius:999px;
-      background:radial-gradient(circle, rgba(106,79,207,.18), transparent 68%);
-      filter:blur(8px);
+    a{
+      color:inherit;
+      text-decoration:none;
     }
 
     .wrap{
-      width:min(1160px, calc(100% - 36px));
+      width:min(1120px,calc(100% - 32px));
       margin-inline:auto;
     }
 
@@ -139,29 +144,27 @@
       top:0;
       z-index:50;
       border-bottom:1px solid var(--line);
-      background:color-mix(in srgb,var(--bg) 78%, transparent);
-      backdrop-filter:blur(20px);
+      background:color-mix(in srgb,var(--bg) 82%,transparent);
+      backdrop-filter:blur(18px);
     }
 
     .brand{
       display:flex;
       align-items:center;
       gap:12px;
-      text-decoration:none;
-      color:var(--ink);
     }
 
     .brand-logo{
       width:40px;
       height:40px;
-      border-radius:16px;
+      border-radius:15px;
       display:grid;
       place-items:center;
       color:white;
       background:
-        radial-gradient(circle at 30% 20%, rgba(255,255,255,.42), transparent 25%),
+        radial-gradient(circle at 30% 20%,rgba(255,255,255,.45),transparent 28%),
         linear-gradient(135deg,var(--primary),var(--primary-3));
-      box-shadow:0 16px 32px -18px var(--primary);
+      box-shadow:0 18px 36px -24px var(--primary);
     }
 
     .brand-logo svg{
@@ -183,7 +186,6 @@
     .brand-text b{
       font-size:20px;
       font-weight:900;
-      letter-spacing:.3px;
     }
 
     .brand-text span{
@@ -193,26 +195,14 @@
       margin-top:3px;
     }
 
-    .nav-btn,
-    .icon-btn{
+    .icon-btn,
+    .nav-btn{
       height:42px;
       border:1px solid var(--line);
-      background:var(--card);
+      background:var(--card-glass);
       color:var(--ink);
-      box-shadow:0 12px 30px -24px rgba(0,0,0,.35);
-      transition:.2s ease;
-    }
-
-    .nav-btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:9px;
-      border-radius:999px;
-      padding:0 16px;
-      font-size:13px;
-      font-weight:900;
-      text-decoration:none;
+      transition:.18s ease;
+      backdrop-filter:blur(12px);
     }
 
     .icon-btn{
@@ -223,298 +213,283 @@
       cursor:pointer;
     }
 
-    .nav-btn:hover,
-    .icon-btn:hover{
+    .nav-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:0 15px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:900;
+    }
+
+    .icon-btn:hover,
+    .nav-btn:hover{
       border-color:var(--line-strong);
       color:var(--primary);
       transform:translateY(-1px);
-      box-shadow:0 18px 38px -28px var(--primary);
     }
 
-    .hero{
-      position:relative;
-      padding:36px 0 30px;
+    .page{
+      padding:28px 0 52px;
     }
 
-    .hero-shell{
+    .top-layout{
+      display:grid;
+      grid-template-columns:minmax(0,1.35fr) 360px;
+      gap:18px;
+      align-items:stretch;
+    }
+
+    .hero-card{
       position:relative;
       overflow:hidden;
+      border-radius:34px;
       border:1px solid var(--line-strong);
       background:
-        linear-gradient(135deg, color-mix(in srgb,var(--card-solid) 76%, transparent), color-mix(in srgb,var(--primary) 7%, transparent)),
-        radial-gradient(700px 280px at 85% 0%, color-mix(in srgb,var(--primary) 20%, transparent), transparent 70%);
+        radial-gradient(580px 260px at 80% -20%,color-mix(in srgb,var(--primary) 23%,transparent),transparent 68%),
+        radial-gradient(360px 230px at 10% 0%,color-mix(in srgb,var(--blue) 13%,transparent),transparent 65%),
+        var(--card-glass);
       box-shadow:var(--shadow-strong);
-      border-radius:34px;
+      backdrop-filter:blur(20px);
     }
 
-    .hero-shell::before{
+    .hero-card::after{
       content:"";
       position:absolute;
-      inset:0;
+      inset:auto -80px -120px auto;
+      width:260px;
+      height:260px;
+      border-radius:50%;
+      background:radial-gradient(circle,color-mix(in srgb,var(--primary) 20%,transparent),transparent 70%);
       pointer-events:none;
-      background:
-        radial-gradient(380px 160px at 20% 15%, rgba(19,184,216,.13), transparent 70%),
-        linear-gradient(90deg, transparent, rgba(255,255,255,.16), transparent);
-      opacity:.85;
     }
 
-    .hero-shell::after{
-      content:"";
-      position:absolute;
-      width:210px;
-      height:210px;
-      left:-55px;
-      top:-70px;
-      border-radius:999px;
-      background:
-        radial-gradient(circle at 35% 35%, rgba(255,255,255,.30), transparent 28%),
-        linear-gradient(135deg,var(--pink),var(--primary));
-      opacity:.18;
-      filter:blur(1px);
-    }
-
-    .hero-grid{
+    .hero-content{
       position:relative;
       z-index:1;
-      display:grid;
-      grid-template-columns:1.25fr .75fr;
-      gap:24px;
-      align-items:stretch;
-      padding:28px;
+      padding:30px;
+      min-height:315px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
     }
 
-    .eyebrow{
+    .crumb{
       display:inline-flex;
       align-items:center;
-      gap:8px;
-      padding:7px 13px;
+      gap:7px;
+      width:max-content;
+      padding:7px 12px;
       border-radius:999px;
-      color:var(--primary);
-      background:color-mix(in srgb,var(--primary) 10%, transparent);
-      border:1px solid color-mix(in srgb,var(--primary) 20%, transparent);
       font-size:11px;
       font-weight:900;
-      letter-spacing:.14em;
-      width:max-content;
+      letter-spacing:.12em;
+      color:var(--primary);
+      background:color-mix(in srgb,var(--primary) 10%,transparent);
+      border:1px solid color-mix(in srgb,var(--primary) 20%,transparent);
     }
 
     .uni-title{
-      color:var(--ink);
+      margin-top:18px;
+      font-size:clamp(34px,5.5vw,62px);
       font-weight:900;
       letter-spacing:-.055em;
       line-height:1.08;
-    }
-
-    .gradient-text{
-      background:linear-gradient(90deg,var(--primary),var(--cyan),var(--pink));
-      -webkit-background-clip:text;
-      background-clip:text;
-      color:transparent;
+      color:var(--ink);
+      max-width:760px;
     }
 
     .location-line{
-      color:var(--muted);
+      margin-top:14px;
       display:flex;
       align-items:center;
       gap:9px;
+      color:var(--muted);
       font-size:14px;
-      font-weight:700;
-      margin-top:14px;
+      font-weight:800;
     }
 
     .location-line i{
       color:var(--primary);
     }
 
-    .hero-side{
-      border-radius:28px;
-      background:
-        radial-gradient(220px 160px at 20% 0%, color-mix(in srgb,var(--cyan) 18%, transparent), transparent 70%),
-        color-mix(in srgb,var(--card-solid) 74%, transparent);
-      border:1px solid var(--line);
-      box-shadow:0 18px 46px -34px rgba(0,0,0,.42);
-      padding:22px;
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-      min-height:220px;
-    }
-
-    .hero-side-icon{
-      width:54px;
-      height:54px;
-      border-radius:20px;
-      display:grid;
-      place-items:center;
-      color:white;
-      background:linear-gradient(135deg,var(--primary),var(--primary-3));
-      box-shadow:0 16px 30px -20px var(--primary);
-      font-size:22px;
-    }
-
-    .hero-side-title{
-      font-size:13px;
-      color:var(--muted);
-      font-weight:800;
-      margin-top:16px;
-    }
-
-    .hero-side-value{
-      font-size:32px;
-      line-height:1;
-      font-weight:900;
-      color:var(--ink);
-      margin-top:6px;
-    }
-
-    .hero-side-note{
-      color:var(--faint);
-      font-size:12px;
-      line-height:1.7;
-      margin-top:10px;
-    }
-
-    .hero-actions{
+    .student-actions{
       display:flex;
       flex-wrap:wrap;
       gap:10px;
-      margin-top:22px;
+      margin-top:24px;
     }
 
-    .hero-action{
+    .student-action{
       display:inline-flex;
       align-items:center;
+      justify-content:center;
       gap:8px;
       padding:11px 15px;
       border-radius:999px;
       font-size:13px;
       font-weight:900;
-      text-decoration:none;
-      transition:.2s ease;
+      transition:.18s ease;
     }
 
-    .hero-action.primary{
+    .student-action.primary{
       color:white;
       background:linear-gradient(135deg,var(--primary),var(--primary-3));
-      box-shadow:0 18px 40px -26px var(--primary);
+      box-shadow:0 18px 42px -28px var(--primary);
     }
 
-    .hero-action.secondary{
+    .student-action.secondary{
+      background:var(--card);
       color:var(--ink);
       border:1px solid var(--line);
-      background:var(--card);
     }
 
-    .hero-action:hover{
+    .student-action:hover{
       transform:translateY(-1px);
+    }
+
+    .priority-card{
+      border-radius:34px;
+      border:1px solid var(--line);
+      background:var(--card-glass);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(20px);
+      padding:22px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      min-height:315px;
+    }
+
+    .priority-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:900;
+      font-size:17px;
+      color:var(--ink);
+    }
+
+    .priority-icon{
+      width:44px;
+      height:44px;
+      border-radius:17px;
+      display:grid;
+      place-items:center;
+      color:white;
+      background:linear-gradient(135deg,var(--primary),var(--primary-3));
+      box-shadow:0 18px 34px -24px var(--primary);
+    }
+
+    .priority-list{
+      margin-top:18px;
+      display:grid;
+      gap:10px;
+    }
+
+    .priority-item{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      padding:12px;
+      border-radius:18px;
+      background:var(--card-soft);
+      border:1px solid var(--line);
+    }
+
+    .priority-item i{
+      color:var(--primary);
+      margin-top:3px;
+    }
+
+    .priority-item b{
+      display:block;
+      font-size:13px;
+      color:var(--ink);
+      font-weight:900;
+    }
+
+    .priority-item span{
+      display:block;
+      font-size:11px;
+      color:var(--muted);
+      line-height:1.7;
+      margin-top:2px;
+    }
+
+    .quick-nav{
+      margin:18px 0;
+      position:sticky;
+      top:67px;
+      z-index:35;
+      border:1px solid var(--line);
+      background:color-mix(in srgb,var(--bg) 74%,transparent);
+      backdrop-filter:blur(16px);
+      border-radius:22px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .quick-nav-inner{
+      display:flex;
+      gap:6px;
+      padding:7px;
+      overflow-x:auto;
+      scrollbar-width:none;
+    }
+
+    .quick-nav-inner::-webkit-scrollbar{
+      display:none;
+    }
+
+    .quick-link{
+      white-space:nowrap;
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:9px 12px;
+      border-radius:16px;
+      font-size:12px;
+      font-weight:900;
+      color:var(--muted);
+      transition:.18s ease;
+    }
+
+    .quick-link:hover{
+      background:color-mix(in srgb,var(--primary) 10%,transparent);
+      color:var(--primary);
     }
 
     .glass-card{
       position:relative;
-      background:var(--card);
+      background:var(--card-glass);
       border:1px solid var(--line);
       box-shadow:var(--shadow);
       backdrop-filter:blur(18px);
     }
 
-    .premium-result{
-      position:relative;
-      overflow:hidden;
-      border-radius:34px;
-      border:1px solid color-mix(in srgb,var(--primary) 32%, transparent);
-      background:
-        radial-gradient(460px 220px at 50% -40%, color-mix(in srgb,var(--primary) 24%, transparent), transparent 65%),
-        radial-gradient(300px 180px at 12% 0%, color-mix(in srgb,var(--cyan) 16%, transparent), transparent 65%),
-        var(--card);
-    }
-
-    .premium-result::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      pointer-events:none;
-      background:linear-gradient(115deg,transparent,rgba(255,255,255,.18),transparent);
-      opacity:.9;
-    }
-
-    .result-number{
-      font-size:clamp(58px,10vw,104px);
-      font-weight:900;
-      letter-spacing:-.09em;
-      line-height:.9;
-      color:var(--ink);
-    }
-
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      gap:7px;
-      padding:6px 11px;
-      border-radius:999px;
-      font-size:10px;
-      font-weight:900;
-      color:var(--primary);
-      background:color-mix(in srgb,var(--primary) 10%, transparent);
-      border:1px solid color-mix(in srgb,var(--primary) 20%, transparent);
-    }
-
-    .stats-grid{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:14px;
-      margin:22px 0 38px;
-    }
-
-    .stat-card{
-      overflow:hidden;
-      padding:20px;
-      border-radius:26px;
-      transition:.2s ease;
-    }
-
-    .stat-card:hover{
-      transform:translateY(-3px);
-      border-color:var(--line-strong);
-      box-shadow:var(--shadow-strong);
-    }
-
-    .stat-icon{
-      width:46px;
-      height:46px;
-      border-radius:18px;
-      display:grid;
-      place-items:center;
-      color:white;
-      margin:0 auto 13px;
-      font-size:18px;
-    }
-
-    .stat-card:nth-child(1) .stat-icon{background:linear-gradient(135deg,var(--green),#0f766e)}
-    .stat-card:nth-child(2) .stat-icon{background:linear-gradient(135deg,var(--primary),var(--primary-3))}
-    .stat-card:nth-child(3) .stat-icon{background:linear-gradient(135deg,var(--cyan),#2563eb)}
-    .stat-card:nth-child(4) .stat-icon{background:linear-gradient(135deg,var(--pink),var(--primary))}
-
-    .stat-label{
-      color:var(--faint);
-      font-size:10px;
-      font-weight:900;
-      letter-spacing:.12em;
-      text-align:center;
-    }
-
-    .stat-value{
-      color:var(--ink);
-      font-weight:900;
-      text-align:center;
-      margin-top:5px;
+    .student-section{
+      margin-bottom:22px;
     }
 
     .section-head{
       display:flex;
-      align-items:flex-end;
       justify-content:space-between;
-      gap:16px;
-      margin-bottom:18px;
+      align-items:flex-end;
+      gap:14px;
+      margin-bottom:14px;
+    }
+
+    .section-kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      color:var(--primary);
+      font-size:11px;
+      font-weight:900;
+      margin-bottom:5px;
     }
 
     .section-title{
@@ -523,24 +498,174 @@
       color:var(--ink);
       display:flex;
       align-items:center;
-      gap:10px;
+      gap:9px;
       letter-spacing:-.02em;
     }
 
-    .section-title i{
-      color:var(--primary);
-    }
-
     .section-subtitle{
+      margin-top:4px;
       color:var(--faint);
       font-size:13px;
       font-weight:700;
+      line-height:1.7;
+    }
+
+    .section-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:7px 11px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:900;
+      color:var(--primary);
+      background:color-mix(in srgb,var(--primary) 9%,transparent);
+      border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
+      white-space:nowrap;
+    }
+
+    .score-card{
+      display:grid;
+      grid-template-columns:1fr 1.05fr;
+      gap:18px;
+      align-items:stretch;
+      padding:22px;
+      border-radius:30px;
+      overflow:hidden;
+      border-color:color-mix(in srgb,var(--primary) 28%,transparent);
+      background:
+        radial-gradient(420px 220px at 78% -20%,color-mix(in srgb,var(--primary) 20%,transparent),transparent 70%),
+        var(--card-glass);
+    }
+
+    .score-explain{
+      padding:18px;
+      border-radius:24px;
+      background:var(--card-soft);
+      border:1px solid var(--line);
+    }
+
+    .score-explain h3{
+      font-size:18px;
+      font-weight:900;
+      color:var(--ink);
+      display:flex;
+      align-items:center;
+      gap:9px;
+    }
+
+    .score-explain p{
+      margin-top:9px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.9;
+      font-weight:600;
+    }
+
+    .score-result{
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      text-align:center;
+      padding:18px;
+      border-radius:24px;
+      background:
+        radial-gradient(360px 160px at 50% -40%,color-mix(in srgb,var(--primary) 24%,transparent),transparent 70%),
+        var(--card);
+      border:1px solid var(--line);
+    }
+
+    .score-label{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:7px;
+      width:max-content;
+      margin-inline:auto;
+      padding:7px 12px;
+      border-radius:999px;
+      color:var(--primary);
+      background:color-mix(in srgb,var(--primary) 9%,transparent);
+      border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
+      font-size:11px;
+      font-weight:900;
+    }
+
+    .result-number{
+      margin-top:14px;
+      font-size:clamp(54px,9vw,90px);
+      font-weight:900;
+      line-height:.9;
+      letter-spacing:-.08em;
+      color:var(--ink);
+    }
+
+    #weightLabels{
+      margin-top:16px;
+    }
+
+    #weightLabels span{
+      background:color-mix(in srgb,var(--primary) 10%,transparent)!important;
+      color:var(--primary)!important;
+      border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
+      font-weight:900;
+      border-radius:999px!important;
+      padding:7px 11px!important;
+    }
+
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+    }
+
+    .stat-card{
+      padding:18px;
+      border-radius:24px;
+      transition:.18s ease;
+      overflow:hidden;
+    }
+
+    .stat-card:hover{
+      transform:translateY(-2px);
+      border-color:var(--line-strong);
+      box-shadow:var(--shadow-strong);
+    }
+
+    .stat-icon{
+      width:42px;
+      height:42px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      color:white;
+      margin-bottom:13px;
+      font-size:17px;
+    }
+
+    .stat-card:nth-child(1) .stat-icon{background:linear-gradient(135deg,var(--green),#0f766e)}
+    .stat-card:nth-child(2) .stat-icon{background:linear-gradient(135deg,var(--primary),var(--primary-3))}
+    .stat-card:nth-child(3) .stat-icon{background:linear-gradient(135deg,var(--blue),#1d4ed8)}
+    .stat-card:nth-child(4) .stat-icon{background:linear-gradient(135deg,var(--pink),var(--primary))}
+
+    .stat-label{
+      font-size:10px;
+      font-weight:900;
+      color:var(--faint);
+      letter-spacing:.10em;
+    }
+
+    .stat-value{
       margin-top:5px;
+      font-size:17px;
+      font-weight:900;
+      color:var(--ink);
+      line-height:1.35;
     }
 
     .about-card{
-      border-radius:30px;
-      padding:26px;
+      padding:24px;
+      border-radius:28px;
       overflow:hidden;
     }
 
@@ -551,42 +676,42 @@
       top:0;
       bottom:0;
       width:5px;
-      background:linear-gradient(180deg,var(--primary),var(--cyan),var(--pink));
+      background:linear-gradient(180deg,var(--primary),var(--blue),var(--pink));
+    }
+
+    .about-layout{
+      display:flex;
+      gap:15px;
+      align-items:flex-start;
     }
 
     .about-icon{
-      width:52px;
-      height:52px;
-      border-radius:20px;
+      width:50px;
+      height:50px;
+      flex:none;
+      border-radius:18px;
       display:grid;
       place-items:center;
       color:white;
       background:linear-gradient(135deg,var(--primary),var(--primary-3));
-      box-shadow:0 18px 36px -24px var(--primary);
-      font-size:20px;
-      flex:none;
-    }
-
-    .muted-text{
-      color:var(--muted);
-    }
-
-    .faint-text{
-      color:var(--faint);
+      box-shadow:0 18px 34px -24px var(--primary);
     }
 
     #uniAbout{
-      color:var(--muted) !important;
+      margin-top:8px;
+      color:var(--muted)!important;
+      line-height:2.05;
       font-size:15px;
-      line-height:2.1;
-      font-style:normal !important;
+      font-style:normal!important;
+      font-weight:600;
     }
 
     #collegesGrid .glass-card{
-      border-radius:28px !important;
-      padding:22px !important;
-      transition:.2s ease;
+      border-radius:24px!important;
+      padding:20px!important;
       overflow:hidden;
+      transition:.18s ease;
+      background:var(--card-glass)!important;
     }
 
     #collegesGrid .glass-card::before{
@@ -594,42 +719,89 @@
       position:absolute;
       inset-inline-start:0;
       top:0;
-      height:100%;
+      bottom:0;
       width:4px;
-      background:linear-gradient(180deg,var(--primary),var(--cyan));
-      opacity:.85;
+      background:linear-gradient(180deg,var(--primary),var(--blue));
     }
 
     #collegesGrid .glass-card:hover{
-      transform:translateY(-3px);
+      transform:translateY(-2px);
       border-color:var(--line-strong);
       box-shadow:var(--shadow-strong);
     }
 
+    #collegesGrid h4{
+      color:var(--primary)!important;
+      font-size:12px!important;
+      letter-spacing:0!important;
+    }
+
+    #collegesGrid .text-gray-400,
+    #collegesGrid .text-gray-500,
+    #collegesGrid .text-gray-600{
+      color:var(--muted)!important;
+    }
+
     #ratiosContainer .glass-card{
-      border-radius:22px !important;
-      transition:.2s ease;
+      border-radius:20px!important;
+      background:var(--card-glass)!important;
+      border:1px solid var(--line)!important;
+      transition:.18s ease;
     }
 
     #ratiosContainer .glass-card:hover{
       transform:translateY(-2px);
-      border-color:var(--line-strong);
+      border-color:var(--line-strong)!important;
+      box-shadow:var(--shadow-strong);
+    }
+
+    #extraSections{
+      scroll-margin-top:120px;
+    }
+
+    #extraSections > h3{
+      font-size:22px!important;
+      font-weight:900!important;
+      margin-bottom:14px!important;
+      color:var(--ink)!important;
+    }
+
+    #extraSections .grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
     }
 
     #extraSections .glass-card{
-      border-radius:28px !important;
-      transition:.2s ease;
+      border-radius:24px!important;
+      padding:20px!important;
+      background:var(--card-glass)!important;
+      transition:.18s ease;
     }
 
     #extraSections .glass-card:hover{
-      transform:translateY(-3px);
+      transform:translateY(-2px);
       border-color:var(--line-strong);
       box-shadow:var(--shadow-strong);
     }
 
+    #extraSections h4{
+      color:var(--primary)!important;
+      font-size:12px!important;
+      letter-spacing:0!important;
+      margin-bottom:9px!important;
+    }
+
+    #extraSections p{
+      color:var(--muted)!important;
+      line-height:1.95!important;
+      font-size:13px!important;
+      font-weight:600;
+    }
+
     .loading-card{
-      min-height:160px;
-      border-radius:28px;
+      min-height:150px;
+      border-radius:24px;
       overflow:hidden;
     }
 
@@ -638,8 +810,8 @@
       position:absolute;
       inset:0;
       transform:translateX(100%);
-      background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);
-      animation:shimmer 1.6s infinite;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);
+      animation:shimmer 1.5s infinite;
     }
 
     @keyframes shimmer{
@@ -654,16 +826,14 @@
     .text-indigo-400,
     .text-indigo-500{color:var(--primary)!important}
     .border-white\/5{border-color:var(--line)!important}
-
     .bg-white\/5,
     .bg-white\/\[0\.02\],
     .bg-white\/\[0\.01\]{
-      background:color-mix(in srgb,var(--primary) 6%, transparent)!important;
+      background:color-mix(in srgb,var(--primary) 6%,transparent)!important;
     }
 
     ::selection{
-      background:color-mix(in srgb,var(--primary) 28%, transparent);
-      color:var(--ink);
+      background:color-mix(in srgb,var(--primary) 26%,transparent);
     }
 
     :focus-visible{
@@ -671,31 +841,62 @@
       outline-offset:3px;
     }
 
-    @media(max-width:900px){
-      .hero-grid{
+    @media(max-width:960px){
+      .top-layout{
+        grid-template-columns:1fr;
+      }
+
+      .priority-card{
+        min-height:auto;
+      }
+
+      .score-card{
         grid-template-columns:1fr;
       }
 
       .stats-grid{
         grid-template-columns:repeat(2,1fr);
       }
+
+      #extraSections .grid{
+        grid-template-columns:1fr;
+      }
     }
 
     @media(max-width:560px){
       .wrap{
-        width:min(100% - 24px, 1160px);
+        width:min(100% - 24px,1120px);
       }
 
-      .hero{
-        padding-top:22px;
+      .page{
+        padding-top:18px;
       }
 
-      .hero-grid{
-        padding:20px;
+      .hero-content{
+        padding:22px;
+        min-height:auto;
       }
 
       .uni-title{
-        font-size:34px !important;
+        font-size:34px;
+      }
+
+      .student-actions{
+        flex-direction:column;
+      }
+
+      .student-action{
+        width:100%;
+      }
+
+      .quick-nav{
+        top:64px;
+        border-radius:18px;
+      }
+
+      .section-head{
+        flex-direction:column;
+        align-items:flex-start;
       }
 
       .stats-grid{
@@ -703,11 +904,14 @@
       }
 
       .stat-card{
-        padding:16px 10px;
+        padding:15px;
       }
 
-      .section-head{
-        align-items:flex-start;
+      .stat-value{
+        font-size:15px;
+      }
+
+      .about-layout{
         flex-direction:column;
       }
     }
@@ -722,7 +926,7 @@
   </style>
 </head>
 
-<body class="pb-12">
+<body>
 
   <nav class="nav">
     <div class="wrap py-3 flex items-center justify-between gap-3">
@@ -735,6 +939,7 @@
             <polygon points="50,84 40,48 50,54 60,48" fill="currentColor" opacity=".62"/>
           </svg>
         </div>
+
         <div class="brand-text">
           <b>مُوجّه</b>
           <span>بوصلتك للجامعات</span>
@@ -754,18 +959,18 @@
     </div>
   </nav>
 
-  <main class="wrap">
+  <main class="wrap page">
 
-    <section class="hero">
-      <div class="hero-shell">
-        <div class="hero-grid">
-          <div class="flex flex-col justify-center">
-            <div class="eyebrow mb-5">
+    <section id="overview" class="top-layout">
+      <div class="hero-card">
+        <div class="hero-content">
+          <div>
+            <div class="crumb">
               <i class="fa-solid fa-building-columns"></i>
               ملف الجامعة
             </div>
 
-            <h1 id="uniName" class="uni-title text-4xl md:text-6xl">
+            <h1 id="uniName" class="uni-title">
               --
             </h1>
 
@@ -773,105 +978,235 @@
               <i class="fa-solid fa-location-dot"></i>
               <span>--</span>
             </p>
-
-            <div class="hero-actions">
-              <a href="#collegesSection" class="hero-action primary">
-                <i class="fa-solid fa-layer-group"></i>
-                استعرض التخصصات
-              </a>
-
-              <a href="#ratiosSection" class="hero-action secondary">
-                <i class="fa-solid fa-chart-line"></i>
-                نسب القبول
-              </a>
-            </div>
           </div>
 
-          <aside class="hero-side">
-            <div>
-              <div class="hero-side-icon">
-                <i class="fa-solid fa-award"></i>
-              </div>
+          <div class="student-actions">
+            <a href="#scoreBlock" class="student-action primary">
+              <i class="fa-solid fa-calculator"></i>
+              ابدأ من موزونتك
+            </a>
 
-              <p class="hero-side-title">مستوى التنافسية</p>
-              <p id="uniCompetency" class="hero-side-value gradient-text">--</p>
-              <p class="hero-side-note">
-                يعكس مدى صعوبة القبول وقوة الطلب على الجامعة مقارنة بالخيارات الأخرى.
-              </p>
-            </div>
-          </aside>
+            <a href="#collegesSection" class="student-action secondary">
+              <i class="fa-solid fa-layer-group"></i>
+              شوف التخصصات
+            </a>
+
+            <a href="#ratiosSection" class="student-action secondary">
+              <i class="fa-solid fa-chart-line"></i>
+              نسب القبول
+            </a>
+          </div>
         </div>
       </div>
-    </section>
 
-    <section id="autoResultSection" class="hidden mb-8">
-      <div class="premium-result glass-card p-7 md:p-9 text-center">
-        <div class="relative z-10">
-          <div class="chip mb-5">
-            <i class="fa-solid fa-calculator"></i>
-            موزونتك المتوقعة
+      <aside class="priority-card">
+        <div>
+          <div class="priority-title">
+            <div class="priority-icon">
+              <i class="fa-solid fa-route"></i>
+            </div>
+            <span>وش تشوف أول؟</span>
           </div>
 
-          <h2 id="finalResult" class="result-number mb-5">
-            00.00%
+          <div class="priority-list">
+            <div class="priority-item">
+              <i class="fa-solid fa-1"></i>
+              <div>
+                <b>الموزونة</b>
+                <span>أهم رقم يحدد هل دخولك واقعي أو يحتاج بدائل.</span>
+              </div>
+            </div>
+
+            <div class="priority-item">
+              <i class="fa-solid fa-2"></i>
+              <div>
+                <b>التخصصات</b>
+                <span>تأكد أن الجامعة فيها المسار اللي تبيه قبل تتحمس لها.</span>
+              </div>
+            </div>
+
+            <div class="priority-item">
+              <i class="fa-solid fa-3"></i>
+              <div>
+                <b>الشروط والسكن</b>
+                <span>بعد القبول والنسبة، شوف التفاصيل اللي تأثر على قرارك.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <nav class="quick-nav" aria-label="تنقل سريع داخل الصفحة">
+      <div class="quick-nav-inner">
+        <a href="#overview" class="quick-link">
+          <i class="fa-solid fa-house"></i>
+          نظرة عامة
+        </a>
+
+        <a href="#scoreBlock" class="quick-link">
+          <i class="fa-solid fa-calculator"></i>
+          موزونتك
+        </a>
+
+        <a href="#statsBlock" class="quick-link">
+          <i class="fa-solid fa-gauge-high"></i>
+          مؤشرات سريعة
+        </a>
+
+        <a href="#aboutBlock" class="quick-link">
+          <i class="fa-solid fa-circle-info"></i>
+          عن الجامعة
+        </a>
+
+        <a href="#collegesSection" class="quick-link">
+          <i class="fa-solid fa-layer-group"></i>
+          التخصصات
+        </a>
+
+        <a href="#ratiosSection" class="quick-link">
+          <i class="fa-solid fa-chart-simple"></i>
+          النسب
+        </a>
+
+        <a href="#extraSections" class="quick-link">
+          <i class="fa-solid fa-file-lines"></i>
+          التفاصيل
+        </a>
+      </div>
+    </nav>
+
+    <section id="scoreBlock" class="student-section">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">
+            <i class="fa-solid fa-star"></i>
+            الأهم للطالب
+          </div>
+
+          <h2 class="section-title">
+            موزونتك على هذه الجامعة
           </h2>
 
-          <div id="weightLabels" class="flex flex-wrap justify-center gap-2"></div>
+          <p class="section-subtitle">
+            تظهر النتيجة هنا بعد إدخال درجاتك في الصفحة الرئيسية. هذا يساعدك تعرف وضعك بسرعة.
+          </p>
+        </div>
+
+        <span class="section-chip">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          حساب تلقائي
+        </span>
+      </div>
+
+      <section id="autoResultSection" class="hidden">
+        <div class="score-card glass-card">
+          <div class="score-explain">
+            <h3>
+              <i class="fa-solid fa-circle-question text-indigo-500"></i>
+              كيف أقرأ النتيجة؟
+            </h3>
+
+            <p>
+              النسبة المعروضة هي موزونتك حسب أوزان هذه الجامعة أو المسار الافتراضي المسجل في قاعدة البيانات.
+              قارنها مع نسب القبول السابقة، ثم راجع الشروط والتخصصات قبل اتخاذ القرار.
+            </p>
+          </div>
+
+          <div class="score-result">
+            <div class="score-label">
+              <i class="fa-solid fa-calculator"></i>
+              موزونتك المتوقعة
+            </div>
+
+            <h2 id="finalResult" class="result-number">
+              00.00%
+            </h2>
+
+            <div id="weightLabels" class="flex flex-wrap justify-center gap-2"></div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section id="statsBlock" class="student-section">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">
+            <i class="fa-solid fa-gauge-high"></i>
+            مؤشرات القرار
+          </div>
+
+          <h2 class="section-title">
+            أرقام سريعة قبل التفاصيل
+          </h2>
+
+          <p class="section-subtitle">
+            هذه المؤشرات تعطيك تصور سريع عن قوة الجامعة وصعوبة الدخول ومخرجاتها.
+          </p>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card glass-card">
+          <div class="stat-icon">
+            <i class="fa-solid fa-briefcase"></i>
+          </div>
+          <p class="stat-label">التوظيف</p>
+          <p id="statEmp" class="stat-value">--</p>
+        </div>
+
+        <div class="stat-card glass-card">
+          <div class="stat-icon">
+            <i class="fa-solid fa-ranking-star"></i>
+          </div>
+          <p class="stat-label">التصنيف</p>
+          <p id="statLocal" class="stat-value">--</p>
+        </div>
+
+        <div class="stat-card glass-card">
+          <div class="stat-icon">
+            <i class="fa-solid fa-door-open"></i>
+          </div>
+          <p class="stat-label">القبول</p>
+          <p id="statAccept" class="stat-value">--</p>
+        </div>
+
+        <div class="stat-card glass-card">
+          <div class="stat-icon">
+            <i class="fa-solid fa-fire"></i>
+          </div>
+          <p class="stat-label">التنافسية</p>
+          <p id="uniCompetency" class="stat-value">--</p>
         </div>
       </div>
     </section>
 
-    <section class="stats-grid">
-      <div class="stat-card glass-card text-center">
-        <div class="stat-icon">
-          <i class="fa-solid fa-briefcase"></i>
-        </div>
-        <p class="stat-label">التوظيف</p>
-        <p id="statEmp" class="stat-value text-base md:text-lg">--</p>
-      </div>
-
-      <div class="stat-card glass-card text-center">
-        <div class="stat-icon">
-          <i class="fa-solid fa-ranking-star"></i>
-        </div>
-        <p class="stat-label">التصنيف</p>
-        <p id="statLocal" class="stat-value text-lg">--</p>
-      </div>
-
-      <div class="stat-card glass-card text-center">
-        <div class="stat-icon">
-          <i class="fa-solid fa-door-open"></i>
-        </div>
-        <p class="stat-label">القبول</p>
-        <p id="statAccept" class="stat-value text-lg">--</p>
-      </div>
-
-      <div class="stat-card glass-card text-center">
-        <div class="stat-icon">
-          <i class="fa-solid fa-fire"></i>
-        </div>
-        <p class="stat-label">التميّز</p>
-        <p class="stat-value text-lg">
-          <span class="gradient-text">مُوجّه</span>
-        </p>
-      </div>
-    </section>
-
-    <section class="mb-12">
-      <div class="about-card glass-card">
-        <div class="flex items-start gap-4">
-          <div class="about-icon">
+    <section id="aboutBlock" class="student-section">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">
             <i class="fa-solid fa-circle-info"></i>
+            افهم الجامعة
+          </div>
+
+          <h2 class="section-title">
+            عن الجامعة
+          </h2>
+
+          <p class="section-subtitle">
+            نبذة مختصرة تساعدك تعرف طبيعة الجامعة ومكانها وقوتها العامة.
+          </p>
+        </div>
+      </div>
+
+      <div class="about-card glass-card">
+        <div class="about-layout">
+          <div class="about-icon">
+            <i class="fa-solid fa-building-columns"></i>
           </div>
 
           <div>
-            <h3 class="section-title mb-1">
-              عن الجامعة
-            </h3>
-            <p class="section-subtitle mb-4">
-              نبذة مختصرة تساعدك تفهم طبيعة الجامعة قبل المقارنة.
-            </p>
-
             <p id="uniAbout">
               --
             </p>
@@ -880,21 +1215,26 @@
       </div>
     </section>
 
-    <section id="collegesSection" class="mb-12">
+    <section id="collegesSection" class="student-section">
       <div class="section-head">
         <div>
-          <h3 class="section-title">
+          <div class="section-kicker">
             <i class="fa-solid fa-layer-group"></i>
+            أهم قسم بعد الموزونة
+          </div>
+
+          <h2 class="section-title">
             الكليات والتخصصات
-          </h3>
+          </h2>
+
           <p class="section-subtitle">
-            عرض مرتب للكليات والتخصصات المسجلة في قاعدة البيانات.
+            شوف التخصصات المتاحة حسب الكلية، وتأكد أن خيارك موجود قبل تقارن بين الجامعات.
           </p>
         </div>
 
-        <span class="chip">
+        <span class="section-chip">
           <i class="fa-solid fa-database"></i>
-          محدث تلقائيًا
+          من قاعدة البيانات
         </span>
       </div>
 
@@ -904,28 +1244,33 @@
       </div>
     </section>
 
-    <section id="ratiosSection" class="mb-12 hidden">
+    <section id="ratiosSection" class="student-section hidden">
       <div class="section-head">
         <div>
-          <h3 class="section-title">
+          <div class="section-kicker">
             <i class="fa-solid fa-chart-simple"></i>
+            للمقارنة الواقعية
+          </div>
+
+          <h2 class="section-title">
             نسب قبول العام الماضي
-          </h3>
+          </h2>
+
           <p class="section-subtitle">
-            تظهر هنا النسب المتاحة فقط، وقد تختلف حسب السنة والمسار.
+            استخدمها كمرجع للمقارنة، ولا تعتبرها ضمانًا؛ لأن النسب تختلف حسب السنة والمسار والمنافسة.
           </p>
         </div>
 
-        <span class="chip">
+        <span class="section-chip">
           <i class="fa-solid fa-shield-halved"></i>
-          تحتاج تحقق دائم
+          تحتاج تحقق سنوي
         </span>
       </div>
 
       <div id="ratiosContainer" class="space-y-3"></div>
     </section>
 
-    <section id="extraSections" class="mb-12"></section>
+    <section id="extraSections" class="student-section"></section>
 
   </main>
 
