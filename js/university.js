@@ -1,11 +1,10 @@
 // =====================================================
 // University Details Page
 // details.html?id=kfupm
-// نسخة نظيفة:
-// - تعرض كل مسارات القبول بشكل مرتب
-// - لا تعرض كلمة "نعم"
-// - التخصصات تظهر كأسماء فقط
-// - الملفات من Google Drive تظهر من university_resources
+// يسحب بيانات الجامعة من Supabase
+// + يعرض كل مسارات القبول ومعاييرها بشكل مرتب
+// + يعرض التخصصات مثل أول: رمز التخصص + الاسم فقط
+// + يعرض ملفات Google Drive من university_resources
 // =====================================================
 
 let currentUniData = null;
@@ -24,7 +23,13 @@ function esc(value) {
 }
 
 function isEmpty(value) {
-    return value === null || value === undefined || value === "" || value === "null" || value === "undefined";
+    return (
+        value === null ||
+        value === undefined ||
+        value === "" ||
+        value === "null" ||
+        value === "undefined"
+    );
 }
 
 function getUniversityIdFromUrl() {
@@ -42,7 +47,23 @@ function getStoredScores() {
 
 function formatPercent(value) {
     if (isEmpty(value)) return "--";
-    return `${Number(value).toFixed(2)}%`;
+
+    const n = Number(value);
+    if (Number.isNaN(n)) return "--";
+
+    return `${n.toFixed(2)}%`;
+}
+
+function normalizeWeight(value) {
+    if (isEmpty(value)) return 0;
+
+    const n = Number(value);
+    if (Number.isNaN(n)) return 0;
+
+    // يدعم الحالتين:
+    // 0.50 = 50%
+    // 50   = 50%
+    return n > 1 ? n / 100 : n;
 }
 
 function formatWeight(value) {
@@ -51,17 +72,26 @@ function formatWeight(value) {
     const n = Number(value);
     if (Number.isNaN(n)) return null;
 
-    if (n <= 1) return `${Math.round(n * 100)}%`;
+    if (n <= 1) {
+        return `${Math.round(n * 100)}%`;
+    }
+
     return `${n}%`;
 }
 
-function formatNumber(value) {
+function formatCriteriaValue(value) {
     if (isEmpty(value)) return "";
+
+    if (typeof value === "boolean") {
+        return value ? "" : "";
+    }
+
     return String(value);
 }
 
-// أي Boolean هنا ما راح يكتب "نعم"
-// إذا true يظهر اسم الشرط فقط، وإذا false يختفي
+// هنا نتحكم بالمعايير اللي تظهر فقط
+// أي Boolean مثل interview_required ما يكتب "نعم"
+// إذا true يطلع اسم الشرط فقط، وإذا false يختفي
 const ADMISSION_CRITERIA = [
     { key: "step_required", label: "STEP", type: "value" },
     { key: "ielts_required", label: "IELTS", type: "value" },
@@ -69,8 +99,8 @@ const ADMISSION_CRITERIA = [
     { key: "duolingo_required", label: "Duolingo", type: "value" },
     { key: "sat_min", label: "SAT", type: "value" },
     { key: "sat_required", label: "SAT", type: "value" },
-    { key: "gpa_required", label: "معدل مطلوب", type: "value" },
-    { key: "english_required", label: "شرط لغة إنجليزية", type: "value" },
+    { key: "gpa_required", label: "المعدل المطلوب", type: "value" },
+    { key: "english_required", label: "شرط اللغة الإنجليزية", type: "value" },
 
     { key: "interview_required", label: "مقابلة شخصية", type: "flag" },
     { key: "portfolio_required", label: "ملف أعمال", type: "flag" },
@@ -81,10 +111,10 @@ const ADMISSION_CRITERIA = [
 ];
 
 function ensureDynamicStyles() {
-    if (document.getElementById("universityCleanStyles")) return;
+    if (document.getElementById("universityDynamicStyles")) return;
 
     const style = document.createElement("style");
-    style.id = "universityCleanStyles";
+    style.id = "universityDynamicStyles";
 
     style.textContent = `
         .admission-tracks-grid{
@@ -241,78 +271,6 @@ function ensureDynamicStyles() {
             margin-inline-end:5px;
         }
 
-        .clean-college-card{
-            border-radius:24px!important;
-            padding:20px!important;
-            overflow:hidden;
-            transition:.18s ease;
-            background:var(--card-glass)!important;
-        }
-
-        .clean-college-card::before{
-            content:"";
-            position:absolute;
-            inset-inline-start:0;
-            top:0;
-            bottom:0;
-            width:4px;
-            background:linear-gradient(180deg,var(--primary),var(--blue));
-        }
-
-        .clean-college-card:hover{
-            transform:translateY(-2px);
-            border-color:var(--line-strong);
-            box-shadow:var(--shadow-strong);
-        }
-
-        .clean-college-title{
-            display:flex;
-            align-items:center;
-            gap:8px;
-            color:var(--primary);
-            font-size:13px;
-            font-weight:900;
-            margin-bottom:12px;
-        }
-
-        .clean-college-desc{
-            color:var(--muted);
-            font-size:12px;
-            line-height:1.8;
-            font-weight:600;
-            margin-bottom:13px;
-        }
-
-        .majors-clean-list{
-            display:flex;
-            flex-wrap:wrap;
-            gap:8px;
-        }
-
-        .major-clean-pill{
-            display:inline-flex;
-            align-items:center;
-            gap:7px;
-            padding:8px 11px;
-            border-radius:999px;
-            background:var(--card-soft);
-            border:1px solid var(--line);
-            color:var(--ink);
-            font-size:12px;
-            font-weight:800;
-            line-height:1.4;
-        }
-
-        .major-clean-pill i{
-            color:var(--primary);
-            font-size:7px;
-        }
-
-        .major-clean-pill b{
-            color:var(--primary);
-            font-weight:900;
-        }
-
         @media(max-width:960px){
             .admission-tracks-grid{
                 grid-template-columns:1fr;
@@ -338,7 +296,10 @@ function ensureQuickLink(targetId, label, iconClass) {
     const link = document.createElement("a");
     link.href = `#${targetId}`;
     link.className = "quick-link";
-    link.innerHTML = `<i class="fa-solid ${iconClass}"></i>${esc(label)}`;
+    link.innerHTML = `
+        <i class="fa-solid ${iconClass}"></i>
+        ${esc(label)}
+    `;
 
     const collegesLink = quickNav.querySelector('a[href="#collegesSection"]');
 
@@ -361,6 +322,7 @@ function ensureSection(id, afterId) {
     wrapper.className = "student-section";
 
     const after = $(afterId);
+
     if (after && after.parentNode) {
         after.insertAdjacentElement("afterend", wrapper);
     } else {
@@ -382,6 +344,7 @@ async function loadUniversityDetails() {
     ensureQuickLink("admissionTracksSection", "مسارات القبول", "fa-list-check");
 
     try {
+        // 1) بيانات الجامعة الأساسية
         const { data: university, error: uniError } = await supabaseClient
             .from("universities")
             .select("*")
@@ -394,6 +357,7 @@ async function loadUniversityDetails() {
 
         currentUniData = university;
 
+        // 2) كل مسارات القبول + الأوزان
         const { data: tracks, error: tracksError } = await supabaseClient
             .from("admission_tracks")
             .select(`
@@ -417,6 +381,7 @@ async function loadUniversityDetails() {
             activeTracks[0] ||
             null;
 
+        // 3) الكليات والتخصصات - مثل النسخة القديمة
         const { data: colleges, error: collegesError } = await supabaseClient
             .from("colleges")
             .select(`
@@ -424,13 +389,14 @@ async function loadUniversityDetails() {
                 name,
                 description,
                 display_order,
-                is_active,
                 majors (
                     id,
                     code,
                     name,
-                    display_order,
-                    is_active
+                    degree,
+                    gender,
+                    note,
+                    display_order
                 )
             `)
             .eq("university_id", uniId)
@@ -441,6 +407,7 @@ async function loadUniversityDetails() {
             console.error("Colleges error:", collegesError);
         }
 
+        // 4) نسب القبول
         const { data: ratios, error: ratiosError } = await supabaseClient
             .from("v_admission_ratios_admin")
             .select("*")
@@ -450,6 +417,7 @@ async function loadUniversityDetails() {
             console.error("Ratios error:", ratiosError);
         }
 
+        // 5) ملفات وروابط الجامعة
         const { data: resources, error: resourcesError } = await supabaseClient
             .from("university_resources")
             .select("*")
@@ -461,6 +429,7 @@ async function loadUniversityDetails() {
             console.error("Resources error:", resourcesError);
         }
 
+        // 6) الأقسام النصية
         const { data: sections, error: sectionsError } = await supabaseClient
             .from("university_sections")
             .select("*")
@@ -555,9 +524,9 @@ function renderAutoCalculation(defaultTrack) {
 
     const { q, t, s } = getStoredScores();
 
-    const qW = Number(weights.qodrat_weight || 0);
-    const tW = Number(weights.tahsili_weight || 0);
-    const sW = Number(weights.school_weight || 0);
+    const qW = normalizeWeight(weights.qodrat_weight);
+    const tW = normalizeWeight(weights.tahsili_weight);
+    const sW = normalizeWeight(weights.school_weight);
 
     const needsQ = qW > 0;
     const needsT = tW > 0;
@@ -584,9 +553,9 @@ function renderAutoCalculation(defaultTrack) {
 
     if (weightLabels) {
         weightLabels.innerHTML = `
-            ${needsQ ? `<span class="bg-indigo-500/10 px-2 py-1 rounded-lg">قدرات ${formatWeight(qW)}</span>` : ""}
-            ${needsT ? `<span class="bg-indigo-500/10 px-2 py-1 rounded-lg">تحصيلي ${formatWeight(tW)}</span>` : ""}
-            ${needsS ? `<span class="bg-indigo-500/10 px-2 py-1 rounded-lg">ثانوي ${formatWeight(sW)}</span>` : ""}
+            ${needsQ ? `<span class="bg-indigo-500/10 px-2 py-1 rounded-lg">قدرات ${formatWeight(weights.qodrat_weight)}</span>` : ""}
+            ${needsT ? `<span class="bg-indigo-500/10 px-2 py-1 rounded-lg">تحصيلي ${formatWeight(weights.tahsili_weight)}</span>` : ""}
+            ${needsS ? `<span class="bg-indigo-500/10 px-2 py-1 rounded-lg">ثانوي ${formatWeight(weights.school_weight)}</span>` : ""}
         `;
     }
 
@@ -634,7 +603,10 @@ function renderAdmissionTracks(tracks) {
 }
 
 function renderTrackCard(track) {
-    const weights = Array.isArray(track.university_weights) ? track.university_weights : [];
+    const weights = Array.isArray(track.university_weights)
+        ? track.university_weights
+        : [];
+
     const firstWeight = weights[0] || {};
 
     const qW = formatWeight(firstWeight.qodrat_weight);
@@ -726,7 +698,7 @@ function buildCriteria(weight) {
         if (!isEmpty(value)) {
             result.push({
                 label: item.label,
-                value: formatNumber(value)
+                value: formatCriteriaValue(value)
             });
         }
     });
@@ -749,40 +721,37 @@ function renderColleges(colleges) {
 
     collegesGrid.innerHTML = colleges.map(college => {
         const majors = (college.majors || [])
-            .filter(major => major.is_active !== false)
             .sort((a, b) => (a.display_order || 999) - (b.display_order || 999));
 
         return `
-            <div class="clean-college-card glass-card border border-white/5">
-                <h4 class="clean-college-title">
+            <div class="glass-card p-6 rounded-3xl border border-white/5">
+                <h4 class="text-xs font-black text-indigo-500 uppercase tracking-widest mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-graduation-cap"></i>
                     ${esc(college.name)}
                 </h4>
 
                 ${college.description ? `
-                    <p class="clean-college-desc">
+                    <p class="text-[11px] text-gray-500 mb-4 leading-relaxed">
                         ${esc(college.description)}
                     </p>
                 ` : ""}
 
-                <div class="majors-clean-list">
-                    ${majors.length ? majors.map(major => renderMajorPill(major)).join("") : `
-                        <span class="major-clean-pill">لا توجد تخصصات مضافة بعد</span>
+                <div class="grid grid-cols-1 gap-2">
+                    ${majors.length ? majors.map(major => `
+                        <div class="text-xs text-gray-400 flex items-center justify-between gap-2 italic bg-white/[0.02] rounded-xl px-3 py-2">
+                            <span class="flex items-center gap-2">
+                                <span class="w-1 h-1 rounded-full bg-indigo-500/50"></span>
+                                ${major.code ? `<b class="text-indigo-400 not-italic">${esc(major.code)}</b>` : ""}
+                                ${esc(major.name || "تخصص غير محدد")}
+                            </span>
+                        </div>
+                    `).join("") : `
+                        <div class="text-xs text-gray-600">لا توجد تخصصات مضافة بعد.</div>
                     `}
                 </div>
             </div>
         `;
     }).join("");
-}
-
-function renderMajorPill(major) {
-    return `
-        <span class="major-clean-pill">
-            <i class="fa-solid fa-circle"></i>
-            ${major.code ? `<b>${esc(major.code)}</b>` : ""}
-            ${esc(major.name || "تخصص غير محدد")}
-        </span>
-    `;
 }
 
 function renderRatios(ratios) {
