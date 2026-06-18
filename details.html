@@ -12,58 +12,72 @@
 
   <script>
     (function(){
-      var t = localStorage.getItem('theme') || 'light';
-      document.documentElement.setAttribute('data-theme', t);
+      const theme = localStorage.getItem("theme") || "light";
+      document.documentElement.setAttribute("data-theme", theme);
     })();
   </script>
 
   <style>
     :root{
-      --bg:#f4f0fb;
-      --ink:#2a2348;
-      --muted:#736d92;
-      --faint:#a39cc2;
-      --card:#ffffff;
-      --card-2:#f7f4fc;
-      --line:#e7e0f3;
-      --line-strong:#d6cbef;
+      --bg:#f5f1ff;
+      --bg-2:#ede7fb;
+      --ink:#241b45;
+      --muted:#706891;
+      --faint:#a09abf;
+
+      --card:rgba(255,255,255,.82);
+      --card-solid:#ffffff;
+      --card-2:rgba(255,255,255,.55);
+
+      --line:rgba(92,70,160,.14);
+      --line-strong:rgba(106,79,207,.30);
+
       --primary:#6a4fcf;
-      --primary-mid:#7c5fd6;
-      --primary-deep:#4a3a9e;
-      --on-primary:#ffffff;
-      --gold:#b8902f;
-      --gold-deep:#977322;
-      --glow:rgba(106,79,207,.22);
-      --grid:rgba(74,58,158,.05);
-      --input-bg:#f3eefb;
-      --card-shadow:0 16px 40px -26px rgba(74,40,140,.3);
-      --premium-bg:linear-gradient(135deg,#f7efdd,#efeafb);
-      --bloom:radial-gradient(55% 45% at 84% -8%, rgba(124,95,214,.18), transparent 60%),
-              radial-gradient(40% 38% at 8% 2%, rgba(106,79,207,.12), transparent 55%);
+      --primary-2:#8b5cf6;
+      --primary-3:#4a3a9e;
+      --cyan:#13b8d8;
+      --pink:#e45bb5;
+      --gold:#c99a2e;
+      --green:#16a34a;
+
+      --shadow:0 24px 70px -42px rgba(76,45,150,.42);
+      --shadow-strong:0 28px 90px -45px rgba(81,50,180,.60);
+
+      --hero-gradient:
+        radial-gradient(650px 330px at 78% -5%, rgba(139,92,246,.28), transparent 66%),
+        radial-gradient(500px 280px at 10% 0%, rgba(19,184,216,.16), transparent 60%),
+        radial-gradient(440px 260px at 50% 20%, rgba(228,91,181,.12), transparent 65%);
     }
 
     [data-theme="dark"]{
       --bg:#100f1d;
-      --ink:#f3f1fb;
-      --muted:#9b94bd;
-      --faint:#615b82;
-      --card:rgba(255,255,255,.04);
-      --card-2:rgba(255,255,255,.07);
-      --line:rgba(255,255,255,.09);
-      --line-strong:rgba(150,130,240,.36);
+      --bg-2:#17142b;
+      --ink:#f7f4ff;
+      --muted:#aaa2ca;
+      --faint:#706a91;
+
+      --card:rgba(255,255,255,.065);
+      --card-solid:rgba(255,255,255,.075);
+      --card-2:rgba(255,255,255,.045);
+
+      --line:rgba(255,255,255,.10);
+      --line-strong:rgba(167,139,250,.34);
+
       --primary:#a78bfa;
-      --primary-mid:#8b6ff0;
-      --primary-deep:#6d4fd0;
-      --on-primary:#ffffff;
+      --primary-2:#8b5cf6;
+      --primary-3:#6d4fd0;
+      --cyan:#22d3ee;
+      --pink:#f472b6;
       --gold:#e7c873;
-      --gold-deep:#c9a84a;
-      --glow:rgba(120,90,240,.4);
-      --grid:rgba(255,255,255,.025);
-      --input-bg:rgba(255,255,255,.04);
-      --card-shadow:0 26px 64px -38px rgba(90,60,220,.5);
-      --premium-bg:linear-gradient(135deg,rgba(231,200,115,.09),rgba(124,95,214,.08));
-      --bloom:radial-gradient(55% 45% at 82% -8%, rgba(124,95,214,.30), transparent 60%),
-              radial-gradient(40% 38% at 8% 2%, rgba(67,56,202,.24), transparent 55%);
+      --green:#4ade80;
+
+      --shadow:0 28px 80px -48px rgba(92,72,230,.72);
+      --shadow-strong:0 34px 100px -48px rgba(124,95,214,.75);
+
+      --hero-gradient:
+        radial-gradient(650px 330px at 78% -5%, rgba(139,92,246,.36), transparent 66%),
+        radial-gradient(500px 280px at 10% 0%, rgba(34,211,238,.13), transparent 60%),
+        radial-gradient(440px 260px at 50% 20%, rgba(244,114,182,.11), transparent 65%);
     }
 
     *{
@@ -77,15 +91,15 @@
     }
 
     body{
-      font-family:'Tajawal',system-ui,sans-serif;
-      background:var(--bg);
+      font-family:"Tajawal", system-ui, sans-serif;
+      background:
+        var(--hero-gradient),
+        linear-gradient(180deg,var(--bg),var(--bg-2));
       color:var(--ink);
       min-height:100vh;
       overflow-x:hidden;
-      position:relative;
       -webkit-font-smoothing:antialiased;
       -webkit-tap-highlight-color:transparent;
-      transition:background .3s,color .3s;
     }
 
     body::before{
@@ -93,67 +107,66 @@
       position:fixed;
       inset:0;
       z-index:-2;
-      background:var(--bloom);
+      pointer-events:none;
+      background-image:
+        linear-gradient(rgba(106,79,207,.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(106,79,207,.055) 1px, transparent 1px);
+      background-size:58px 58px;
+      mask-image:radial-gradient(75% 55% at 50% 0%, #000, transparent 80%);
     }
 
     body::after{
       content:"";
       position:fixed;
-      inset:0;
+      width:420px;
+      height:420px;
+      left:-160px;
+      bottom:-160px;
       z-index:-1;
       pointer-events:none;
-      background-image:
-        linear-gradient(var(--grid) 1px, transparent 1px),
-        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-      background-size:62px 62px;
-      -webkit-mask-image:radial-gradient(85% 60% at 50% 0%,#000,transparent 78%);
-      mask-image:radial-gradient(85% 60% at 50% 0%,#000,transparent 78%);
-    }
-
-    ::selection{
-      background:color-mix(in srgb,var(--primary) 25%,transparent);
-      color:var(--ink);
+      border-radius:999px;
+      background:radial-gradient(circle, rgba(106,79,207,.18), transparent 68%);
+      filter:blur(8px);
     }
 
     .wrap{
-      max-width:1180px;
-      margin:0 auto;
-      padding:0 22px;
-    }
-
-    .glass-card{
-      background:var(--card);
-      border:1px solid var(--line);
-      box-shadow:var(--card-shadow);
-      backdrop-filter:blur(14px);
-    }
-
-    .soft-card{
-      background:var(--card-2);
-      border:1px solid var(--line);
+      width:min(1160px, calc(100% - 36px));
+      margin-inline:auto;
     }
 
     .nav{
       position:sticky;
       top:0;
       z-index:50;
-      backdrop-filter:blur(16px);
-      background:color-mix(in srgb,var(--bg) 80%,transparent);
       border-bottom:1px solid var(--line);
+      background:color-mix(in srgb,var(--bg) 78%, transparent);
+      backdrop-filter:blur(20px);
     }
 
     .brand{
       display:flex;
       align-items:center;
-      gap:11px;
-      color:var(--ink);
+      gap:12px;
       text-decoration:none;
+      color:var(--ink);
     }
 
-    .brand-mark{
-      width:34px;
-      height:34px;
-      color:var(--primary);
+    .brand-logo{
+      width:40px;
+      height:40px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      color:white;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,.42), transparent 25%),
+        linear-gradient(135deg,var(--primary),var(--primary-3));
+      box-shadow:0 16px 32px -18px var(--primary);
+    }
+
+    .brand-logo svg{
+      width:24px;
+      height:24px;
       animation:spin 44s linear infinite;
     }
 
@@ -161,177 +174,542 @@
       to{transform:rotate(360deg)}
     }
 
-    .brand b{
-      font-weight:900;
+    .brand-text{
+      display:flex;
+      flex-direction:column;
+      line-height:1.05;
+    }
+
+    .brand-text b{
       font-size:20px;
-      letter-spacing:.5px;
+      font-weight:900;
+      letter-spacing:.3px;
+    }
+
+    .brand-text span{
+      font-size:10px;
+      font-weight:800;
+      color:var(--muted);
+      margin-top:3px;
+    }
+
+    .nav-btn,
+    .icon-btn{
+      height:42px;
+      border:1px solid var(--line);
+      background:var(--card);
+      color:var(--ink);
+      box-shadow:0 12px 30px -24px rgba(0,0,0,.35);
+      transition:.2s ease;
     }
 
     .nav-btn{
-      height:40px;
-      border-radius:999px;
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      gap:8px;
-      padding:0 15px;
+      gap:9px;
+      border-radius:999px;
+      padding:0 16px;
       font-size:13px;
-      font-weight:800;
-      color:var(--ink);
-      background:var(--card-2);
-      border:1px solid var(--line);
-      transition:.18s;
+      font-weight:900;
       text-decoration:none;
-      cursor:pointer;
-    }
-
-    .nav-btn:hover{
-      border-color:var(--line-strong);
-      color:var(--primary);
-      transform:translateY(-1px);
     }
 
     .icon-btn{
-      width:40px;
-      height:40px;
+      width:42px;
       border-radius:50%;
       display:grid;
       place-items:center;
       cursor:pointer;
-      color:var(--ink);
-      background:var(--card-2);
-      border:1px solid var(--line);
-      font-size:15px;
-      transition:.18s;
     }
 
+    .nav-btn:hover,
     .icon-btn:hover{
       border-color:var(--line-strong);
       color:var(--primary);
       transform:translateY(-1px);
+      box-shadow:0 18px 38px -28px var(--primary);
     }
 
-    .hero-badge{
+    .hero{
+      position:relative;
+      padding:36px 0 30px;
+    }
+
+    .hero-shell{
+      position:relative;
+      overflow:hidden;
+      border:1px solid var(--line-strong);
+      background:
+        linear-gradient(135deg, color-mix(in srgb,var(--card-solid) 76%, transparent), color-mix(in srgb,var(--primary) 7%, transparent)),
+        radial-gradient(700px 280px at 85% 0%, color-mix(in srgb,var(--primary) 20%, transparent), transparent 70%);
+      box-shadow:var(--shadow-strong);
+      border-radius:34px;
+    }
+
+    .hero-shell::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(380px 160px at 20% 15%, rgba(19,184,216,.13), transparent 70%),
+        linear-gradient(90deg, transparent, rgba(255,255,255,.16), transparent);
+      opacity:.85;
+    }
+
+    .hero-shell::after{
+      content:"";
+      position:absolute;
+      width:210px;
+      height:210px;
+      left:-55px;
+      top:-70px;
+      border-radius:999px;
+      background:
+        radial-gradient(circle at 35% 35%, rgba(255,255,255,.30), transparent 28%),
+        linear-gradient(135deg,var(--pink),var(--primary));
+      opacity:.18;
+      filter:blur(1px);
+    }
+
+    .hero-grid{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns:1.25fr .75fr;
+      gap:24px;
+      align-items:stretch;
+      padding:28px;
+    }
+
+    .eyebrow{
       display:inline-flex;
       align-items:center;
       gap:8px;
+      padding:7px 13px;
+      border-radius:999px;
+      color:var(--primary);
+      background:color-mix(in srgb,var(--primary) 10%, transparent);
+      border:1px solid color-mix(in srgb,var(--primary) 20%, transparent);
       font-size:11px;
       font-weight:900;
-      letter-spacing:.18em;
-      color:var(--primary);
-      background:color-mix(in srgb,var(--primary) 10%,transparent);
-      border:1px solid var(--line-strong);
-      padding:7px 14px;
-      border-radius:999px;
+      letter-spacing:.14em;
+      width:max-content;
     }
 
-    .page-title{
+    .uni-title{
       color:var(--ink);
-      letter-spacing:-.04em;
+      font-weight:900;
+      letter-spacing:-.055em;
+      line-height:1.08;
     }
 
-    .muted{
+    .gradient-text{
+      background:linear-gradient(90deg,var(--primary),var(--cyan),var(--pink));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .location-line{
       color:var(--muted);
+      display:flex;
+      align-items:center;
+      gap:9px;
+      font-size:14px;
+      font-weight:700;
+      margin-top:14px;
     }
 
-    .faint{
-      color:var(--faint);
-    }
-
-    .accent{
+    .location-line i{
       color:var(--primary);
     }
 
-    .stat-label{
+    .hero-side{
+      border-radius:28px;
+      background:
+        radial-gradient(220px 160px at 20% 0%, color-mix(in srgb,var(--cyan) 18%, transparent), transparent 70%),
+        color-mix(in srgb,var(--card-solid) 74%, transparent);
+      border:1px solid var(--line);
+      box-shadow:0 18px 46px -34px rgba(0,0,0,.42);
+      padding:22px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      min-height:220px;
+    }
+
+    .hero-side-icon{
+      width:54px;
+      height:54px;
+      border-radius:20px;
+      display:grid;
+      place-items:center;
+      color:white;
+      background:linear-gradient(135deg,var(--primary),var(--primary-3));
+      box-shadow:0 16px 30px -20px var(--primary);
+      font-size:22px;
+    }
+
+    .hero-side-title{
+      font-size:13px;
+      color:var(--muted);
+      font-weight:800;
+      margin-top:16px;
+    }
+
+    .hero-side-value{
+      font-size:32px;
+      line-height:1;
+      font-weight:900;
+      color:var(--ink);
+      margin-top:6px;
+    }
+
+    .hero-side-note{
       color:var(--faint);
-      font-size:10px;
-      font-weight:900;
-      letter-spacing:.12em;
+      font-size:12px;
+      line-height:1.7;
+      margin-top:10px;
     }
 
-    .stat-value{
-      color:var(--ink);
-      font-weight:900;
+    .hero-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:22px;
     }
 
-    .section-title{
-      color:var(--ink);
+    .hero-action{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:11px 15px;
+      border-radius:999px;
+      font-size:13px;
       font-weight:900;
+      text-decoration:none;
+      transition:.2s ease;
+    }
+
+    .hero-action.primary{
+      color:white;
+      background:linear-gradient(135deg,var(--primary),var(--primary-3));
+      box-shadow:0 18px 40px -26px var(--primary);
+    }
+
+    .hero-action.secondary{
+      color:var(--ink);
+      border:1px solid var(--line);
+      background:var(--card);
+    }
+
+    .hero-action:hover{
+      transform:translateY(-1px);
+    }
+
+    .glass-card{
+      position:relative;
+      background:var(--card);
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(18px);
     }
 
     .premium-result{
       position:relative;
       overflow:hidden;
-      border-radius:2.2rem;
+      border-radius:34px;
+      border:1px solid color-mix(in srgb,var(--primary) 32%, transparent);
       background:
-        radial-gradient(80% 90% at 50% -20%, color-mix(in srgb,var(--primary) 18%,transparent), transparent 65%),
+        radial-gradient(460px 220px at 50% -40%, color-mix(in srgb,var(--primary) 24%, transparent), transparent 65%),
+        radial-gradient(300px 180px at 12% 0%, color-mix(in srgb,var(--cyan) 16%, transparent), transparent 65%),
         var(--card);
     }
 
     .premium-result::before{
       content:"";
       position:absolute;
-      inset:-2px;
+      inset:0;
       pointer-events:none;
-      background:linear-gradient(120deg, transparent, color-mix(in srgb,var(--primary) 18%,transparent), transparent);
-      opacity:.8;
+      background:linear-gradient(115deg,transparent,rgba(255,255,255,.18),transparent);
+      opacity:.9;
     }
 
     .result-number{
-      color:var(--ink);
+      font-size:clamp(58px,10vw,104px);
       font-weight:900;
-      letter-spacing:-.08em;
+      letter-spacing:-.09em;
+      line-height:.9;
+      color:var(--ink);
     }
 
     .chip{
       display:inline-flex;
       align-items:center;
-      gap:6px;
-      padding:6px 10px;
+      gap:7px;
+      padding:6px 11px;
       border-radius:999px;
-      background:color-mix(in srgb,var(--primary) 10%,transparent);
-      border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
-      color:var(--primary);
       font-size:10px;
-      font-weight:800;
+      font-weight:900;
+      color:var(--primary);
+      background:color-mix(in srgb,var(--primary) 10%, transparent);
+      border:1px solid color-mix(in srgb,var(--primary) 20%, transparent);
     }
 
-    .side-line{
-      border-right:4px solid var(--primary);
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px;
+      margin:22px 0 38px;
     }
 
-    .gradient-text{
-      background:linear-gradient(90deg,var(--primary),var(--primary-deep));
-      -webkit-background-clip:text;
-      background-clip:text;
-      color:transparent;
+    .stat-card{
+      overflow:hidden;
+      padding:20px;
+      border-radius:26px;
+      transition:.2s ease;
     }
 
-    .loading-shimmer{
-      position:relative;
+    .stat-card:hover{
+      transform:translateY(-3px);
+      border-color:var(--line-strong);
+      box-shadow:var(--shadow-strong);
+    }
+
+    .stat-icon{
+      width:46px;
+      height:46px;
+      border-radius:18px;
+      display:grid;
+      place-items:center;
+      color:white;
+      margin:0 auto 13px;
+      font-size:18px;
+    }
+
+    .stat-card:nth-child(1) .stat-icon{background:linear-gradient(135deg,var(--green),#0f766e)}
+    .stat-card:nth-child(2) .stat-icon{background:linear-gradient(135deg,var(--primary),var(--primary-3))}
+    .stat-card:nth-child(3) .stat-icon{background:linear-gradient(135deg,var(--cyan),#2563eb)}
+    .stat-card:nth-child(4) .stat-icon{background:linear-gradient(135deg,var(--pink),var(--primary))}
+
+    .stat-label{
+      color:var(--faint);
+      font-size:10px;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-align:center;
+    }
+
+    .stat-value{
+      color:var(--ink);
+      font-weight:900;
+      text-align:center;
+      margin-top:5px;
+    }
+
+    .section-head{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:18px;
+    }
+
+    .section-title{
+      font-size:22px;
+      font-weight:900;
+      color:var(--ink);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      letter-spacing:-.02em;
+    }
+
+    .section-title i{
+      color:var(--primary);
+    }
+
+    .section-subtitle{
+      color:var(--faint);
+      font-size:13px;
+      font-weight:700;
+      margin-top:5px;
+    }
+
+    .about-card{
+      border-radius:30px;
+      padding:26px;
       overflow:hidden;
     }
 
-    .loading-shimmer::after{
+    .about-card::before{
+      content:"";
+      position:absolute;
+      inset-inline-start:0;
+      top:0;
+      bottom:0;
+      width:5px;
+      background:linear-gradient(180deg,var(--primary),var(--cyan),var(--pink));
+    }
+
+    .about-icon{
+      width:52px;
+      height:52px;
+      border-radius:20px;
+      display:grid;
+      place-items:center;
+      color:white;
+      background:linear-gradient(135deg,var(--primary),var(--primary-3));
+      box-shadow:0 18px 36px -24px var(--primary);
+      font-size:20px;
+      flex:none;
+    }
+
+    .muted-text{
+      color:var(--muted);
+    }
+
+    .faint-text{
+      color:var(--faint);
+    }
+
+    #uniAbout{
+      color:var(--muted) !important;
+      font-size:15px;
+      line-height:2.1;
+      font-style:normal !important;
+    }
+
+    #collegesGrid .glass-card{
+      border-radius:28px !important;
+      padding:22px !important;
+      transition:.2s ease;
+      overflow:hidden;
+    }
+
+    #collegesGrid .glass-card::before{
+      content:"";
+      position:absolute;
+      inset-inline-start:0;
+      top:0;
+      height:100%;
+      width:4px;
+      background:linear-gradient(180deg,var(--primary),var(--cyan));
+      opacity:.85;
+    }
+
+    #collegesGrid .glass-card:hover{
+      transform:translateY(-3px);
+      border-color:var(--line-strong);
+      box-shadow:var(--shadow-strong);
+    }
+
+    #ratiosContainer .glass-card{
+      border-radius:22px !important;
+      transition:.2s ease;
+    }
+
+    #ratiosContainer .glass-card:hover{
+      transform:translateY(-2px);
+      border-color:var(--line-strong);
+    }
+
+    #extraSections .glass-card{
+      border-radius:28px !important;
+      transition:.2s ease;
+    }
+
+    #extraSections .glass-card:hover{
+      transform:translateY(-3px);
+      border-color:var(--line-strong);
+      box-shadow:var(--shadow-strong);
+    }
+
+    .loading-card{
+      min-height:160px;
+      border-radius:28px;
+      overflow:hidden;
+    }
+
+    .loading-card::after{
       content:"";
       position:absolute;
       inset:0;
       transform:translateX(100%);
-      background:linear-gradient(90deg,transparent,rgba(255,255,255,.14),transparent);
-      animation:shimmer 1.8s infinite;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);
+      animation:shimmer 1.6s infinite;
     }
 
     @keyframes shimmer{
       100%{transform:translateX(-100%)}
     }
 
-    .no-scrollbar::-webkit-scrollbar{
-      display:none;
+    .text-white{color:var(--ink)!important}
+    .text-gray-300{color:var(--muted)!important}
+    .text-gray-400{color:var(--muted)!important}
+    .text-gray-500{color:var(--faint)!important}
+    .text-gray-600{color:var(--faint)!important}
+    .text-indigo-400,
+    .text-indigo-500{color:var(--primary)!important}
+    .border-white\/5{border-color:var(--line)!important}
+
+    .bg-white\/5,
+    .bg-white\/\[0\.02\],
+    .bg-white\/\[0\.01\]{
+      background:color-mix(in srgb,var(--primary) 6%, transparent)!important;
+    }
+
+    ::selection{
+      background:color-mix(in srgb,var(--primary) 28%, transparent);
+      color:var(--ink);
     }
 
     :focus-visible{
       outline:2px solid var(--primary);
       outline-offset:3px;
+    }
+
+    @media(max-width:900px){
+      .hero-grid{
+        grid-template-columns:1fr;
+      }
+
+      .stats-grid{
+        grid-template-columns:repeat(2,1fr);
+      }
+    }
+
+    @media(max-width:560px){
+      .wrap{
+        width:min(100% - 24px, 1160px);
+      }
+
+      .hero{
+        padding-top:22px;
+      }
+
+      .hero-grid{
+        padding:20px;
+      }
+
+      .uni-title{
+        font-size:34px !important;
+      }
+
+      .stats-grid{
+        gap:10px;
+      }
+
+      .stat-card{
+        padding:16px 10px;
+      }
+
+      .section-head{
+        align-items:flex-start;
+        flex-direction:column;
+      }
     }
 
     @media(prefers-reduced-motion:reduce){
@@ -344,18 +722,23 @@
   </style>
 </head>
 
-<body class="pb-10">
+<body class="pb-12">
 
   <nav class="nav">
     <div class="wrap py-3 flex items-center justify-between gap-3">
       <a href="index.html" class="brand">
-        <svg class="brand-mark" viewBox="0 0 100 100" fill="none" aria-hidden="true">
-          <circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="3"/>
-          <circle cx="50" cy="50" r="3" fill="currentColor"/>
-          <polygon points="50,16 58,50 50,46 42,50" fill="currentColor"/>
-          <polygon points="50,84 42,50 50,54 58,50" fill="currentColor" opacity=".55"/>
-        </svg>
-        <b>مُوجّه</b>
+        <div class="brand-logo">
+          <svg viewBox="0 0 100 100" fill="none" aria-hidden="true">
+            <circle cx="50" cy="50" r="42" stroke="currentColor" stroke-width="5" opacity=".9"/>
+            <circle cx="50" cy="50" r="4" fill="currentColor"/>
+            <polygon points="50,16 60,52 50,46 40,52" fill="currentColor"/>
+            <polygon points="50,84 40,48 50,54 60,48" fill="currentColor" opacity=".62"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <b>مُوجّه</b>
+          <span>بوصلتك للجامعات</span>
+        </div>
       </a>
 
       <div class="flex items-center gap-2">
@@ -371,155 +754,200 @@
     </div>
   </nav>
 
-  <main class="wrap pt-8">
+  <main class="wrap">
+
+    <section class="hero">
+      <div class="hero-shell">
+        <div class="hero-grid">
+          <div class="flex flex-col justify-center">
+            <div class="eyebrow mb-5">
+              <i class="fa-solid fa-building-columns"></i>
+              ملف الجامعة
+            </div>
+
+            <h1 id="uniName" class="uni-title text-4xl md:text-6xl">
+              --
+            </h1>
+
+            <p id="uniLocation" class="location-line">
+              <i class="fa-solid fa-location-dot"></i>
+              <span>--</span>
+            </p>
+
+            <div class="hero-actions">
+              <a href="#collegesSection" class="hero-action primary">
+                <i class="fa-solid fa-layer-group"></i>
+                استعرض التخصصات
+              </a>
+
+              <a href="#ratiosSection" class="hero-action secondary">
+                <i class="fa-solid fa-chart-line"></i>
+                نسب القبول
+              </a>
+            </div>
+          </div>
+
+          <aside class="hero-side">
+            <div>
+              <div class="hero-side-icon">
+                <i class="fa-solid fa-award"></i>
+              </div>
+
+              <p class="hero-side-title">مستوى التنافسية</p>
+              <p id="uniCompetency" class="hero-side-value gradient-text">--</p>
+              <p class="hero-side-note">
+                يعكس مدى صعوبة القبول وقوة الطلب على الجامعة مقارنة بالخيارات الأخرى.
+              </p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
 
     <section id="autoResultSection" class="hidden mb-8">
       <div class="premium-result glass-card p-7 md:p-9 text-center">
         <div class="relative z-10">
-          <p class="hero-badge mb-4">
+          <div class="chip mb-5">
             <i class="fa-solid fa-calculator"></i>
             موزونتك المتوقعة
-          </p>
+          </div>
 
-          <h2 id="finalResult" class="result-number text-6xl md:text-8xl mb-5">
+          <h2 id="finalResult" class="result-number mb-5">
             00.00%
           </h2>
 
-          <div id="weightLabels" class="flex flex-wrap justify-center gap-2 text-[10px]"></div>
+          <div id="weightLabels" class="flex flex-wrap justify-center gap-2"></div>
         </div>
       </div>
     </section>
 
-    <section class="text-center mb-10">
-      <div class="hero-badge mb-5">
-        <i class="fa-solid fa-building-columns"></i>
-        صفحة الجامعة
-      </div>
-
-      <h1 id="uniName" class="page-title text-3xl md:text-5xl font-black mb-3 italic tracking-tight">
-        --
-      </h1>
-
-      <p id="uniLocation" class="muted text-xs md:text-sm flex justify-center items-center gap-2">
-        <i class="fa-solid fa-location-dot accent"></i>
-        <span>--</span>
-      </p>
-    </section>
-
-    <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-10">
-      <div class="glass-card p-5 rounded-2xl text-center">
-        <div class="w-10 h-10 rounded-2xl soft-card mx-auto mb-3 grid place-items-center accent">
+    <section class="stats-grid">
+      <div class="stat-card glass-card text-center">
+        <div class="stat-icon">
           <i class="fa-solid fa-briefcase"></i>
         </div>
-        <p class="stat-label mb-1">التوظيف</p>
-        <p id="statEmp" class="text-base md:text-lg stat-value">--</p>
+        <p class="stat-label">التوظيف</p>
+        <p id="statEmp" class="stat-value text-base md:text-lg">--</p>
       </div>
 
-      <div class="glass-card p-5 rounded-2xl text-center">
-        <div class="w-10 h-10 rounded-2xl soft-card mx-auto mb-3 grid place-items-center accent">
+      <div class="stat-card glass-card text-center">
+        <div class="stat-icon">
           <i class="fa-solid fa-ranking-star"></i>
         </div>
-        <p class="stat-label mb-1">التصنيف</p>
-        <p id="statLocal" class="text-lg stat-value">--</p>
+        <p class="stat-label">التصنيف</p>
+        <p id="statLocal" class="stat-value text-lg">--</p>
       </div>
 
-      <div class="glass-card p-5 rounded-2xl text-center">
-        <div class="w-10 h-10 rounded-2xl soft-card mx-auto mb-3 grid place-items-center accent">
+      <div class="stat-card glass-card text-center">
+        <div class="stat-icon">
           <i class="fa-solid fa-door-open"></i>
         </div>
-        <p class="stat-label mb-1">القبول</p>
-        <p id="statAccept" class="text-lg stat-value">--</p>
+        <p class="stat-label">القبول</p>
+        <p id="statAccept" class="stat-value text-lg">--</p>
       </div>
 
-      <div class="glass-card p-5 rounded-2xl text-center">
-        <div class="w-10 h-10 rounded-2xl soft-card mx-auto mb-3 grid place-items-center accent">
+      <div class="stat-card glass-card text-center">
+        <div class="stat-icon">
           <i class="fa-solid fa-fire"></i>
         </div>
-        <p class="stat-label mb-1">التنافسية</p>
-        <p id="uniCompetency" class="text-sm font-black accent uppercase">--</p>
-      </div>
-    </section>
-
-    <section class="mb-10">
-      <div class="glass-card side-line p-6 md:p-7 rounded-3xl">
-        <div class="flex items-center gap-3 mb-4">
-          <div class="w-11 h-11 rounded-2xl soft-card grid place-items-center accent">
-            <i class="fa-solid fa-circle-info"></i>
-          </div>
-          <div>
-            <h3 class="section-title text-lg">عن الجامعة</h3>
-            <p class="text-xs faint">نبذة مختصرة تساعدك تفهم طبيعة الجامعة</p>
-          </div>
-        </div>
-
-        <p id="uniAbout" class="muted text-sm md:text-[15px] leading-8">
-          --
+        <p class="stat-label">التميّز</p>
+        <p class="stat-value text-lg">
+          <span class="gradient-text">مُوجّه</span>
         </p>
       </div>
     </section>
 
-    <section class="mb-10">
-      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-6">
+    <section class="mb-12">
+      <div class="about-card glass-card">
+        <div class="flex items-start gap-4">
+          <div class="about-icon">
+            <i class="fa-solid fa-circle-info"></i>
+          </div>
+
+          <div>
+            <h3 class="section-title mb-1">
+              عن الجامعة
+            </h3>
+            <p class="section-subtitle mb-4">
+              نبذة مختصرة تساعدك تفهم طبيعة الجامعة قبل المقارنة.
+            </p>
+
+            <p id="uniAbout">
+              --
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="collegesSection" class="mb-12">
+      <div class="section-head">
         <div>
-          <h3 class="section-title text-xl flex items-center gap-2">
-            <i class="fa-solid fa-layer-group accent"></i>
+          <h3 class="section-title">
+            <i class="fa-solid fa-layer-group"></i>
             الكليات والتخصصات
           </h3>
-          <p class="text-xs faint mt-1">استعراض مرتب للكليات وما يندرج تحتها من تخصصات</p>
+          <p class="section-subtitle">
+            عرض مرتب للكليات والتخصصات المسجلة في قاعدة البيانات.
+          </p>
         </div>
 
         <span class="chip">
-          <i class="fa-solid fa-sparkles"></i>
-          محدث من قاعدة البيانات
+          <i class="fa-solid fa-database"></i>
+          محدث تلقائيًا
         </span>
       </div>
 
       <div id="collegesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="glass-card loading-shimmer p-6 rounded-3xl h-36"></div>
-        <div class="glass-card loading-shimmer p-6 rounded-3xl h-36 hidden md:block"></div>
+        <div class="glass-card loading-card"></div>
+        <div class="glass-card loading-card hidden md:block"></div>
       </div>
     </section>
 
-    <section id="ratiosSection" class="mb-10 hidden">
-      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-6">
+    <section id="ratiosSection" class="mb-12 hidden">
+      <div class="section-head">
         <div>
-          <h3 class="section-title text-xl flex items-center gap-2">
-            <i class="fa-solid fa-chart-simple accent"></i>
+          <h3 class="section-title">
+            <i class="fa-solid fa-chart-simple"></i>
             نسب قبول العام الماضي
           </h3>
-          <p class="text-xs faint mt-1">تظهر هنا النسب المتاحة والمدخلة من الفريق</p>
+          <p class="section-subtitle">
+            تظهر هنا النسب المتاحة فقط، وقد تختلف حسب السنة والمسار.
+          </p>
         </div>
 
         <span class="chip">
-          <i class="fa-solid fa-lock"></i>
-          قد تختلف حسب السنة والمسار
+          <i class="fa-solid fa-shield-halved"></i>
+          تحتاج تحقق دائم
         </span>
       </div>
 
       <div id="ratiosContainer" class="space-y-3"></div>
     </section>
 
-    <section id="extraSections" class="mb-10"></section>
+    <section id="extraSections" class="mb-12"></section>
 
   </main>
 
   <script>
     function toggleTheme(){
-      const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', cur);
-      localStorage.setItem('theme', cur);
+      const cur = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", cur);
+      localStorage.setItem("theme", cur);
       syncThemeIcon();
     }
 
     function syncThemeIcon(){
-      const btn = document.getElementById('themeToggle');
+      const btn = document.getElementById("themeToggle");
       if (!btn) return;
 
-      const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-      btn.innerHTML = dark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+      const dark = document.documentElement.getAttribute("data-theme") === "dark";
+      btn.innerHTML = dark
+        ? '<i class="fa-solid fa-sun"></i>'
+        : '<i class="fa-solid fa-moon"></i>';
     }
 
-    document.addEventListener('DOMContentLoaded', syncThemeIcon);
+    document.addEventListener("DOMContentLoaded", syncThemeIcon);
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
