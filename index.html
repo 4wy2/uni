@@ -65,6 +65,7 @@
 
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
+
 body{
   font-family:'Tajawal',system-ui,sans-serif;
   background:var(--bg);
@@ -414,7 +415,12 @@ nav{
 
 .sort button.on{background:var(--primary);color:var(--on-primary)}
 
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px;padding-bottom:20px}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
+  gap:18px;
+  padding-bottom:20px;
+}
 
 .card{
   position:relative;
@@ -430,7 +436,12 @@ nav{
   transition:transform .2s,border-color .2s,box-shadow .2s;
 }
 
-.card:hover{transform:translateY(-5px);border-color:var(--line-strong);box-shadow:0 26px 60px -34px var(--glow)}
+.card:hover{
+  transform:translateY(-5px);
+  border-color:var(--line-strong);
+  box-shadow:0 26px 60px -34px var(--glow);
+}
+
 .card:active{transform:scale(.99)}
 .card .top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 
@@ -446,6 +457,24 @@ nav{
   color:var(--primary);
   background:color-mix(in srgb,var(--primary) 14%,transparent);
   border:1px solid var(--line-strong);
+}
+
+/* ===== شعار الجامعة داخل البطاقة ===== */
+.mono.has-logo{
+  background:#fff;
+  padding:7px;
+  overflow:hidden;
+}
+
+[data-theme="dark"] .mono.has-logo{
+  background:rgba(255,255,255,.92);
+}
+
+.mono.has-logo img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
 }
 
 .tag{
@@ -725,7 +754,7 @@ footer b{color:var(--muted);font-weight:700}
 
 <script>
 const SUPABASE_URL = "https://gybksasoembmgdevogpv.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd5YmtzYXNvZW1ibWdkZXZvZ3B2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NzEyNjIsImV4cCI6MjA5NzM0NzI2Mn0.U0QFX7WS9ETbV0JmMYe-VNZhErJAPtZxwEBASep7AA4";
+const SUPABASE_ANON_KEY = "ضع_مفتاح_anon_public_هنا";
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -737,6 +766,34 @@ const $ = s => document.getElementById(s);
 
 function cityOf(u){
   return (u.location || "").split("،")[0].trim();
+}
+
+function esc(value){
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function logoOrLetter(uni){
+  const mono = (uni.name || "؟").replace(/^جامعة\s*/, "").trim()[0] || "ج";
+
+  if (!uni.logo_url) {
+    return `<div class="mono">${esc(mono)}</div>`;
+  }
+
+  return `
+    <div class="mono has-logo" data-fallback="${esc(mono)}">
+      <img 
+        src="${esc(uni.logo_url)}" 
+        alt="شعار ${esc(uni.name)}"
+        loading="lazy"
+        onerror="this.parentElement.classList.remove('has-logo'); this.parentElement.textContent=this.parentElement.dataset.fallback;"
+      >
+    </div>
+  `;
 }
 
 function toggleTheme(){
@@ -845,20 +902,19 @@ function setSort(mode){
 
 function card(uni){
   const sc = scoreFor(uni);
-  const mono = (uni.name || "؟").replace(/^جامعة\s*/, "").trim()[0] || "ج";
   const elite = (uni.tags || "").includes("النخبة");
 
-  return `<a href="details.html?id=${uni.id}" class="card">
+  return `<a href="details.html?id=${esc(uni.id)}" class="card">
     <div class="top">
-      <div class="mono">${mono}</div>
-      ${uni.tags ? `<span class="tag ${elite ? "elite" : ""}">${uni.tags}</span>` : ""}
+      ${logoOrLetter(uni)}
+      ${uni.tags ? `<span class="tag ${elite ? "elite" : ""}">${esc(uni.tags)}</span>` : ""}
     </div>
 
-    <h3>${uni.name}</h3>
+    <h3>${esc(uni.name)}</h3>
 
     <div class="loc">
       <i class="fa-solid fa-location-dot"></i>
-      ${uni.location || ""}
+      ${esc(uni.location || "")}
     </div>
 
     <div class="score">
@@ -919,7 +975,7 @@ function buildChips(){
 
   $("cityChips").innerHTML =
     `<button class="chip on" data-city="">كل المدن</button>` +
-    cities.map(c => `<button class="chip" data-city="${c}">${c}</button>`).join("");
+    cities.map(c => `<button class="chip" data-city="${esc(c)}">${esc(c)}</button>`).join("");
 
   $("cityChips").querySelectorAll(".chip").forEach(ch => {
     ch.onclick = () => {
@@ -959,6 +1015,7 @@ function mapUniversityRow(u){
     id: u.id,
     name: u.name_ar,
     location: u.location_text || [u.city, u.region].filter(Boolean).join("، "),
+    logo_url: u.logo_url || "",
     tags: tag,
     weights: {
       qodrat: Number(u.qodrat_weight || 0),
@@ -981,7 +1038,7 @@ async function loadUniversities(){
       !SUPABASE_URL ||
       !SUPABASE_ANON_KEY ||
       SUPABASE_URL.includes("PUT_YOUR") ||
-      SUPABASE_ANON_KEY.includes("PUT_YOUR")
+      SUPABASE_ANON_KEY.includes("ضع_مفتاح")
     ) {
       throw new Error("Supabase URL أو ANON KEY غير مضافة");
     }
