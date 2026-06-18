@@ -1,10 +1,11 @@
 // =====================================================
 // University Details Page
 // details.html?id=kfupm
-// يسحب بيانات الجامعة من Supabase
-// + يعرض كل مسارات القبول ومعاييرها
-// + يعرض ملفات Google Drive من university_resources
-// + يحاول عرض أي بيانات إضافية إذا أضفت أعمدة جديدة لاحقًا
+// نسخة نظيفة:
+// - تعرض كل مسارات القبول بشكل مرتب
+// - لا تعرض كلمة "نعم"
+// - التخصصات تظهر كأسماء فقط
+// - الملفات من Google Drive تظهر من university_resources
 // =====================================================
 
 let currentUniData = null;
@@ -22,15 +23,8 @@ function esc(value) {
         .replaceAll("'", "&#039;");
 }
 
-function isEmptyValue(value) {
-    return (
-        value === null ||
-        value === undefined ||
-        value === "" ||
-        value === "null" ||
-        value === "undefined" ||
-        (Array.isArray(value) && value.length === 0)
-    );
+function isEmpty(value) {
+    return value === null || value === undefined || value === "" || value === "null" || value === "undefined";
 }
 
 function getUniversityIdFromUrl() {
@@ -47,151 +41,50 @@ function getStoredScores() {
 }
 
 function formatPercent(value) {
-    if (value === null || value === undefined || value === "") return "--";
+    if (isEmpty(value)) return "--";
     return `${Number(value).toFixed(2)}%`;
 }
 
 function formatWeight(value) {
-    if (value === null || value === undefined || value === "") return null;
+    if (isEmpty(value)) return null;
 
     const n = Number(value);
     if (Number.isNaN(n)) return null;
 
-    if (n <= 1) {
-        return `${Math.round(n * 100)}%`;
-    }
-
+    if (n <= 1) return `${Math.round(n * 100)}%`;
     return `${n}%`;
 }
 
-function formatValue(value) {
-    if (isEmptyValue(value)) return "";
-
-    if (typeof value === "boolean") {
-        return value ? "نعم" : "لا";
-    }
-
-    if (typeof value === "number") {
-        return String(value);
-    }
-
-    if (typeof value === "string") {
-        if (value.startsWith("http://") || value.startsWith("https://")) {
-            return `<a href="${esc(value)}" target="_blank" rel="noopener" class="inline-link">فتح الرابط</a>`;
-        }
-
-        return esc(value);
-    }
-
-    if (Array.isArray(value)) {
-        return value.map(v => esc(v)).join("، ");
-    }
-
-    if (typeof value === "object") {
-        return esc(JSON.stringify(value));
-    }
-
-    return esc(value);
+function formatNumber(value) {
+    if (isEmpty(value)) return "";
+    return String(value);
 }
 
-function fieldLabel(key) {
-    const labels = {
-        id: "المعرّف",
-        university_id: "الجامعة",
-        track_id: "المسار",
-        admission_track_id: "المسار",
-        name: "الاسم",
-        title: "العنوان",
-        description: "الوصف",
-        content: "المحتوى",
-        note: "ملاحظة",
-        notes: "ملاحظات",
+// أي Boolean هنا ما راح يكتب "نعم"
+// إذا true يظهر اسم الشرط فقط، وإذا false يختفي
+const ADMISSION_CRITERIA = [
+    { key: "step_required", label: "STEP", type: "value" },
+    { key: "ielts_required", label: "IELTS", type: "value" },
+    { key: "toefl_required", label: "TOEFL", type: "value" },
+    { key: "duolingo_required", label: "Duolingo", type: "value" },
+    { key: "sat_min", label: "SAT", type: "value" },
+    { key: "sat_required", label: "SAT", type: "value" },
+    { key: "gpa_required", label: "معدل مطلوب", type: "value" },
+    { key: "english_required", label: "شرط لغة إنجليزية", type: "value" },
 
-        qodrat_weight: "القدرات",
-        tahsili_weight: "التحصيلي",
-        school_weight: "الثانوي",
-
-        step_required: "STEP",
-        ielts_required: "IELTS",
-        toefl_required: "TOEFL",
-        duolingo_required: "Duolingo",
-        sat_min: "SAT",
-        sat_required: "SAT",
-        gpa_required: "المعدل المطلوب",
-        interview_required: "مقابلة شخصية",
-        portfolio_required: "ملف أعمال",
-        recommendation_required: "خطاب توصية",
-        personal_statement_required: "Personal Statement",
-        essay_required: "مقال / Essay",
-        olympiad_required: "أولمبياد",
-        english_required: "شرط اللغة الإنجليزية",
-
-        is_default: "المسار الافتراضي",
-        is_active: "نشط",
-        is_official: "رسمي",
-        display_order: "الترتيب",
-        created_at: "تاريخ الإضافة",
-        updated_at: "آخر تحديث",
-
-        resource_type: "نوع الملف",
-        file_url: "رابط الملف",
-        file_type: "نوع الملف",
-        source_name: "المصدر",
-        year: "السنة",
-
-        code: "الرمز",
-        degree: "الدرجة",
-        gender: "الفئة",
-        college_name: "الكلية",
-        major_name: "التخصص",
-        major_code: "رمز التخصص",
-        general_ratio: "النسبة العامة",
-        male_ratio: "نسبة البنين",
-        female_ratio: "نسبة البنات",
-        ratio_type: "نوع النسبة",
-        has_data: "توجد بيانات"
-    };
-
-    if (labels[key]) return labels[key];
-
-    return key
-        .replaceAll("_", " ")
-        .replace(/\b\w/g, c => c.toUpperCase());
-}
-
-function renderExtraFields(obj, ignoredKeys = []) {
-    if (!obj || typeof obj !== "object") return "";
-
-    const ignored = new Set(ignoredKeys);
-
-    const fields = Object.entries(obj).filter(([key, value]) => {
-        if (ignored.has(key)) return false;
-        if (key.startsWith("_")) return false;
-        if (isEmptyValue(value)) return false;
-        if (Array.isArray(value)) return false;
-        if (typeof value === "object") return false;
-        return true;
-    });
-
-    if (!fields.length) return "";
-
-    return `
-        <div class="auto-extra-fields">
-            ${fields.map(([key, value]) => `
-                <div class="auto-extra-item">
-                    <span>${esc(fieldLabel(key))}</span>
-                    <b>${formatValue(value)}</b>
-                </div>
-            `).join("")}
-        </div>
-    `;
-}
+    { key: "interview_required", label: "مقابلة شخصية", type: "flag" },
+    { key: "portfolio_required", label: "ملف أعمال", type: "flag" },
+    { key: "recommendation_required", label: "خطاب توصية", type: "flag" },
+    { key: "personal_statement_required", label: "Personal Statement", type: "flag" },
+    { key: "essay_required", label: "Essay", type: "flag" },
+    { key: "olympiad_required", label: "أولمبياد", type: "flag" }
+];
 
 function ensureDynamicStyles() {
-    if (document.getElementById("universityDynamicStyles")) return;
+    if (document.getElementById("universityCleanStyles")) return;
 
     const style = document.createElement("style");
-    style.id = "universityDynamicStyles";
+    style.id = "universityCleanStyles";
 
     style.textContent = `
         .admission-tracks-grid{
@@ -200,98 +93,98 @@ function ensureDynamicStyles() {
             gap:14px;
         }
 
-        .track-card{
+        .track-card-clean{
             padding:20px;
             border-radius:24px;
-            transition:.18s ease;
             overflow:hidden;
+            transition:.18s ease;
         }
 
-        .track-card:hover{
+        .track-card-clean:hover{
             transform:translateY(-2px);
             border-color:var(--line-strong);
             box-shadow:var(--shadow-strong);
         }
 
-        .track-card.default{
-            border-color:color-mix(in srgb,var(--primary) 32%,transparent);
+        .track-card-clean.default{
+            border-color:color-mix(in srgb,var(--primary) 34%,transparent);
             background:
-                radial-gradient(360px 180px at 80% -30%,color-mix(in srgb,var(--primary) 16%,transparent),transparent 70%),
+                radial-gradient(420px 190px at 85% -35%,color-mix(in srgb,var(--primary) 16%,transparent),transparent 72%),
                 var(--card-glass);
         }
 
-        .track-top{
+        .track-head-clean{
             display:flex;
-            align-items:flex-start;
             justify-content:space-between;
+            align-items:flex-start;
             gap:12px;
-            margin-bottom:12px;
+            margin-bottom:14px;
         }
 
-        .track-title{
+        .track-name-clean{
             display:flex;
-            align-items:center;
-            gap:10px;
+            align-items:flex-start;
+            gap:11px;
             min-width:0;
         }
 
-        .track-icon{
+        .track-icon-clean{
             width:44px;
             height:44px;
-            flex:none;
             border-radius:17px;
             display:grid;
             place-items:center;
             color:white;
+            flex:none;
             background:linear-gradient(135deg,var(--primary),var(--primary-3));
             box-shadow:0 18px 34px -24px var(--primary);
         }
 
-        .track-title h3{
+        .track-name-clean h3{
             color:var(--ink);
             font-size:15px;
+            line-height:1.5;
             font-weight:900;
-            line-height:1.45;
         }
 
-        .track-title p{
+        .track-name-clean p{
             color:var(--muted);
             font-size:12px;
-            line-height:1.8;
-            margin-top:3px;
+            line-height:1.85;
             font-weight:600;
+            margin-top:3px;
         }
 
-        .track-badge{
+        .track-default-badge{
+            white-space:nowrap;
             display:inline-flex;
             align-items:center;
             gap:6px;
-            white-space:nowrap;
-            padding:6px 10px;
-            border-radius:999px;
             color:var(--primary);
             background:color-mix(in srgb,var(--primary) 9%,transparent);
             border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
+            border-radius:999px;
+            padding:6px 10px;
             font-size:10px;
             font-weight:900;
         }
 
-        .weights-row{
+        .track-weights-clean{
             display:grid;
             grid-template-columns:repeat(3,1fr);
             gap:8px;
             margin-top:12px;
         }
 
-        .weight-box{
+        .track-weight-clean{
+            text-align:center;
             padding:11px 8px;
             border-radius:16px;
-            text-align:center;
             background:var(--card-soft);
             border:1px solid var(--line);
         }
 
-        .weight-box span{
+        .track-weight-clean span{
             display:block;
             color:var(--faint);
             font-size:10px;
@@ -299,14 +192,39 @@ function ensureDynamicStyles() {
             margin-bottom:3px;
         }
 
-        .weight-box b{
+        .track-weight-clean b{
             display:block;
             color:var(--primary);
             font-size:17px;
             font-weight:900;
         }
 
-        .track-note{
+        .track-criteria-clean{
+            display:flex;
+            flex-wrap:wrap;
+            gap:7px;
+            margin-top:13px;
+        }
+
+        .criteria-chip-clean{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding:7px 10px;
+            border-radius:999px;
+            font-size:11px;
+            font-weight:900;
+            color:var(--primary);
+            background:color-mix(in srgb,var(--primary) 8%,transparent);
+            border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
+        }
+
+        .criteria-chip-clean b{
+            color:var(--ink);
+            font-weight:900;
+        }
+
+        .track-note-clean{
             margin-top:12px;
             padding:11px 12px;
             border-radius:16px;
@@ -318,110 +236,91 @@ function ensureDynamicStyles() {
             font-weight:600;
         }
 
-        .track-note i{
+        .track-note-clean i{
             color:var(--primary);
             margin-inline-end:5px;
         }
 
-        .criteria-grid{
-            display:grid;
-            grid-template-columns:repeat(2,minmax(0,1fr));
+        .clean-college-card{
+            border-radius:24px!important;
+            padding:20px!important;
+            overflow:hidden;
+            transition:.18s ease;
+            background:var(--card-glass)!important;
+        }
+
+        .clean-college-card::before{
+            content:"";
+            position:absolute;
+            inset-inline-start:0;
+            top:0;
+            bottom:0;
+            width:4px;
+            background:linear-gradient(180deg,var(--primary),var(--blue));
+        }
+
+        .clean-college-card:hover{
+            transform:translateY(-2px);
+            border-color:var(--line-strong);
+            box-shadow:var(--shadow-strong);
+        }
+
+        .clean-college-title{
+            display:flex;
+            align-items:center;
             gap:8px;
-            margin-top:12px;
-        }
-
-        .criteria-item{
-            padding:9px 10px;
-            border-radius:14px;
-            background:var(--card-soft);
-            border:1px solid var(--line);
-            min-width:0;
-        }
-
-        .criteria-item span{
-            display:block;
-            color:var(--faint);
-            font-size:10px;
+            color:var(--primary);
+            font-size:13px;
             font-weight:900;
-            margin-bottom:3px;
+            margin-bottom:12px;
         }
 
-        .criteria-item b{
-            color:var(--ink);
+        .clean-college-desc{
+            color:var(--muted);
             font-size:12px;
-            line-height:1.6;
-            font-weight:900;
-            word-break:break-word;
+            line-height:1.8;
+            font-weight:600;
+            margin-bottom:13px;
         }
 
-        .auto-extra-fields{
-            display:grid;
-            grid-template-columns:repeat(2,minmax(0,1fr));
-            gap:8px;
-            margin-top:12px;
-        }
-
-        .auto-extra-item{
-            padding:9px 10px;
-            border-radius:14px;
-            background:var(--card-soft);
-            border:1px solid var(--line);
-            min-width:0;
-        }
-
-        .auto-extra-item span{
-            display:block;
-            color:var(--faint);
-            font-size:10px;
-            font-weight:900;
-            margin-bottom:3px;
-        }
-
-        .auto-extra-item b{
-            color:var(--ink);
-            font-size:12px;
-            line-height:1.6;
-            font-weight:900;
-            word-break:break-word;
-        }
-
-        .major-meta{
+        .majors-clean-list{
             display:flex;
             flex-wrap:wrap;
-            gap:5px;
-            margin-top:5px;
+            gap:8px;
         }
 
-        .major-meta span{
-            font-size:9px;
-            font-weight:800;
-            color:var(--faint);
+        .major-clean-pill{
+            display:inline-flex;
+            align-items:center;
+            gap:7px;
+            padding:8px 11px;
+            border-radius:999px;
             background:var(--card-soft);
             border:1px solid var(--line);
-            padding:3px 7px;
-            border-radius:999px;
+            color:var(--ink);
+            font-size:12px;
+            font-weight:800;
+            line-height:1.4;
         }
 
-        .inline-link{
+        .major-clean-pill i{
+            color:var(--primary);
+            font-size:7px;
+        }
+
+        .major-clean-pill b{
             color:var(--primary);
             font-weight:900;
-            text-decoration:underline;
         }
 
         @media(max-width:960px){
             .admission-tracks-grid{
                 grid-template-columns:1fr;
             }
-
-            .weights-row{
-                grid-template-columns:repeat(3,1fr);
-            }
         }
 
         @media(max-width:560px){
-            .weights-row,
-            .criteria-grid,
-            .auto-extra-fields{
+            .track-weights-clean{
                 grid-template-columns:1fr;
             }
         }
@@ -434,21 +333,17 @@ function ensureQuickLink(targetId, label, iconClass) {
     const quickNav = document.querySelector(".quick-nav-inner");
     if (!quickNav) return;
 
-    const exists = quickNav.querySelector(`a[href="#${targetId}"]`);
-    if (exists) return;
+    if (quickNav.querySelector(`a[href="#${targetId}"]`)) return;
 
-    const ratiosLink = quickNav.querySelector('a[href="#ratiosSection"]');
     const link = document.createElement("a");
-
     link.href = `#${targetId}`;
     link.className = "quick-link";
-    link.innerHTML = `
-        <i class="fa-solid ${iconClass}"></i>
-        ${esc(label)}
-    `;
+    link.innerHTML = `<i class="fa-solid ${iconClass}"></i>${esc(label)}`;
 
-    if (ratiosLink) {
-        ratiosLink.insertAdjacentElement("beforebegin", link);
+    const collegesLink = quickNav.querySelector('a[href="#collegesSection"]');
+
+    if (collegesLink) {
+        collegesLink.insertAdjacentElement("beforebegin", link);
     } else {
         quickNav.appendChild(link);
     }
@@ -487,7 +382,6 @@ async function loadUniversityDetails() {
     ensureQuickLink("admissionTracksSection", "مسارات القبول", "fa-list-check");
 
     try {
-        // 1) بيانات الجامعة الأساسية
         const { data: university, error: uniError } = await supabaseClient
             .from("universities")
             .select("*")
@@ -500,7 +394,6 @@ async function loadUniversityDetails() {
 
         currentUniData = university;
 
-        // 2) كل مسارات القبول + كل المعايير والبيانات الموجودة داخل university_weights
         const { data: tracks, error: tracksError } = await supabaseClient
             .from("admission_tracks")
             .select(`
@@ -524,12 +417,21 @@ async function loadUniversityDetails() {
             activeTracks[0] ||
             null;
 
-        // 3) الكليات والتخصصات - نستخدم * عشان أي بيانات زيادة ما تنحذف
         const { data: colleges, error: collegesError } = await supabaseClient
             .from("colleges")
             .select(`
-                *,
-                majors (*)
+                id,
+                name,
+                description,
+                display_order,
+                is_active,
+                majors (
+                    id,
+                    code,
+                    name,
+                    display_order,
+                    is_active
+                )
             `)
             .eq("university_id", uniId)
             .eq("is_active", true)
@@ -539,7 +441,6 @@ async function loadUniversityDetails() {
             console.error("Colleges error:", collegesError);
         }
 
-        // 4) نسب القبول
         const { data: ratios, error: ratiosError } = await supabaseClient
             .from("v_admission_ratios_admin")
             .select("*")
@@ -549,7 +450,6 @@ async function loadUniversityDetails() {
             console.error("Ratios error:", ratiosError);
         }
 
-        // 5) ملفات وروابط الجامعة: Google Drive أو روابط خارجية
         const { data: resources, error: resourcesError } = await supabaseClient
             .from("university_resources")
             .select("*")
@@ -561,7 +461,6 @@ async function loadUniversityDetails() {
             console.error("Resources error:", resourcesError);
         }
 
-        // 6) الأقسام النصية
         const { data: sections, error: sectionsError } = await supabaseClient
             .from("university_sections")
             .select("*")
@@ -718,7 +617,7 @@ function renderAdmissionTracks(tracks) {
                 </h2>
 
                 <p class="section-subtitle">
-                    كل مسار قبول قد يكون له أوزان أو شروط مختلفة. يعرض هذا القسم كل البيانات المسجلة في قاعدة البيانات.
+                    عرض مختصر وواضح للمسارات بدون تفاصيل مزعجة.
                 </p>
             </div>
 
@@ -735,34 +634,20 @@ function renderAdmissionTracks(tracks) {
 }
 
 function renderTrackCard(track) {
-    const weights = Array.isArray(track.university_weights)
-        ? track.university_weights
-        : [];
-
+    const weights = Array.isArray(track.university_weights) ? track.university_weights : [];
     const firstWeight = weights[0] || {};
 
     const qW = formatWeight(firstWeight.qodrat_weight);
     const tW = formatWeight(firstWeight.tahsili_weight);
     const sW = formatWeight(firstWeight.school_weight);
 
-    const trackIgnoredKeys = [
-        "id",
-        "university_id",
-        "name",
-        "description",
-        "is_default",
-        "is_active",
-        "display_order",
-        "created_at",
-        "updated_at",
-        "university_weights"
-    ];
+    const criteria = buildCriteria(firstWeight);
 
     return `
-        <div class="track-card glass-card ${track.is_default ? "default" : ""}">
-            <div class="track-top">
-                <div class="track-title">
-                    <div class="track-icon">
+        <div class="track-card-clean glass-card ${track.is_default ? "default" : ""}">
+            <div class="track-head-clean">
+                <div class="track-name-clean">
+                    <div class="track-icon-clean">
                         <i class="fa-solid ${track.is_default ? "fa-star" : "fa-route"}"></i>
                     </div>
 
@@ -773,7 +658,7 @@ function renderTrackCard(track) {
                 </div>
 
                 ${track.is_default ? `
-                    <span class="track-badge">
+                    <span class="track-default-badge">
                         <i class="fa-solid fa-check"></i>
                         افتراضي
                     </span>
@@ -781,75 +666,72 @@ function renderTrackCard(track) {
             </div>
 
             ${(qW || tW || sW) ? `
-                <div class="weights-row">
-                    <div class="weight-box">
+                <div class="track-weights-clean">
+                    <div class="track-weight-clean">
                         <span>قدرات</span>
                         <b>${qW || "—"}</b>
                     </div>
 
-                    <div class="weight-box">
+                    <div class="track-weight-clean">
                         <span>تحصيلي</span>
                         <b>${tW || "—"}</b>
                     </div>
 
-                    <div class="weight-box">
+                    <div class="track-weight-clean">
                         <span>ثانوي</span>
                         <b>${sW || "—"}</b>
                     </div>
                 </div>
             ` : ""}
 
-            ${weights.map(weight => renderWeightCriteria(weight)).join("")}
+            ${criteria.length ? `
+                <div class="track-criteria-clean">
+                    ${criteria.map(item => `
+                        <span class="criteria-chip-clean">
+                            ${esc(item.label)}
+                            ${item.value ? `<b>${esc(item.value)}</b>` : ""}
+                        </span>
+                    `).join("")}
+                </div>
+            ` : ""}
 
-            ${renderExtraFields(track, trackIgnoredKeys)}
+            ${firstWeight.note ? `
+                <div class="track-note-clean">
+                    <i class="fa-solid fa-circle-info"></i>
+                    ${esc(firstWeight.note)}
+                </div>
+            ` : ""}
         </div>
     `;
 }
 
-function renderWeightCriteria(weight) {
-    if (!weight) return "";
+function buildCriteria(weight) {
+    if (!weight) return [];
 
-    const ignoredWeightKeys = [
-        "id",
-        "university_id",
-        "track_id",
-        "admission_track_id",
-        "qodrat_weight",
-        "tahsili_weight",
-        "school_weight",
-        "created_at",
-        "updated_at"
-    ];
+    const result = [];
 
-    const note = weight.note;
+    ADMISSION_CRITERIA.forEach(item => {
+        const value = weight[item.key];
 
-    const fields = Object.entries(weight).filter(([key, value]) => {
-        if (ignoredWeightKeys.includes(key)) return false;
-        if (key === "note") return false;
-        if (isEmptyValue(value)) return false;
-        if (typeof value === "object") return false;
-        return true;
+        if (item.type === "flag") {
+            if (value === true) {
+                result.push({
+                    label: item.label,
+                    value: ""
+                });
+            }
+            return;
+        }
+
+        if (!isEmpty(value)) {
+            result.push({
+                label: item.label,
+                value: formatNumber(value)
+            });
+        }
     });
 
-    return `
-        ${note ? `
-            <div class="track-note">
-                <i class="fa-solid fa-circle-info"></i>
-                ${esc(note)}
-            </div>
-        ` : ""}
-
-        ${fields.length ? `
-            <div class="criteria-grid">
-                ${fields.map(([key, value]) => `
-                    <div class="criteria-item">
-                        <span>${esc(fieldLabel(key))}</span>
-                        <b>${formatValue(value)}</b>
-                    </div>
-                `).join("")}
-            </div>
-        ` : ""}
-    `;
+    return result;
 }
 
 function renderColleges(colleges) {
@@ -871,77 +753,35 @@ function renderColleges(colleges) {
             .sort((a, b) => (a.display_order || 999) - (b.display_order || 999));
 
         return `
-            <div class="glass-card p-6 rounded-3xl border border-white/5">
-                <h4 class="text-xs font-black text-indigo-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+            <div class="clean-college-card glass-card border border-white/5">
+                <h4 class="clean-college-title">
                     <i class="fa-solid fa-graduation-cap"></i>
                     ${esc(college.name)}
                 </h4>
 
                 ${college.description ? `
-                    <p class="text-[11px] text-gray-500 mb-4 leading-relaxed">
+                    <p class="clean-college-desc">
                         ${esc(college.description)}
                     </p>
                 ` : ""}
 
-                <div class="grid grid-cols-1 gap-2">
-                    ${majors.length ? majors.map(major => renderMajorRow(major)).join("") : `
-                        <div class="text-xs text-gray-600">لا توجد تخصصات مضافة بعد.</div>
+                <div class="majors-clean-list">
+                    ${majors.length ? majors.map(major => renderMajorPill(major)).join("") : `
+                        <span class="major-clean-pill">لا توجد تخصصات مضافة بعد</span>
                     `}
                 </div>
-
-                ${renderExtraFields(college, [
-                    "id",
-                    "university_id",
-                    "name",
-                    "description",
-                    "display_order",
-                    "is_active",
-                    "created_at",
-                    "updated_at",
-                    "majors"
-                ])}
             </div>
         `;
     }).join("");
 }
 
-function renderMajorRow(major) {
-    const ignoredMajorKeys = [
-        "id",
-        "university_id",
-        "college_id",
-        "code",
-        "name",
-        "degree",
-        "gender",
-        "note",
-        "display_order",
-        "is_active",
-        "created_at",
-        "updated_at"
-    ];
-
-    const extraHtml = renderExtraFields(major, ignoredMajorKeys);
-
+function renderMajorPill(major) {
     return `
-        <div class="text-xs text-gray-400 bg-white/[0.02] rounded-xl px-3 py-2">
-            <div class="flex items-center justify-between gap-2 italic">
-                <span class="flex items-center gap-2">
-                    <span class="w-1 h-1 rounded-full bg-indigo-500/50"></span>
-                    ${major.code ? `<b class="text-indigo-400 not-italic">${esc(major.code)}</b>` : ""}
-                    ${esc(major.name)}
-                </span>
-
-                <span class="text-[9px] text-gray-600">${esc(major.gender || "")}</span>
-            </div>
-
-            <div class="major-meta">
-                ${major.degree ? `<span>${esc(major.degree)}</span>` : ""}
-                ${major.note ? `<span>${esc(major.note)}</span>` : ""}
-            </div>
-
-            ${extraHtml}
-        </div>
+        <span class="major-clean-pill">
+            <i class="fa-solid fa-circle"></i>
+            ${major.code ? `<b>${esc(major.code)}</b>` : ""}
+            ${esc(major.name || "تخصص غير محدد")}
+        </span>
     `;
 }
 
@@ -1070,60 +910,37 @@ function renderResources(resources) {
         </div>
 
         <div class="resources-grid">
-            ${resources.map(file => renderResourceCard(file)).join("")}
+            ${resources.map(file => `
+                <a href="${esc(file.file_url)}" target="_blank" rel="noopener" class="resource-card glass-card">
+                    <div class="resource-icon">
+                        <i class="fa-solid ${resourceIcon(file.resource_type)}"></i>
+                    </div>
+
+                    <div class="resource-body">
+                        <div class="resource-top">
+                            <span>${esc(resourceTypeLabel(file.resource_type))}</span>
+                            ${file.year ? `<b>${esc(file.year)}</b>` : ""}
+                        </div>
+
+                        <h3>${esc(file.title)}</h3>
+
+                        ${file.description ? `
+                            <p>${esc(file.description)}</p>
+                        ` : ""}
+
+                        <div class="resource-meta">
+                            ${file.file_type ? `<span>${esc(file.file_type)}</span>` : ""}
+                            ${file.is_official ? `<span>رسمي</span>` : `<span>غير رسمي</span>`}
+                            ${file.source_name ? `<span>${esc(file.source_name)}</span>` : ""}
+                        </div>
+                    </div>
+
+                    <div class="resource-open">
+                        <i class="fa-solid fa-arrow-up-left-from-square"></i>
+                    </div>
+                </a>
+            `).join("")}
         </div>
-    `;
-}
-
-function renderResourceCard(file) {
-    const ignoredResourceKeys = [
-        "id",
-        "university_id",
-        "resource_type",
-        "title",
-        "description",
-        "file_url",
-        "file_type",
-        "year",
-        "source_name",
-        "is_official",
-        "is_active",
-        "display_order",
-        "created_at",
-        "updated_at"
-    ];
-
-    return `
-        <a href="${esc(file.file_url)}" target="_blank" rel="noopener" class="resource-card glass-card">
-            <div class="resource-icon">
-                <i class="fa-solid ${resourceIcon(file.resource_type)}"></i>
-            </div>
-
-            <div class="resource-body">
-                <div class="resource-top">
-                    <span>${esc(resourceTypeLabel(file.resource_type))}</span>
-                    ${file.year ? `<b>${esc(file.year)}</b>` : ""}
-                </div>
-
-                <h3>${esc(file.title)}</h3>
-
-                ${file.description ? `
-                    <p>${esc(file.description)}</p>
-                ` : ""}
-
-                <div class="resource-meta">
-                    ${file.file_type ? `<span>${esc(file.file_type)}</span>` : ""}
-                    ${file.is_official ? `<span>رسمي</span>` : `<span>غير رسمي</span>`}
-                    ${file.source_name ? `<span>${esc(file.source_name)}</span>` : ""}
-                </div>
-
-                ${renderExtraFields(file, ignoredResourceKeys)}
-            </div>
-
-            <div class="resource-open">
-                <i class="fa-solid fa-arrow-up-left-from-square"></i>
-            </div>
-        </a>
     `;
 }
 
@@ -1161,18 +978,6 @@ function renderSections(sections) {
                     <p class="text-gray-400 text-sm leading-relaxed">
                         ${esc(section.content || "--")}
                     </p>
-
-                    ${renderExtraFields(section, [
-                        "id",
-                        "university_id",
-                        "section_type",
-                        "title",
-                        "content",
-                        "is_active",
-                        "display_order",
-                        "created_at",
-                        "updated_at"
-                    ])}
                 </div>
             `).join("")}
         </div>
