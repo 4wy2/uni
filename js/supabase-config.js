@@ -1,0 +1,11 @@
+// =====================================================
+// Supabase Config
+// ملف الاتصال بقاعدة بيانات مُوجّه
+// =====================================================
+
+// حط بيانات مشروعك من Supabase هنا
+const SUPABASE_URL = "PASTE_YOUR_SUPABASE_URL_HERE";
+const SUPABASE_ANON_KEY = "PASTE_YOUR_SUPABASE_ANON_KEY_HERE";
+
+// لا تعدل هذا السطر
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
