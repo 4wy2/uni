@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+```html
 <!DOCTYPE html>
 
 <html dir="rtl" lang="ar">
@@ -7,299 +7,847 @@
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <title>تفاصيل الجامعة | مُوجّه</title>
 <meta content="ملف الجامعة: التخصصات، مسارات القبول، الموزونة، نسب القبول والملفات الرسمية." name="description"/>
-<meta content="light dark" name="color-scheme"/>
-<meta content="#6a4fcf" media="(prefers-color-scheme: light)" name="theme-color"/>
-<meta content="#100f1d" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<meta id="themeColor" name="theme-color" content="#6a4fcf">
+
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://cdnjs.cloudflare.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/><link href="css/details.css" rel="stylesheet"/>
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&amp;display=swap"
+  rel="stylesheet"
+/>
+
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  rel="stylesheet"
+/>
+
+<link href="css/details.css" rel="stylesheet"/>
+
 <script>
-    (function(){
-      const saved = localStorage.getItem("theme");
-      const dark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
-      document.documentElement.setAttribute("data-theme", saved || (dark ? "dark" : "light"));
-    })();
-  </script>
+  (function () {
+    const saved = localStorage.getItem("theme");
+    const theme = saved === "dark" ? "dark" : "light";
 
+    document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.style.colorScheme = theme;
+
+    const themeColor = document.getElementById("themeColor");
+
+    if (themeColor) {
+      themeColor.setAttribute(
+        "content",
+        theme === "dark" ? "#100f1d" : "#6a4fcf"
+      );
+    }
+  })();
+</script>
 </head>
+
 <body>
-<a class="skip-link" href="#mainContent">تجاوز إلى المحتوى</a>
-<nav class="top-nav">
-<div class="wrap top-nav-inner">
-<a class="brand" href="index.html">
-<div class="brand-mark">
-<svg aria-hidden="true" fill="none" viewbox="0 0 100 100">
-<circle cx="50" cy="50" opacity=".9" r="42" stroke="currentColor" stroke-width="5"></circle>
-<circle cx="50" cy="50" fill="currentColor" r="4"></circle>
-<polygon fill="currentColor" points="50,16 60,52 50,46 40,52"></polygon>
-<polygon fill="currentColor" opacity=".62" points="50,84 40,48 50,54 60,48"></polygon>
-</svg>
-</div>
-<div class="brand-copy">
-<b>مُوجّه</b>
-<span>دليل الطالب الجامعي</span>
-</div>
+
+<a class="skip-link" href="#mainContent">
+  تجاوز إلى المحتوى
 </a>
-<div class="nav-actions">
-<button aria-label="تبديل الوضع" class="nav-button icon" id="themeToggle" type="button">
-<i class="fa-solid fa-moon"></i>
-</button>
-<a class="nav-button hide-mobile" href="major-search.html">
-<i class="fa-solid fa-graduation-cap"></i>
-          بحث التخصص
-        </a>
-<a class="nav-button" href="index.html">
-<i class="fa-solid fa-arrow-right"></i>
-          الجامعات
-        </a>
-</div>
-</div>
+
+<nav class="top-nav">
+  <div class="wrap top-nav-inner">
+
+    <a class="brand" href="index.html">
+      <div class="brand-mark">
+        <svg aria-hidden="true" fill="none" viewBox="0 0 100 100">
+          <circle
+            cx="50"
+            cy="50"
+            opacity=".9"
+            r="42"
+            stroke="currentColor"
+            stroke-width="5"
+          ></circle>
+
+          <circle
+            cx="50"
+            cy="50"
+            fill="currentColor"
+            r="4"
+          ></circle>
+
+          <polygon
+            fill="currentColor"
+            points="50,16 60,52 50,46 40,52"
+          ></polygon>
+
+          <polygon
+            fill="currentColor"
+            opacity=".62"
+            points="50,84 40,48 50,54 60,48"
+          ></polygon>
+        </svg>
+      </div>
+
+      <div class="brand-copy">
+        <b>مُوجّه</b>
+        <span>دليل الطالب الجامعي</span>
+      </div>
+    </a>
+
+    <div class="nav-actions">
+
+      <button
+        aria-label="تبديل الوضع"
+        class="nav-button icon"
+        id="themeToggle"
+        type="button"
+      >
+        <i class="fa-solid fa-moon"></i>
+      </button>
+
+      <a class="nav-button hide-mobile" href="major-search.html">
+        <i class="fa-solid fa-graduation-cap"></i>
+        بحث التخصص
+      </a>
+
+      <a class="nav-button" href="index.html">
+        <i class="fa-solid fa-arrow-right"></i>
+        الجامعات
+      </a>
+
+    </div>
+  </div>
 </nav>
+
 <main class="wrap page" id="mainContent">
-<section class="hero" id="overview">
-<div class="hero-main">
-<div class="hero-identity">
-<div class="uni-logo hidden" id="uniLogoWrap">
-<img alt="شعار الجامعة" id="uniLogo"/>
-</div>
-<div class="hero-content">
-<div class="eyebrow">
-<i class="fa-solid fa-building-columns"></i>
-              ملف الجامعة
+
+  <section class="hero" id="overview">
+
+    <div class="hero-main">
+
+      <div class="hero-identity">
+
+        <div class="uni-logo hidden" id="uniLogoWrap">
+          <img alt="شعار الجامعة" id="uniLogo"/>
+        </div>
+
+        <div class="hero-content">
+
+          <div class="eyebrow">
+            <i class="fa-solid fa-building-columns"></i>
+            ملف الجامعة
+          </div>
+
+          <h1 class="hero-title" id="uniName">
+            جارٍ تحميل الجامعة…
+          </h1>
+
+          <p class="hero-location" id="uniLocation">
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-location-dot"
+            ></i>
+
+            <span>--</span>
+          </p>
+
+          <div class="hero-badges" id="uniBadges"></div>
+
+        </div>
+      </div>
+
+      <div class="hero-actions">
+
+        <a class="hero-action primary" href="#scoreBlock">
+          <i class="fa-solid fa-calculator"></i>
+          القبول والموزونة
+        </a>
+
+        <a class="hero-action" href="#collegesSection">
+          <i class="fa-solid fa-layer-group"></i>
+          استكشف التخصصات
+        </a>
+
+        <a
+          class="hero-action"
+          hidden
+          href="#"
+          id="officialWebsite"
+          rel="noopener"
+          target="_blank"
+        >
+          <i class="fa-solid fa-arrow-up-left-from-square"></i>
+          الموقع الرسمي
+        </a>
+
+        <button
+          class="hero-action"
+          id="shareUniversity"
+          type="button"
+        >
+          <i class="fa-solid fa-link"></i>
+          مشاركة الصفحة
+        </button>
+
+      </div>
+    </div>
+
+    <div class="hero-summary">
+
+      <div class="summary-item">
+        <div class="summary-icon">
+          <i class="fa-solid fa-building"></i>
+        </div>
+
+        <div>
+          <b
+            aria-live="polite"
+            class="summary-value"
+            id="summaryColleges"
+          >
+            --
+          </b>
+
+          <span class="summary-label">
+            كلية
+          </span>
+        </div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-icon">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+
+        <div>
+          <b
+            aria-live="polite"
+            class="summary-value"
+            id="summaryMajors"
+          >
+            --
+          </b>
+
+          <span class="summary-label">
+            برنامج أكاديمي
+          </span>
+        </div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-icon">
+          <i class="fa-solid fa-route"></i>
+        </div>
+
+        <div>
+          <b
+            aria-live="polite"
+            class="summary-value"
+            id="summaryTracks"
+          >
+            --
+          </b>
+
+          <span class="summary-label">
+            مسار قبول
+          </span>
+        </div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-icon">
+          <i class="fa-solid fa-folder-open"></i>
+        </div>
+
+        <div>
+          <b
+            aria-live="polite"
+            class="summary-value"
+            id="summaryResources"
+          >
+            --
+          </b>
+
+          <span class="summary-label">
+            ملف ورابط
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="content-layout">
+
+    <aside
+      aria-label="أقسام صفحة الجامعة"
+      class="side-panel glass"
+    >
+
+      <div class="side-title">
+        محتويات الملف
+      </div>
+
+      <nav class="side-links">
+
+        <a class="side-link active" href="#overview">
+          <i class="fa-solid fa-house"></i>
+          نظرة عامة
+        </a>
+
+        <a class="side-link" href="#scoreBlock">
+          <i class="fa-solid fa-calculator"></i>
+          القبول والموزونة
+        </a>
+
+        <a
+          class="side-link"
+          data-nav="stats"
+          href="#statsBlock"
+        >
+          <i class="fa-solid fa-gauge-high"></i>
+          المؤشرات
+        </a>
+
+        <a
+          class="side-link"
+          data-nav="about"
+          href="#aboutBlock"
+        >
+          <i class="fa-solid fa-circle-info"></i>
+          عن الجامعة
+        </a>
+
+        <a class="side-link" href="#collegesSection">
+          <i class="fa-solid fa-layer-group"></i>
+          الكليات والتخصصات
+        </a>
+
+        <a
+          class="side-link"
+          data-nav="ratios"
+          href="#ratiosSection"
+        >
+          <i class="fa-solid fa-chart-simple"></i>
+          نسب القبول
+        </a>
+
+        <a
+          class="side-link"
+          data-nav="resources"
+          href="#resourcesSection"
+        >
+          <i class="fa-solid fa-folder-open"></i>
+          الملفات الرسمية
+        </a>
+
+        <a
+          class="side-link"
+          data-nav="sections"
+          href="#extraSections"
+        >
+          <i class="fa-solid fa-file-lines"></i>
+          معلومات إضافية
+        </a>
+
+      </nav>
+
+      <div class="side-meta">
+
+        <div class="side-meta-row">
+          <span>
+            آخر تحديث لملف الجامعة
+          </span>
+
+          <b id="lastUpdated">
+            غير محدد
+          </b>
+        </div>
+
+        <div class="side-meta-row">
+          <span>
+            مصدر البيانات
+          </span>
+
+          <b>
+            قاعدة مُوجّه
+          </b>
+        </div>
+
+      </div>
+    </aside>
+
+    <div class="content-column">
+
+      <!-- 1) القبول والموزونة -->
+      <section class="section" id="scoreBlock">
+
+        <div class="section-header">
+
+          <div>
+            <div class="section-kicker">
+              <i class="fa-solid fa-calculator"></i>
+              مركز القبول
             </div>
-<h1 class="hero-title" id="uniName">جارٍ تحميل الجامعة…</h1>
-<p class="hero-location" id="uniLocation">
-<i aria-hidden="true" class="fa-solid fa-location-dot"></i>
-<span>--</span>
-</p>
-<div class="hero-badges" id="uniBadges"></div>
-</div>
-</div>
-<div class="hero-actions">
-<a class="hero-action primary" href="#scoreBlock">
-<i class="fa-solid fa-calculator"></i>
-            القبول والموزونة
-          </a>
-<a class="hero-action" href="#collegesSection">
-<i class="fa-solid fa-layer-group"></i>
-            استكشف التخصصات
-          </a>
-<a class="hero-action" hidden="" href="#" id="officialWebsite" rel="noopener" target="_blank">
-<i class="fa-solid fa-arrow-up-left-from-square"></i>
-            الموقع الرسمي
-          </a>
-<button class="hero-action" id="shareUniversity" type="button">
-<i class="fa-solid fa-link"></i>
-            مشاركة الصفحة
-          </button>
-</div>
-</div>
-<div class="hero-summary">
-<div class="summary-item">
-<div class="summary-icon"><i class="fa-solid fa-building"></i></div>
-<div>
-<b aria-live="polite" class="summary-value" id="summaryColleges">--</b>
-<span class="summary-label">كلية</span>
-</div>
-</div>
-<div class="summary-item">
-<div class="summary-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-<div>
-<b aria-live="polite" class="summary-value" id="summaryMajors">--</b>
-<span class="summary-label">برنامج أكاديمي</span>
-</div>
-</div>
-<div class="summary-item">
-<div class="summary-icon"><i class="fa-solid fa-route"></i></div>
-<div>
-<b aria-live="polite" class="summary-value" id="summaryTracks">--</b>
-<span class="summary-label">مسار قبول</span>
-</div>
-</div>
-<div class="summary-item">
-<div class="summary-icon"><i class="fa-solid fa-folder-open"></i></div>
-<div>
-<b aria-live="polite" class="summary-value" id="summaryResources">--</b>
-<span class="summary-label">ملف ورابط</span>
-</div>
-</div>
-</div>
-</section>
-<div class="content-layout">
-<aside aria-label="أقسام صفحة الجامعة" class="side-panel glass">
-<div class="side-title">محتويات الملف</div>
-<nav class="side-links">
 
+            <h2 class="section-title">
+              مسارات القبول والموزونة
+            </h2>
 
+            <p class="section-description">
+              كل مسار يعرض أوزانه وشروطه والنتيجة المحسوبة من درجاتك المحفوظة، دون افتراض بيانات غير موجودة.
+            </p>
+          </div>
 
+          <span
+            aria-live="polite"
+            class="section-count"
+            id="trackCount"
+          >
+            جارٍ التحميل
+          </span>
 
+        </div>
 
+        <div class="score-overview" id="scoreOverview">
 
+          <section
+            class="score-card"
+            hidden
+            id="autoResultSection"
+          >
 
+            <span class="score-label">
+              <i class="fa-solid fa-calculator"></i>
+              موزونتك في المسار الافتراضي
+            </span>
 
-<a class="side-link active" href="#overview"><i class="fa-solid fa-house"></i> نظرة عامة</a><a class="side-link" href="#scoreBlock"><i class="fa-solid fa-calculator"></i> القبول والموزونة</a><a class="side-link" data-nav="stats" href="#statsBlock"><i class="fa-solid fa-gauge-high"></i> المؤشرات</a><a class="side-link" data-nav="about" href="#aboutBlock"><i class="fa-solid fa-circle-info"></i> عن الجامعة</a><a class="side-link" href="#collegesSection"><i class="fa-solid fa-layer-group"></i> الكليات والتخصصات</a><a class="side-link" data-nav="ratios" href="#ratiosSection"><i class="fa-solid fa-chart-simple"></i> نسب القبول</a><a class="side-link" data-nav="resources" href="#resourcesSection"><i class="fa-solid fa-folder-open"></i> الملفات الرسمية</a><a class="side-link" data-nav="sections" href="#extraSections"><i class="fa-solid fa-file-lines"></i> معلومات إضافية</a></nav>
-<div class="side-meta">
-<div class="side-meta-row">
-<span>آخر تحديث لملف الجامعة</span>
-<b id="lastUpdated">غير محدد</b>
-</div>
-<div class="side-meta-row">
-<span>مصدر البيانات</span>
-<b>قاعدة مُوجّه</b>
-</div>
-</div>
-</aside>
-<div class="content-column">
-<!-- 1) القبول والموزونة -->
+            <h3 class="score-number" id="finalResult">
+              00.00%
+            </h3>
 
-<!-- 2) الكليات والتخصصات -->
+            <div
+              class="weight-labels"
+              id="weightLabels"
+            ></div>
 
-<!-- 3) نسب القبول -->
+          </section>
 
-<!-- 4) المؤشرات -->
+          <div class="score-help">
 
-<!-- 5) عن الجامعة -->
+            <h3>
+              كيف تستفيد من هذا القسم؟
+            </h3>
 
-<!-- 6) الملفات الرسمية -->
+            <p>
+              ابدأ بالمسار المناسب لك، راجع الأوزان والشروط، ثم قارن موزونتك مع نسب السنوات السابقة. النتيجة استرشادية وليست قبولًا مضمونًا.
+            </p>
 
-<!-- 7) معلومات إضافية -->
+            <div
+              aria-live="polite"
+              class="score-missing"
+              id="scoreMessage"
+              role="status"
+            >
+              جارٍ التحقق من درجاتك وأوزان الجامعة.
+            </div>
 
-<section class="section" id="scoreBlock">
-<div class="section-header">
-<div>
-<div class="section-kicker"><i class="fa-solid fa-calculator"></i> مركز القبول</div>
-<h2 class="section-title">مسارات القبول والموزونة</h2>
-<p class="section-description">كل مسار يعرض أوزانه وشروطه والنتيجة المحسوبة من درجاتك المحفوظة، دون افتراض بيانات غير موجودة.</p>
-</div>
-<span aria-live="polite" class="section-count" id="trackCount">جارٍ التحميل</span>
-</div>
-<div class="score-overview" id="scoreOverview">
-<section class="score-card" hidden="" id="autoResultSection">
-<span class="score-label"><i class="fa-solid fa-calculator"></i> موزونتك في المسار الافتراضي</span>
-<h3 class="score-number" id="finalResult">00.00%</h3>
-<div class="weight-labels" id="weightLabels"></div>
-</section>
-<div class="score-help">
-<h3>كيف تستفيد من هذا القسم؟</h3>
-<p>ابدأ بالمسار المناسب لك، راجع الأوزان والشروط، ثم قارن موزونتك مع نسب السنوات السابقة. النتيجة استرشادية وليست قبولًا مضمونًا.</p>
-<div aria-live="polite" class="score-missing" id="scoreMessage" role="status">جارٍ التحقق من درجاتك وأوزان الجامعة.</div>
-</div>
-</div>
-<div class="tracks-grid" id="admissionTracksGrid"></div>
-</section><section class="section" hidden="" id="statsBlock">
-<div class="section-header">
-<div>
-<div class="section-kicker"><i class="fa-solid fa-gauge-high"></i> مؤشرات القرار</div>
-<h2 class="section-title">أرقام سريعة قبل التفاصيل</h2>
-<p class="section-description">هذه المؤشرات تعطي تصورًا سريعًا عن الجامعة، وتظهر فقط عندما تكون بياناتها مسجلة.</p>
-</div>
-</div>
-<div class="stats-section-grid">
-<article class="metric-card" data-metric="employment">
-<i class="fa-solid fa-briefcase"></i>
-<span>التوظيف</span>
-<b id="statEmp">--</b>
-</article>
-<article class="metric-card" data-metric="rank">
-<i class="fa-solid fa-ranking-star"></i>
-<span>التصنيف المحلي</span>
-<b id="statLocal">--</b>
-</article>
-<article class="metric-card" data-metric="acceptance">
-<i class="fa-solid fa-door-open"></i>
-<span>صعوبة القبول</span>
-<b id="statAccept">--</b>
-</article>
-<article class="metric-card" data-metric="competition">
-<i class="fa-solid fa-fire"></i>
-<span>التنافسية</span>
-<b id="uniCompetency">--</b>
-</article>
-</div>
-</section><section class="section" hidden="" id="aboutBlock">
-<div class="section-header">
-<div>
-<div class="section-kicker"><i class="fa-solid fa-circle-info"></i> افهم الجامعة</div>
-<h2 class="section-title">عن الجامعة</h2>
-<p class="section-description">نبذة مختصرة تساعدك على فهم طبيعة الجامعة وموقعها وصورتها العامة.</p>
-</div>
-</div>
-<div class="about-grid about-grid-single">
-<article class="about-card">
-<p id="uniAbout">--</p>
-</article>
-<div class="about-facts" hidden="" id="aboutFacts"></div>
-</div>
-</section><section class="section" id="collegesSection">
-<div class="section-header">
-<div>
-<div class="section-kicker"><i class="fa-solid fa-layer-group"></i> الكليات والبرامج</div>
-<h2 class="section-title">الكليات والتخصصات</h2>
-<p class="section-description">ابحث داخل برامج الجامعة، ثم صفِّ النتائج حسب الكلية. تظهر الدرجة والفئة والملاحظات عندما تكون مسجلة.</p>
-</div>
-<span aria-live="polite" class="section-count" id="majorResultCount">جارٍ التحميل</span>
-</div>
-<div class="toolbar">
-<div class="search-wrap">
-<i aria-hidden="true" class="fa-solid fa-magnifying-glass"></i>
-<input aria-label="ابحث عن تخصص داخل الجامعة" autocomplete="off" class="search-input" id="majorSearch" placeholder="ابحث عن تخصص داخل الجامعة…" type="search"/>
-</div>
-<select aria-label="فلترة حسب الدرجة" class="filter-select" id="degreeFilter">
-<option value="all">كل الدرجات</option>
-</select>
-</div>
-<div class="filter-pills" id="collegeFilters"></div>
-<div class="colleges-grid" id="collegesGrid">
-<div aria-hidden="true" class="skeleton"></div>
-<div aria-hidden="true" class="skeleton"></div>
-</div>
-</section><section class="section" hidden="" id="ratiosSection">
-<div class="section-header">
-<div>
-<div class="section-kicker"><i class="fa-solid fa-chart-simple"></i> بيانات تاريخية</div>
-<h2 class="section-title">نسب القبول السابقة</h2>
-<p class="section-description">اعرض النسب حسب التخصص والسنة، مع فصل النسبة العامة عن نسب الطلاب والطالبات عندما تكون متاحة.</p>
-</div>
-<span aria-live="polite" class="section-count" id="ratioCount">0 سجل</span>
-</div>
-<div class="toolbar">
-<div class="search-wrap">
-<i aria-hidden="true" class="fa-solid fa-magnifying-glass"></i>
-<input aria-label="ابحث داخل نسب القبول" autocomplete="off" class="search-input" id="ratioSearch" placeholder="ابحث داخل نسب القبول…" type="search"/>
-</div>
-<select aria-label="فلترة نسب القبول حسب السنة" class="filter-select" id="ratioYearFilter">
-<option value="all">كل السنوات</option>
-</select>
-</div>
-<div class="ratios-list" id="ratiosContainer"></div>
-</section><section class="section" hidden="" id="resourcesSection">
-<div class="section-header">
-<div>
-<div class="section-kicker"><i class="fa-solid fa-folder-open"></i> مصادر الطالب</div>
-<h2 class="section-title">الملفات والروابط</h2>
-<p class="section-description">الملفات مصنفة حسب نوعها، مع توضيح السنة والمصدر وحالة الرسمية متى كانت مسجلة.</p>
-</div>
-<span aria-live="polite" class="section-count" id="resourceCount">0 ملف</span>
-</div>
-<div class="resource-groups" id="resourcesContainer"></div>
-</section><section class="section" hidden="" id="extraSections">
-<div class="section-header">
-<div>
-<div class="section-kicker"><i class="fa-solid fa-file-lines"></i> تفاصيل إضافية</div>
-<h2 class="section-title">معلومات الجامعة</h2>
-<p class="section-description">أقسام نصية مرتبة وقابلة للفتح، حتى لا تتحول الصفحة إلى كتل نصية طويلة.</p>
-</div>
-<span aria-live="polite" class="section-count" id="sectionCount">0 قسم</span>
-</div>
-<div class="extra-grid" id="sectionsContainer"></div>
-</section></div>
-</div>
+          </div>
+        </div>
+
+        <div
+          class="tracks-grid"
+          id="admissionTracksGrid"
+        ></div>
+
+      </section>
+
+      <!-- 2) المؤشرات -->
+      <section
+        class="section"
+        hidden
+        id="statsBlock"
+      >
+
+        <div class="section-header">
+
+          <div>
+            <div class="section-kicker">
+              <i class="fa-solid fa-gauge-high"></i>
+              مؤشرات القرار
+            </div>
+
+            <h2 class="section-title">
+              أرقام سريعة قبل التفاصيل
+            </h2>
+
+            <p class="section-description">
+              هذه المؤشرات تعطي تصورًا سريعًا عن الجامعة، وتظهر فقط عندما تكون بياناتها مسجلة.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="stats-section-grid">
+
+          <article
+            class="metric-card"
+            data-metric="employment"
+          >
+            <i class="fa-solid fa-briefcase"></i>
+
+            <span>
+              التوظيف
+            </span>
+
+            <b id="statEmp">
+              --
+            </b>
+          </article>
+
+          <article
+            class="metric-card"
+            data-metric="rank"
+          >
+            <i class="fa-solid fa-ranking-star"></i>
+
+            <span>
+              التصنيف المحلي
+            </span>
+
+            <b id="statLocal">
+              --
+            </b>
+          </article>
+
+          <article
+            class="metric-card"
+            data-metric="acceptance"
+          >
+            <i class="fa-solid fa-door-open"></i>
+
+            <span>
+              صعوبة القبول
+            </span>
+
+            <b id="statAccept">
+              --
+            </b>
+          </article>
+
+          <article
+            class="metric-card"
+            data-metric="competition"
+          >
+            <i class="fa-solid fa-fire"></i>
+
+            <span>
+              التنافسية
+            </span>
+
+            <b id="uniCompetency">
+              --
+            </b>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- 3) عن الجامعة -->
+      <section
+        class="section"
+        hidden
+        id="aboutBlock"
+      >
+
+        <div class="section-header">
+
+          <div>
+            <div class="section-kicker">
+              <i class="fa-solid fa-circle-info"></i>
+              افهم الجامعة
+            </div>
+
+            <h2 class="section-title">
+              عن الجامعة
+            </h2>
+
+            <p class="section-description">
+              نبذة مختصرة تساعدك على فهم طبيعة الجامعة وموقعها وصورتها العامة.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="about-grid about-grid-single">
+
+          <article class="about-card">
+            <p id="uniAbout">
+              --
+            </p>
+          </article>
+
+          <div
+            class="about-facts"
+            hidden
+            id="aboutFacts"
+          ></div>
+
+        </div>
+      </section>
+
+      <!-- 4) الكليات والتخصصات -->
+      <section
+        class="section"
+        id="collegesSection"
+      >
+
+        <div class="section-header">
+
+          <div>
+            <div class="section-kicker">
+              <i class="fa-solid fa-layer-group"></i>
+              الكليات والبرامج
+            </div>
+
+            <h2 class="section-title">
+              الكليات والتخصصات
+            </h2>
+
+            <p class="section-description">
+              ابحث داخل برامج الجامعة، ثم صفِّ النتائج حسب الكلية. تظهر الدرجة والفئة والملاحظات عندما تكون مسجلة.
+            </p>
+          </div>
+
+          <span
+            aria-live="polite"
+            class="section-count"
+            id="majorResultCount"
+          >
+            جارٍ التحميل
+          </span>
+
+        </div>
+
+        <div class="toolbar">
+
+          <div class="search-wrap">
+
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-magnifying-glass"
+            ></i>
+
+            <input
+              aria-label="ابحث عن تخصص داخل الجامعة"
+              autocomplete="off"
+              class="search-input"
+              id="majorSearch"
+              placeholder="ابحث عن تخصص داخل الجامعة…"
+              type="search"
+            />
+
+          </div>
+
+          <select
+            aria-label="فلترة حسب الدرجة"
+            class="filter-select"
+            id="degreeFilter"
+          >
+            <option value="all">
+              كل الدرجات
+            </option>
+          </select>
+
+        </div>
+
+        <div
+          class="filter-pills"
+          id="collegeFilters"
+        ></div>
+
+        <div
+          class="colleges-grid"
+          id="collegesGrid"
+        >
+          <div
+            aria-hidden="true"
+            class="skeleton"
+          ></div>
+
+          <div
+            aria-hidden="true"
+            class="skeleton"
+          ></div>
+        </div>
+
+      </section>
+
+      <!-- 5) نسب القبول -->
+      <section
+        class="section"
+        hidden
+        id="ratiosSection"
+      >
+
+        <div class="section-header">
+
+          <div>
+            <div class="section-kicker">
+              <i class="fa-solid fa-chart-simple"></i>
+              بيانات تاريخية
+            </div>
+
+            <h2 class="section-title">
+              نسب القبول السابقة
+            </h2>
+
+            <p class="section-description">
+              اعرض النسب حسب التخصص والسنة، مع فصل النسبة العامة عن نسب الطلاب والطالبات عندما تكون متاحة.
+            </p>
+          </div>
+
+          <span
+            aria-live="polite"
+            class="section-count"
+            id="ratioCount"
+          >
+            0 سجل
+          </span>
+
+        </div>
+
+        <div class="toolbar">
+
+          <div class="search-wrap">
+
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-magnifying-glass"
+            ></i>
+
+            <input
+              aria-label="ابحث داخل نسب القبول"
+              autocomplete="off"
+              class="search-input"
+              id="ratioSearch"
+              placeholder="ابحث داخل نسب القبول…"
+              type="search"
+            />
+
+          </div>
+
+          <select
+            aria-label="فلترة نسب القبول حسب السنة"
+            class="filter-select"
+            id="ratioYearFilter"
+          >
+            <option value="all">
+              كل السنوات
+            </option>
+          </select>
+
+        </div>
+
+        <div
+          class="ratios-list"
+          id="ratiosContainer"
+        ></div>
+
+      </section>
+
+      <!-- 6) الملفات والروابط -->
+      <section
+        class="section"
+        hidden
+        id="resourcesSection"
+      >
+
+        <div class="section-header">
+
+          <div>
+            <div class="section-kicker">
+              <i class="fa-solid fa-folder-open"></i>
+              مصادر الطالب
+            </div>
+
+            <h2 class="section-title">
+              الملفات والروابط
+            </h2>
+
+            <p class="section-description">
+              الملفات مصنفة حسب نوعها، مع توضيح السنة والمصدر وحالة الرسمية متى كانت مسجلة.
+            </p>
+          </div>
+
+          <span
+            aria-live="polite"
+            class="section-count"
+            id="resourceCount"
+          >
+            0 ملف
+          </span>
+
+        </div>
+
+        <div
+          class="resource-groups"
+          id="resourcesContainer"
+        ></div>
+
+      </section>
+
+      <!-- 7) المعلومات الإضافية -->
+      <section
+        class="section"
+        hidden
+        id="extraSections"
+      >
+
+        <div class="section-header">
+
+          <div>
+            <div class="section-kicker">
+              <i class="fa-solid fa-file-lines"></i>
+              تفاصيل إضافية
+            </div>
+
+            <h2 class="section-title">
+              معلومات الجامعة
+            </h2>
+
+            <p class="section-description">
+              أقسام نصية مرتبة وقابلة للفتح، حتى لا تتحول الصفحة إلى كتل نصية طويلة.
+            </p>
+          </div>
+
+          <span
+            aria-live="polite"
+            class="section-count"
+            id="sectionCount"
+          >
+            0 قسم
+          </span>
+
+        </div>
+
+        <div
+          class="extra-grid"
+          id="sectionsContainer"
+        ></div>
+
+      </section>
+
+    </div>
+  </div>
 </main>
-<div class="toast" id="toast">تم نسخ الرابط</div>
+
+<div class="toast" id="toast">
+  تم نسخ الرابط
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
 <script src="js/university.js"></script>
+
 </body>
 </html>
+```
