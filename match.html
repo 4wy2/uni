@@ -4,179 +4,208 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>وين أقبل؟ | مُوجّه</title>
-<meta name="description" content="أدخل درجاتك واختر تخصصك — مُوجّه يرتّب لك الجامعات اللي تقبلك حسب موزونتك مقارنةً بنسب القبول.">
+<meta name="description" content="أدخل درجاتك واختر تخصصك، ثم قارن موزونتك بحدود القبول السابقة في الجامعات السعودية.">
 <meta name="theme-color" content="#6a4fcf">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script>(function(){document.documentElement.setAttribute('data-theme',localStorage.getItem('theme')||'light')})()</script>
+<script>
+(function(){
+  document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+})();
+</script>
 <style>
 :root{
   --bg:#f4f0fb;--ink:#2a2348;--muted:#736d92;--faint:#a39cc2;
-  --card:#ffffff;--card-2:#f7f4fc;--line:#e7e0f3;--line-strong:#d6cbef;
+  --card:#fff;--card-2:#f7f4fc;--line:#e7e0f3;--line-strong:#d6cbef;
   --primary:#6a4fcf;--primary-mid:#7c5fd6;--primary-deep:#4a3a9e;--on-primary:#fff;
   --gold:#b8902f;--gold-deep:#977322;
-  --green:#16a34a;--green-soft:rgba(22,163,74,.12);
-  --amber:#c98a14;--amber-soft:rgba(201,138,20,.14);
-  --red:#d94848;--red-soft:rgba(217,72,72,.12);
+  --green:#168a46;--green-soft:rgba(22,138,70,.12);
+  --amber:#bd7b08;--amber-soft:rgba(189,123,8,.14);
+  --red:#cf4141;--red-soft:rgba(207,65,65,.12);
+  --blue:#2475c5;--blue-soft:rgba(36,117,197,.11);
   --glow:rgba(106,79,207,.22);--grid:rgba(74,58,158,.05);--input-bg:#f3eefb;
-  --card-shadow:0 16px 40px -26px rgba(74,40,140,.3);
+  --shadow:0 16px 40px -26px rgba(74,40,140,.30);
   --bloom:radial-gradient(55% 45% at 84% -8%,rgba(124,95,214,.18),transparent 60%),
           radial-gradient(40% 38% at 8% 2%,rgba(106,79,207,.12),transparent 55%);
 }
 [data-theme="dark"]{
-  --bg:#100f1d;--ink:#f3f1fb;--muted:#9b94bd;--faint:#615b82;
-  --card:rgba(255,255,255,.04);--card-2:rgba(255,255,255,.07);
+  --bg:#100f1d;--ink:#f3f1fb;--muted:#aaa3c8;--faint:#6f688f;
+  --card:rgba(255,255,255,.045);--card-2:rgba(255,255,255,.075);
   --line:rgba(255,255,255,.09);--line-strong:rgba(150,130,240,.36);
-  --primary:#a78bfa;--primary-mid:#8b6ff0;--primary-deep:#6d4fd0;--on-primary:#fff;
+  --primary:#a78bfa;--primary-mid:#8b6ff0;--primary-deep:#7657dc;--on-primary:#fff;
   --gold:#e7c873;--gold-deep:#c9a84a;
   --green:#4ade80;--green-soft:rgba(74,222,128,.12);
-  --amber:#e7b34a;--amber-soft:rgba(231,179,74,.14);
+  --amber:#f0b74c;--amber-soft:rgba(240,183,76,.14);
   --red:#f87171;--red-soft:rgba(248,113,113,.13);
-  --glow:rgba(120,90,240,.4);--grid:rgba(255,255,255,.025);--input-bg:rgba(255,255,255,.04);
-  --card-shadow:0 26px 64px -38px rgba(90,60,220,.5);
+  --blue:#6cb6ff;--blue-soft:rgba(108,182,255,.12);
+  --glow:rgba(120,90,240,.40);--grid:rgba(255,255,255,.025);--input-bg:rgba(255,255,255,.045);
+  --shadow:0 26px 64px -38px rgba(90,60,220,.52);
   --bloom:radial-gradient(55% 45% at 82% -8%,rgba(124,95,214,.30),transparent 60%),
           radial-gradient(40% 38% at 8% 2%,rgba(67,56,202,.24),transparent 55%);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(--ink);
-  -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
-  min-height:100vh;overflow-x:hidden;position:relative;transition:background .3s,color .3s}
+body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden;position:relative;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;transition:background .3s,color .3s}
 body::before{content:"";position:fixed;inset:0;z-index:-2;background:var(--bloom)}
-body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
-  background-size:62px 62px;-webkit-mask-image:radial-gradient(85% 60% at 50% 0%,#000,transparent 78%);mask-image:radial-gradient(85% 60% at 50% 0%,#000,transparent 78%)}
-.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:62px 62px;-webkit-mask-image:radial-gradient(85% 60% at 50% 0%,#000,transparent 78%);mask-image:radial-gradient(85% 60% at 50% 0%,#000,transparent 78%)}
+button,input{font:inherit}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
 .reveal{opacity:0;transform:translateY(14px);animation:rise .55s cubic-bezier(.2,.8,.2,1) forwards}
 @keyframes rise{to{opacity:1;transform:none}}
 
-/* nav */
 nav{position:sticky;top:0;z-index:40;backdrop-filter:blur(16px);background:color-mix(in srgb,var(--bg) 80%,transparent);border-bottom:1px solid var(--line)}
-.nav-in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 22px;max-width:1080px;margin:0 auto}
-.brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:inherit}
+.nav-in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 22px;max-width:1120px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none}
 .compass{width:34px;height:34px;flex:none;color:var(--primary);animation:spin 44s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .brand b{font-weight:900;font-size:20px;letter-spacing:.5px}
 .nav-actions{display:flex;align-items:center;gap:9px}
-.icon-btn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--ink);background:var(--card-2);border:1px solid var(--line);font-size:15px;transition:.18s}
-.icon-btn:hover{border-color:var(--line-strong);color:var(--primary)}
-.nav-btn{display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-size:13px;font-weight:800;color:var(--ink);background:var(--card-2);border:1px solid var(--line);padding:9px 15px;border-radius:30px;cursor:pointer;text-decoration:none;transition:.18s}
-.nav-btn:hover{border-color:var(--line-strong)}
+.icon-btn,.nav-btn{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink);background:var(--card-2);border:1px solid var(--line);transition:.18s}
+.icon-btn{width:40px;height:40px;border-radius:50%;font-size:15px}
+.nav-btn{gap:8px;font-size:13px;font-weight:800;padding:9px 15px;border-radius:30px;text-decoration:none}
+.icon-btn:hover,.nav-btn:hover{border-color:var(--line-strong);color:var(--primary)}
 
-/* hero */
 .hero{text-align:center;padding:48px 0 8px}
 .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--primary);background:color-mix(in srgb,var(--primary) 10%,transparent);border:1px solid var(--line-strong);padding:6px 14px;border-radius:30px;margin-bottom:20px}
 .hero h1{font-size:clamp(34px,6vw,60px);font-weight:900;line-height:1.08;letter-spacing:-.5px}
 .hero h1 .grad{background:linear-gradient(90deg,var(--primary),var(--primary-deep));-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero .sub{color:var(--muted);font-size:clamp(14px,2vw,17px);margin-top:14px;max-width:560px;margin-inline:auto}
+.hero .sub{color:var(--muted);font-size:clamp(14px,2vw,17px);margin:14px auto 0;max-width:680px;line-height:1.8}
 
-/* scores bar */
-.panel{background:var(--card);border:1px solid var(--line-strong);border-radius:26px;padding:22px;box-shadow:var(--card-shadow);margin-top:26px}
-.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:0 2px}
+.panel{background:var(--card);border:1px solid var(--line-strong);border-radius:26px;padding:22px;box-shadow:var(--shadow);margin-top:26px;text-align:start}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;padding:0 2px}
 .panel-head .ttl{font-size:14px;color:var(--muted);font-weight:800;display:flex;align-items:center;gap:8px}
 .panel-head .ttl i{color:var(--primary)}
 .panel-head .live{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--primary);font-weight:700}
 .panel-head .live i{width:7px;height:7px;background:var(--primary);border-radius:50%;animation:pulse 1.6s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .fields{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.field label{display:block;font-size:11px;color:var(--faint);font-weight:800;letter-spacing:2px;margin-bottom:8px}
-.field input{width:100%;background:var(--input-bg);border:1px solid var(--line);border-radius:16px;padding:15px 8px;text-align:center;font-family:inherit;font-size:25px;font-weight:900;color:var(--ink);outline:none;transition:.18s;-moz-appearance:textfield}
+.field label{display:block;font-size:11px;color:var(--faint);font-weight:800;letter-spacing:1px;margin-bottom:8px}
+.field input{width:100%;background:var(--input-bg);border:1px solid var(--line);border-radius:16px;padding:15px 8px;text-align:center;font-size:25px;font-weight:900;color:var(--ink);outline:none;transition:.18s;-moz-appearance:textfield}
 .field input::-webkit-outer-spin-button,.field input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .field input::placeholder{color:var(--faint);opacity:.55}
 .field input:focus{border-color:var(--primary-mid);box-shadow:0 0 0 4px color-mix(in srgb,var(--primary) 18%,transparent)}
+.field.invalid input{border-color:var(--red)}
+.field-msg{display:none;color:var(--red);font-size:11px;margin-top:6px;text-align:center;font-weight:700}
+.field.invalid .field-msg{display:block}
 
-/* controls */
 .controls{margin-top:18px}
 .search{position:relative}
 .search i{position:absolute;right:18px;top:50%;transform:translateY(-50%);color:var(--faint);transition:.18s}
-.search input{width:100%;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:15px 48px 15px 18px;font-family:inherit;font-size:15px;color:var(--ink);outline:none;transition:.18s;box-shadow:var(--card-shadow)}
+.search input{width:100%;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:15px 48px 15px 18px;font-size:15px;color:var(--ink);outline:none;transition:.18s;box-shadow:var(--shadow)}
 .search input:focus{border-color:var(--line-strong)}
 .search:focus-within i{color:var(--primary)}
 .row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:14px}
 .gender{display:inline-flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:30px;padding:4px}
-.gender button{font-family:inherit;font-size:12.5px;font-weight:800;color:var(--muted);background:none;border:none;padding:8px 15px;border-radius:26px;cursor:pointer;transition:.15s}
+.gender button{font-size:12.5px;font-weight:800;color:var(--muted);background:none;border:none;padding:8px 15px;border-radius:26px;cursor:pointer;transition:.15s}
 .gender button.on{background:var(--primary);color:var(--on-primary)}
+.option-toggle{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;background:var(--card);border:1px solid var(--line);padding:9px 13px;border-radius:30px}
+.option-toggle input{accent-color:var(--primary)}
 .margin-note{margin-inline-start:auto;font-size:12px;color:var(--faint)}
 
-/* major list */
-.majors{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;max-height:168px;overflow-y:auto;padding:2px}
+.majors{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;max-height:190px;overflow-y:auto;padding:2px}
 .majors::-webkit-scrollbar{width:8px}
 .majors::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:8px}
-.maj-chip{font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);background:var(--card);border:1px solid var(--line);padding:9px 15px;border-radius:30px;transition:.15s;display:inline-flex;align-items:center;gap:8px}
+.maj-chip{font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);background:var(--card);border:1px solid var(--line);padding:9px 15px;border-radius:30px;transition:.15s;display:inline-flex;align-items:center;gap:8px}
 .maj-chip:hover{color:var(--ink);border-color:var(--line-strong)}
 .maj-chip.on{background:var(--primary);border-color:var(--primary);color:var(--on-primary);font-weight:800}
-.maj-chip .n{font-size:11px;opacity:.7;font-weight:700}
+.maj-chip .n{font-size:11px;opacity:.75;font-weight:700}
 
-/* results */
-.results-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:30px 0 14px;padding:0 2px}
-.results-head h2{font-size:22px;font-weight:900;letter-spacing:-.02em}
+.results-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:30px 0 14px;padding:0 2px}
+.results-head h2{font-size:22px;font-weight:900;line-height:1.5}
 .results-head .picked{color:var(--primary)}
-.results-head .cnt{font-size:13px;color:var(--faint)}
-
+.results-head .cnt{font-size:13px;color:var(--faint);white-space:nowrap}
+.summary{display:none;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.summary-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;text-align:center;box-shadow:var(--shadow)}
+.summary-card b{display:block;font-size:20px;font-weight:900;margin-bottom:3px}
+.summary-card span{font-size:11.5px;color:var(--muted);font-weight:700}
+.summary-card.ok b{color:var(--green)}.summary-card.mid b{color:var(--amber)}.summary-card.no b{color:var(--red)}.summary-card.unknown b{color:var(--blue)}
 .legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
 .lg{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:var(--muted);background:var(--card);border:1px solid var(--line);padding:6px 12px;border-radius:30px}
 .lg .dot{width:9px;height:9px;border-radius:50%}
-.lg.ok .dot{background:var(--green)} .lg.mid .dot{background:var(--amber)} .lg.no .dot{background:var(--red)}
+.lg.ok .dot{background:var(--green)}.lg.mid .dot{background:var(--amber)}.lg.no .dot{background:var(--red)}.lg.unknown .dot{background:var(--blue)}
 
 .res-grid{display:grid;gap:14px}
-.res{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px 20px;box-shadow:var(--card-shadow);overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
-.res::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:5px}
+.res{position:relative;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px 20px;box-shadow:var(--shadow);overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
+.res::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:5px;background:var(--line-strong)}
 .res.ok::before{background:linear-gradient(180deg,var(--green),#0f766e)}
 .res.mid::before{background:linear-gradient(180deg,var(--amber),var(--gold-deep))}
 .res.no::before{background:linear-gradient(180deg,var(--red),#9b2c2c)}
-.res:hover{transform:translateY(-3px);border-color:var(--line-strong);box-shadow:0 24px 56px -34px var(--glow)}
-.res-rank{width:34px;height:34px;flex:none;border-radius:12px;display:grid;place-items:center;font-weight:900;font-size:14px;color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent);border:1px solid var(--line-strong)}
+.res.unknown::before{background:linear-gradient(180deg,var(--blue),#2450a0)}
+.res:hover{transform:translateY(-2px);border-color:var(--line-strong);box-shadow:0 24px 56px -34px var(--glow)}
+.res-main{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center}
+.res-rank{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-weight:900;font-size:14px;color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent);border:1px solid var(--line-strong)}
 .res-mid{min-width:0}
-.res-mid h3{font-size:17px;font-weight:900;margin-bottom:5px;line-height:1.35}
-.res-meta{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--muted);font-weight:700}
+.res-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.res-mid h3{font-size:17px;font-weight:900;line-height:1.35}
+.logo{width:34px;height:34px;border-radius:10px;object-fit:contain;background:#fff;border:1px solid var(--line);padding:3px}
+.res-meta{display:flex;flex-wrap:wrap;gap:9px;font-size:12px;color:var(--muted);font-weight:700;line-height:1.6}
 .res-meta span{display:inline-flex;align-items:center;gap:5px}
 .res-meta i{color:var(--faint);font-size:11px}
-.res-right{text-align:center;flex:none;min-width:118px}
-.res-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:900;padding:5px 11px;border-radius:30px;margin-bottom:8px}
+.res-right{text-align:center;flex:none;min-width:152px}
+.res-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:900;padding:6px 11px;border-radius:30px;margin-bottom:9px}
 .res.ok .res-badge{color:var(--green);background:var(--green-soft)}
 .res.mid .res-badge{color:var(--amber);background:var(--amber-soft)}
 .res.no .res-badge{color:var(--red);background:var(--red-soft)}
+.res.unknown .res-badge{color:var(--blue);background:var(--blue-soft)}
 .res-nums{display:flex;align-items:baseline;justify-content:center;gap:8px}
-.res-nums .you{font-size:23px;font-weight:900;color:var(--ink);line-height:1}
+.res-nums .you{font-size:23px;font-weight:900;line-height:1}
 .res-nums .vs{font-size:11px;color:var(--faint);font-weight:700}
 .res-nums .cut{font-size:14px;font-weight:800;color:var(--muted)}
-.res-gap{margin-top:5px;font-size:11px;font-weight:800}
-.res.ok .res-gap{color:var(--green)} .res.mid .res-gap{color:var(--amber)} .res.no .res-gap{color:var(--red)}
-.res-nodata .res-right{color:var(--faint);font-size:12px;font-weight:700}
+.res-gap{margin-top:6px;font-size:11px;font-weight:800}
+.res.ok .res-gap{color:var(--green)}.res.mid .res-gap{color:var(--amber)}.res.no .res-gap{color:var(--red)}.res.unknown .res-gap{color:var(--blue)}
+.formula{margin-top:9px;font-size:11px;color:var(--faint);font-weight:700;line-height:1.7}
+.details-link{display:inline-flex;align-items:center;gap:7px;margin-top:10px;font-size:12px;font-weight:800;color:var(--primary);text-decoration:none}
+.more{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+.more summary{cursor:pointer;color:var(--primary);font-size:12.5px;font-weight:800;list-style:none;display:flex;align-items:center;gap:7px}
+.more summary::-webkit-details-marker{display:none}
+.option-list{display:grid;gap:9px;margin-top:11px}
+.option{background:var(--card-2);border:1px solid var(--line);border-radius:14px;padding:11px 12px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
+.option b{display:block;font-size:12.5px;margin-bottom:4px}
+.option p{font-size:11px;color:var(--muted);line-height:1.7}
+.option-score{text-align:left;white-space:nowrap;font-size:11.5px;font-weight:800;color:var(--muted)}
+.source-pill{display:inline-flex;align-items:center;gap:5px;margin-top:5px;padding:4px 8px;border-radius:20px;background:color-mix(in srgb,var(--primary) 8%,transparent);color:var(--primary);font-size:10.5px;font-weight:800}
 
-/* states */
 .state{text-align:center;padding:54px 20px;color:var(--muted)}
 .state .ic{width:64px;height:64px;border-radius:22px;display:grid;place-items:center;margin:0 auto 16px;font-size:26px;color:var(--primary);background:color-mix(in srgb,var(--primary) 10%,transparent);border:1px solid var(--line-strong)}
 .state b{display:block;font-size:19px;font-weight:900;color:var(--ink);margin-bottom:6px}
-.state p{font-size:13.5px;max-width:380px;margin:0 auto;line-height:1.8}
+.state p{font-size:13.5px;max-width:520px;margin:0 auto;line-height:1.8}
+.state code{font-family:monospace;background:var(--card-2);padding:2px 6px;border-radius:6px}
 .skel{border-radius:24px;padding:18px 20px;background:var(--card);border:1px solid var(--line);display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center}
 .skel-b{height:14px;border-radius:8px;background:color-mix(in srgb,var(--ink) 8%,transparent);animation:shimmer 1.4s infinite}
 .skel-c{width:34px;height:34px;border-radius:12px;background:color-mix(in srgb,var(--ink) 8%,transparent);animation:shimmer 1.4s infinite}
 @keyframes shimmer{0%{opacity:1}50%{opacity:.4}100%{opacity:1}}
-
-.disclaimer{margin:24px 0 50px;display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--muted);background:color-mix(in srgb,var(--gold) 8%,transparent);border:1px solid color-mix(in srgb,var(--gold) 26%,transparent);border-radius:16px;padding:14px 16px;line-height:1.85}
+.notice{margin:18px 0 0;display:none;align-items:flex-start;gap:10px;font-size:12px;color:var(--muted);background:var(--blue-soft);border:1px solid color-mix(in srgb,var(--blue) 30%,transparent);border-radius:16px;padding:13px 15px;line-height:1.8}
+.notice i{color:var(--blue);margin-top:3px}
+.disclaimer{margin:24px 0 50px;display:none;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--muted);background:color-mix(in srgb,var(--gold) 8%,transparent);border:1px solid color-mix(in srgb,var(--gold) 26%,transparent);border-radius:16px;padding:14px 16px;line-height:1.85}
 .disclaimer i{color:var(--gold-deep);margin-top:3px}
-
 footer{border-top:1px solid var(--line);text-align:center;padding:28px 20px;color:var(--faint);font-size:13px}
 footer b{color:var(--muted);font-weight:700}
 
-@media(max-width:600px){
-  .fields{gap:8px}.field input{font-size:21px;padding:13px 5px}
-  .res{grid-template-columns:1fr auto;gap:12px}
+@media(max-width:760px){
+  .summary{grid-template-columns:repeat(2,1fr)}
+  .res-main{grid-template-columns:1fr auto}
   .res-rank{display:none}
-  .margin-note{display:none}
+  .res-right{min-width:130px}
+}
+@media(max-width:600px){
+  .wrap{padding:0 14px}.nav-in{padding:11px 14px}.hero{padding-top:34px}
+  .panel{padding:16px;border-radius:22px}.fields{gap:7px}.field input{font-size:21px;padding:13px 5px}.field label{font-size:10px}
+  .row{align-items:stretch}.gender{width:100%;display:grid;grid-template-columns:repeat(3,1fr)}.gender button{padding-inline:8px}
+  .option-toggle{flex:1}.margin-note{display:none}
+  .results-head{align-items:flex-start;flex-direction:column}.res{padding:16px}.res-main{grid-template-columns:1fr}.res-right{text-align:right;min-width:0}.res-nums{justify-content:flex-start}.option{grid-template-columns:1fr}.option-score{text-align:right}
+  .nav-btn{font-size:0;width:40px;height:40px;padding:0}.nav-btn i{font-size:14px}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}.reveal{opacity:1;transform:none}}
 :focus-visible{outline:2px solid var(--primary);outline-offset:3px}
 </style>
 </head>
 <body>
-
 <nav>
   <div class="nav-in">
-    <a href="index.html" class="brand">
+    <a href="index.html" class="brand" aria-label="العودة إلى مُوجّه">
       <svg class="compass" viewBox="0 0 100 100" fill="none" aria-hidden="true">
         <circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="3"/>
         <circle cx="50" cy="50" r="3" fill="currentColor"/>
@@ -186,299 +215,749 @@ footer b{color:var(--muted);font-weight:700}
       <b>مُوجّه</b>
     </a>
     <div class="nav-actions">
-      <button class="icon-btn" id="themeToggle" onclick="toggleTheme()" aria-label="تبديل الوضع الليلي/النهاري"><i class="fa-solid fa-moon"></i></button>
+      <button class="icon-btn" id="themeToggle" type="button" onclick="toggleTheme()" aria-label="تبديل الوضع الليلي والنهاري"><i class="fa-solid fa-moon"></i></button>
       <a href="index.html" class="nav-btn"><i class="fa-solid fa-arrow-right"></i> الرئيسية</a>
     </div>
   </div>
 </nav>
 
 <header class="hero wrap">
-  <div class="eyebrow reveal"><i class="fa-solid fa-bullseye"></i> الموجّه الذكي</div>
+  <div class="eyebrow reveal"><i class="fa-solid fa-bullseye"></i> مقارنة استرشادية مبنية على بيانات القبول السابقة</div>
   <h1 class="reveal" style="animation-delay:.05s">وين <span class="grad">أقبل</span>؟</h1>
-  <p class="sub reveal" style="animation-delay:.1s">أدخل درجاتك، اختر التخصص اللي تبيه، ومُوجّه يرتّب لك الجامعات اللي تقبلك — حسب موزونتك مقارنةً بنسب القبول.</p>
+  <p class="sub reveal" style="animation-delay:.1s">أدخل درجاتك واختر التخصص. يحسب مُوجّه موزونتك بالمعيار الأنسب لكل مسار، ثم يقارنها بآخر حد قبول متاح دون تقديم ضمان بالقبول.</p>
 
-  <div class="panel reveal" style="animation-delay:.15s">
+  <section class="panel reveal" style="animation-delay:.15s" aria-labelledby="scoresTitle">
     <div class="panel-head">
-      <span class="ttl"><i class="fa-solid fa-sliders"></i> درجاتك</span>
-      <span class="live"><i></i> تُحفظ تلقائياً</span>
+      <span class="ttl" id="scoresTitle"><i class="fa-solid fa-sliders"></i> درجاتك</span>
+      <span class="live"><i></i> تُحفظ على جهازك فقط</span>
     </div>
     <div class="fields">
-      <div class="field"><label>قدرات</label><input type="number" id="q" placeholder="0" min="0" max="100" inputmode="decimal" oninput="onScore()"></div>
-      <div class="field"><label>تحصيلي</label><input type="number" id="t" placeholder="0" min="0" max="100" inputmode="decimal" oninput="onScore()"></div>
-      <div class="field"><label>ثانوي</label><input type="number" id="s" placeholder="0" min="0" max="100" inputmode="decimal" oninput="onScore()"></div>
+      <div class="field" id="qField">
+        <label for="q">القدرات</label>
+        <input type="number" id="q" placeholder="مثال 85" min="0" max="100" step="0.01" inputmode="decimal" autocomplete="off" oninput="onScore()">
+        <span class="field-msg">أدخل درجة بين 0 و100</span>
+      </div>
+      <div class="field" id="tField">
+        <label for="t">التحصيلي</label>
+        <input type="number" id="t" placeholder="مثال 82" min="0" max="100" step="0.01" inputmode="decimal" autocomplete="off" oninput="onScore()">
+        <span class="field-msg">أدخل درجة بين 0 و100</span>
+      </div>
+      <div class="field" id="sField">
+        <label for="s">الثانوية</label>
+        <input type="number" id="s" placeholder="مثال 96" min="0" max="100" step="0.01" inputmode="decimal" autocomplete="off" oninput="onScore()">
+        <span class="field-msg">أدخل درجة بين 0 و100</span>
+      </div>
     </div>
 
     <div class="controls">
       <div class="search">
-        <input type="text" id="majSearch" placeholder="ابحث عن تخصص… (مثال: حاسب، طب، قانون)" oninput="renderMajors()">
+        <input type="search" id="majSearch" placeholder="ابحث عن تخصص… مثال: علوم الحاسب، الطب، القانون" autocomplete="off" oninput="renderMajors()">
         <i class="fa-solid fa-magnifying-glass"></i>
       </div>
       <div class="row">
-        <div class="gender" id="genderToggle">
-          <button class="on" data-g="general" onclick="setGender('general')">عام</button>
-          <button data-g="male" onclick="setGender('male')">بنين</button>
-          <button data-g="female" onclick="setGender('female')">بنات</button>
+        <div class="gender" id="genderToggle" aria-label="اختيار الجنس">
+          <button class="on" type="button" data-g="general" onclick="setGender('general')">عام</button>
+          <button type="button" data-g="male" onclick="setGender('male')">طلاب</button>
+          <button type="button" data-g="female" onclick="setGender('female')">طالبات</button>
         </div>
-        <span class="margin-note"><i class="fa-solid fa-circle-info"></i> «قريبة» = ضمن ٢٪ من نسبة القبول</span>
+        <label class="option-toggle"><input type="checkbox" id="showNoData" checked onchange="renderResults()"> عرض الجامعات دون نسبة سابقة</label>
+        <span class="margin-note"><i class="fa-solid fa-circle-info"></i> «قريب» يعني ضمن نقطتين مئويتين من الحد السابق</span>
       </div>
-      <div class="majors" id="majorsList"></div>
+      <div class="majors" id="majorsList" aria-live="polite"></div>
+      <div class="notice" id="dataNotice"><i class="fa-solid fa-database"></i><span id="dataNoticeText"></span></div>
     </div>
-  </div>
+  </section>
 </header>
 
 <main class="wrap">
   <div id="resultsHead" class="results-head" style="display:none">
-    <h2>الجامعات اللي تقدّم <span class="picked" id="pickedName"></span></h2>
+    <h2>الجامعات التي تقدم <span class="picked" id="pickedName"></span></h2>
     <span class="cnt" id="resCount"></span>
   </div>
 
-  <div class="legend" id="legend" style="display:none">
-    <span class="lg ok"><span class="dot"></span> فرصتك عالية</span>
-    <span class="lg mid"><span class="dot"></span> قريبة — على الحدود</span>
-    <span class="lg no"><span class="dot"></span> أقل من قبول العام الماضي</span>
+  <div class="summary" id="summary">
+    <div class="summary-card ok"><b id="sumOk">0</b><span>أعلى من الحد السابق</span></div>
+    <div class="summary-card mid"><b id="sumMid">0</b><span>قريب من الحد السابق</span></div>
+    <div class="summary-card no"><b id="sumNo">0</b><span>أقل من الحد السابق</span></div>
+    <div class="summary-card unknown"><b id="sumUnknown">0</b><span>لا توجد مقارنة مكتملة</span></div>
   </div>
 
-  <div class="res-grid" id="resGrid"></div>
+  <div class="legend" id="legend" style="display:none">
+    <span class="lg ok"><span class="dot"></span> أعلى من الحد السابق</span>
+    <span class="lg mid"><span class="dot"></span> قريب من الحد السابق</span>
+    <span class="lg no"><span class="dot"></span> أقل من الحد السابق</span>
+    <span class="lg unknown"><span class="dot"></span> بيانات غير مكتملة</span>
+  </div>
 
-  <div class="disclaimer" id="disclaimer" style="display:none">
+  <div class="res-grid" id="resGrid" aria-live="polite"></div>
+
+  <div class="disclaimer" id="disclaimer">
     <i class="fa-solid fa-shield-halved"></i>
-    <span>النسب مرجعية من سنوات سابقة وتتغيّر كل عام حسب المنافسة والمسار وعدد المقاعد. استخدمها كمؤشر للترتيب، وتأكد من الأرقام الرسمية في بوابة الجامعة قبل أي قرار.</span>
+    <span>النتائج استرشادية فقط. تجاوز الحد السابق لا يضمن القبول؛ لأن المنافسة والمقاعد والمسارات والسياسات تتغير سنويًا. تأكد دائمًا من بوابة الجامعة ومنصة القبول الرسمية قبل ترتيب الرغبات.</span>
   </div>
 </main>
 
-<footer>مُوجّه · <b>وين أقبل؟</b> — موزونتك تختار لك.</footer>
+<footer>مُوجّه · <b>وين أقبل؟</b> — قرار أوضح، لا وعد بالقبول.</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-/* ═══ الإعدادات ═══ */
-const SUPABASE_URL  = "https://gybksasoembmgdevogpv.supabase.co";
-const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd5YmtzYXNvZW1ibWdkZXZvZ3B2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NzEyNjIsImV4cCI6MjA5NzM0NzI2Mn0.U0QFX7WS9ETbV0JmMYe-VNZhErJAPtZxwEBASep7AA4";
+'use strict';
+
+/* ═══════════════════════════════════════════════════════════
+   الإعدادات
+   ملاحظة: مفتاح anon عام بطبيعته، لكن يجب تفعيل RLS ومنع أي كتابة
+   غير مصرح بها داخل Supabase.
+═══════════════════════════════════════════════════════════ */
+const SUPABASE_URL  = 'https://gybksasoembmgdevogpv.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd5YmtzYXNvZW1ibWdkZXZvZ3B2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NzEyNjIsImV4cCI6MjA5NzM0NzI2Mn0.U0QFX7WS9ETbV0JmMYe-VNZhErJAPtZxwEBASep7AA4';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-const MARGIN = 2;                 // هامش "قريبة" بالنسبة المئوية
-let UNIS = {};                    // id -> {name, weights, logo}
-let GROUPS = [];                  // [{key,label,offers:[{university_id,college_name,major_code,major_name,gender}]}]
-let RATIOS = {};                  // "uniId::normName"  /  "uniId::#code"  ->  ratioRow (إثراء فقط)
-let selectedKey = null;
-let gender = "general";
+const CLOSE_MARGIN = 2;
+const MAX_MAJOR_CHIPS = 100;
 const $ = id => document.getElementById(id);
 
-/* ═══ أدوات ═══ */
-function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
-function clamp(v){if(v==="")return"";let n=Number(v);if(isNaN(n))return"";return String(Math.min(100,Math.max(0,n)))}
-function num(v){const n=Number(v);return isNaN(n)?null:n}
-// يدعم 0.30 و 30 معاً
-function normW(v){const n=Number(v);if(isNaN(n))return 0;return n>1?n/100:n}
-function scores(){return{q:parseFloat(localStorage.getItem("qodrat"))||0,t:parseFloat(localStorage.getItem("tahsili"))||0,s:parseFloat(localStorage.getItem("school"))||0}}
-function hasScores(){const{q,t,s}=scores();return q>0||t>0||s>0}
-// تطبيع اسم التخصص للمطابقة بين الجامعات
-function normName(s){return String(s||"").replace(/[ًٌٍَُِّْـ]/g,"").replace(/[أإآ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").replace(/\s+/g," ").trim().toLowerCase()}
+let UNIS = new Map();
+let COLLEGES = new Map();
+let TRACKS_BY_UNI = new Map();
+let WEIGHTS_BY_TRACK = new Map();
+let FALLBACK_WEIGHTS_BY_UNI = new Map();
+let ACTUAL_MAJORS = [];
+let RATIOS = [];
+let GROUPS = [];
+let selectedKey = null;
+let gender = localStorage.getItem('acceptanceGender') || 'general';
+let catalogSource = 'full';
 
-/* ═══ الثيم ═══ */
-function toggleTheme(){const next=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";document.documentElement.setAttribute("data-theme",next);localStorage.setItem("theme",next);syncIcon()}
-function syncIcon(){const d=document.documentElement.getAttribute("data-theme")==="dark";$("themeToggle").innerHTML=d?'<i class="fa-solid fa-sun"></i>':'<i class="fa-solid fa-moon"></i>'}
+/* ═══════════════════════════════════════════════════════════
+   أدوات عامة
+═══════════════════════════════════════════════════════════ */
+function esc(value){
+  return String(value ?? '')
+    .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
+    .replaceAll('"','&quot;').replaceAll("'",'&#039;');
+}
+function toNumber(value){
+  if(value === null || value === undefined || value === '') return null;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+function normWeight(value){
+  const n = toNumber(value);
+  if(n === null) return 0;
+  return n > 1 ? n / 100 : n;
+}
+function clampInput(input){
+  if(input.value === '') return true;
+  const n = Number(input.value);
+  if(!Number.isFinite(n) || n < 0 || n > 100) return false;
+  input.value = String(Math.min(100, Math.max(0, n)));
+  return true;
+}
+function normalizeArabic(value){
+  return String(value || '')
+    .normalize('NFKD')
+    .replace(/[\u064B-\u065F\u0670\u0640]/g,'')
+    .replace(/[أإآٱ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه')
+    .replace(/[–—−]/g,'-').replace(/[()\[\]{}،,:؛/\\|]/g,' ')
+    .replace(/\s+/g,' ').trim().toLowerCase();
+}
+function stripArabicArticle(word){
+  return word.startsWith('ال') && word.length > 4 ? word.slice(2) : word;
+}
+function keyTokens(value){
+  const stop = new Set(['كليه','جامعه','برنامج','برامج','بكالوريوس','دبلوم','متوسط','عام','قبول','منصه','الفصل','الاول','الثاني','الثالث','السجل','المقر','الرئيسي','فرع','طلاب','طالبات']);
+  return normalizeArabic(value).split(' ').map(stripArabicArticle).filter(w => w.length > 1 && !stop.has(w));
+}
+function canonicalAlias(value){
+  let s = normalizeArabic(value)
+    .replace(/علوم الحاسبات/g,'علوم الحاسب')
+    .replace(/هندسه الحاسبات/g,'هندسه الحاسب')
+    .replace(/طب الاسنان وجراحتها/g,'طب الاسنان')
+    .replace(/طب اسنان عام/g,'طب الاسنان')
+    .replace(/دكتور صيدلي/g,'صيدله')
+    .replace(/علوم التمريض/g,'تمريض')
+    .replace(/اداره الاعمال/g,'اداره اعمال')
+    .replace(/نظم المعلومات الحاسوبيه/g,'نظم المعلومات')
+    .replace(/تقنيه المعلومات/g,'تقنيه المعلومات')
+    .replace(/علوم الحاسب الالي/g,'علوم الحاسب');
 
-/* ═══ الدرجات ═══ */
+  const parts = s.split('-').map(x => x.trim()).filter(Boolean);
+  if(parts.length > 1){
+    const ignored = /^(الفصل|السجل|طلاب|طالبات|بكالوريوس|دبلوم|منصه|المقر|الرئيسي|عام)$/;
+    for(let i = parts.length - 1; i >= 0; i--){
+      const p = parts[i]
+        .replace(/الفصل (الاول|الثاني|الثالث)/g,'')
+        .replace(/السجل (الاول|الثاني)/g,'')
+        .replace(/^(بكالوريوس|دبلوم متوسط|دبلوم|عام)\s+/g,'')
+        .trim();
+      if(p && !ignored.test(p)) { s = p; break; }
+    }
+  }
+
+  s = s
+    .replace(/الفصل (الاول|الثاني|الثالث)/g,'')
+    .replace(/السجل (الاول|الثاني)/g,'')
+    .replace(/^(بكالوريوس|دبلوم متوسط|دبلوم|عام)\s+/g,'')
+    .replace(/\s+/g,' ').trim();
+
+  return keyTokens(s).join(' ');
+}
+function similarity(a,b){
+  const A = new Set(keyTokens(a));
+  const B = new Set(keyTokens(b));
+  if(!A.size || !B.size) return 0;
+  const intersection = [...A].filter(x => B.has(x)).length;
+  return intersection / Math.max(A.size, B.size);
+}
+function uniqueCount(list, selector){
+  return new Set(list.map(selector).filter(Boolean)).size;
+}
+function formatPercent(value, digits = 2){
+  const n = toNumber(value);
+  return n === null ? '—' : `${n.toFixed(digits)}%`;
+}
+function currentScores(){
+  return {
+    q: toNumber($('q').value),
+    t: toNumber($('t').value),
+    s: toNumber($('s').value)
+  };
+}
+function scoreLabel(key){
+  return ({q:'القدرات',t:'التحصيلي',s:'الثانوية'})[key] || key;
+}
+function universityName(id){
+  return UNIS.get(id)?.name || 'جامعة';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   الثيم والواجهة
+═══════════════════════════════════════════════════════════ */
+function toggleTheme(){
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  syncThemeIcon();
+}
+function syncThemeIcon(){
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  $('themeToggle').innerHTML = dark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+}
+function syncGenderUI(){
+  $('genderToggle').querySelectorAll('button').forEach(btn => btn.classList.toggle('on', btn.dataset.g === gender));
+}
+function setGender(value){
+  gender = value;
+  localStorage.setItem('acceptanceGender', value);
+  syncGenderUI();
+  renderResults();
+}
 function onScore(){
-  $("q").value=clamp($("q").value); $("t").value=clamp($("t").value); $("s").value=clamp($("s").value);
-  localStorage.setItem("qodrat",$("q").value);
-  localStorage.setItem("tahsili",$("t").value);
-  localStorage.setItem("school",$("s").value);
-  if(selectedKey) renderResults();
-}
-
-/* ═══ الموزونة لكل جامعة ═══ */
-function mozFor(uni){
-  if(!uni||!uni.weights) return null;
-  const{q,t,s}=scores(), w=uni.weights;
-  return q*normW(w.qodrat)+t*normW(w.tahsili)+s*normW(w.school);
-}
-/* نسبة القبول حسب الجنس المختار */
-function cutoffFor(row){
-  if(gender==="male"  && row.male_ratio   !=null) return num(row.male_ratio);
-  if(gender==="female"&& row.female_ratio !=null) return num(row.female_ratio);
-  if(row.general_ratio!=null) return num(row.general_ratio);
-  if(row.female_ratio !=null) return num(row.female_ratio);
-  if(row.male_ratio   !=null) return num(row.male_ratio);
-  return null;
-}
-function classify(moz,cut){
-  if(moz>=cut) return "ok";
-  if(moz>=cut-MARGIN) return "mid";
-  return "no";
-}
-
-/* ═══ بناء قائمة التخصصات (من التخصصات نفسها) ═══ */
-function buildGroups(offers){
-  const map=new Map();
-  offers.forEach(o=>{
-    const name=o.major_name; if(!name) return;
-    const key=normName(name); if(!key) return;
-    if(!map.has(key)) map.set(key,{key,label:name,offers:[]});
-    map.get(key).offers.push(o);
+  const fields = [
+    {input:$('q'),box:$('qField'),key:'qodrat'},
+    {input:$('t'),box:$('tField'),key:'tahsili'},
+    {input:$('s'),box:$('sField'),key:'school'}
+  ];
+  fields.forEach(({input,box,key}) => {
+    const valid = clampInput(input);
+    box.classList.toggle('invalid', !valid);
+    if(valid) localStorage.setItem(key, input.value);
   });
-  GROUPS=[...map.values()].sort((a,b)=>b.offers.length-a.offers.length || a.label.localeCompare(b.label,"ar"));
-}
-/* تجيب نسبة القبول لعرض إضافي فقط (لو موجودة) */
-function ratioFor(o){
-  return RATIOS[o.university_id+"::"+normName(o.major_name)]
-      || (o.major_code?RATIOS[o.university_id+"::#"+o.major_code]:null)
-      || null;
+  renderResults();
 }
 
+/* ═══════════════════════════════════════════════════════════
+   الكتالوج: التخصصات الفعلية أولًا ثم ربط نسب القبول بها
+═══════════════════════════════════════════════════════════ */
+function activeCollege(collegeId){
+  const c = COLLEGES.get(String(collegeId));
+  return c && c.is_active !== false && normalizeArabic(c.name) !== normalizeArabic('مؤشرات القبول');
+}
+function offeringAllowedByGender(offering){
+  const text = normalizeArabic(`${offering.note || ''} ${COLLEGES.get(String(offering.college_id))?.description || ''}`);
+  if(gender === 'male' && /طالبات فقط/.test(text)) return false;
+  if(gender === 'female' && /طلاب فقط/.test(text)) return false;
+  return true;
+}
+function resolveExistingGroup(groupsMap, label){
+  const direct = canonicalAlias(label);
+  if(groupsMap.has(direct)) return direct;
+
+  let bestKey = null;
+  let bestScore = 0;
+  for(const [key, group] of groupsMap){
+    const score = Math.max(similarity(label, group.label), similarity(direct, key));
+    if(score > bestScore){ bestScore = score; bestKey = key; }
+  }
+  return bestScore >= .78 ? bestKey : direct;
+}
+function buildCatalog(){
+  const groups = new Map();
+
+  for(const major of ACTUAL_MAJORS){
+    if(!activeCollege(major.college_id)) continue;
+    const label = String(major.name || '').trim();
+    if(!label) continue;
+    const key = canonicalAlias(label) || normalizeArabic(label);
+    if(!groups.has(key)) groups.set(key,{key,label,offerings:[],ratios:[],aliases:new Set([label])});
+    const group = groups.get(key);
+    group.offerings.push(major);
+    group.aliases.add(label);
+  }
+
+  for(const ratio of RATIOS){
+    const label = ratio.major_name || ratio.display_name || ratio.name;
+    if(!label) continue;
+    const key = resolveExistingGroup(groups, label);
+    if(!groups.has(key)) groups.set(key,{key,label:cleanRatioLabel(label),offerings:[],ratios:[],aliases:new Set([label])});
+    const group = groups.get(key);
+    group.ratios.push(ratio);
+    group.aliases.add(label);
+  }
+
+  GROUPS = [...groups.values()]
+    .map(group => {
+      const offeringUniversities = uniqueCount(group.offerings, x => x.university_id);
+      const ratioUniversities = uniqueCount(group.ratios, x => x.university_id);
+      group.universityCount = new Set([
+        ...group.offerings.map(x=>x.university_id),
+        ...group.ratios.map(x=>x.university_id)
+      ]).size;
+      group.hasActualOffering = offeringUniversities > 0;
+      group.hasRatio = ratioUniversities > 0;
+      return group;
+    })
+    .sort((a,b) => b.universityCount - a.universityCount || a.label.localeCompare(b.label,'ar'));
+}
+function cleanRatioLabel(value){
+  const raw = String(value || '').replace(/[–—]/g,'-');
+  const parts = raw.split('-').map(x=>x.trim()).filter(Boolean);
+  if(parts.length > 1){
+    for(let i=parts.length-1;i>=0;i--){
+      const p = parts[i];
+      if(!/^(الفصل|السجل|طلاب|طالبات|بكالوريوس|دبلوم|منصة قبول|المقر الرئيسي)/.test(p)) return p;
+    }
+  }
+  return raw;
+}
 function renderMajors(){
-  const term=normName($("majSearch").value);
-  const list=term?GROUPS.filter(g=>g.key.includes(term)):GROUPS;
-  $("majorsList").innerHTML = list.slice(0,60).map(g=>`
-    <button class="maj-chip ${g.key===selectedKey?"on":""}" onclick="selectMajor('${esc(g.key)}')">
-      ${esc(g.label)} <span class="n">${g.offers.length}</span>
-    </button>`).join("") || `<span style="color:var(--faint);font-size:13px;padding:8px">ما فيه تخصص بهذا الاسم.</span>`;
-}
+  const term = normalizeArabic($('majSearch').value);
+  const filtered = GROUPS.filter(group => {
+    if(!term) return true;
+    const haystack = normalizeArabic([group.label, ...group.aliases].join(' '));
+    return haystack.includes(term) || similarity(term, haystack) >= .6;
+  });
 
-function setGender(g){
-  gender=g;
-  $("genderToggle").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.g===g));
-  if(selectedKey) renderResults();
+  $('majorsList').innerHTML = filtered.slice(0,MAX_MAJOR_CHIPS).map(group => `
+    <button class="maj-chip ${group.key === selectedKey ? 'on' : ''}" type="button" onclick="selectMajor(${JSON.stringify(group.key)})">
+      ${esc(group.label)} <span class="n">${group.universityCount}</span>
+    </button>`).join('') || '<span style="color:var(--faint);font-size:13px;padding:8px">لم نجد تخصصًا مطابقًا.</span>';
 }
-
 function selectMajor(key){
-  selectedKey=key;
+  selectedKey = key;
+  const group = GROUPS.find(x => x.key === key);
+  if(group){
+    const url = new URL(location.href);
+    url.searchParams.set('major', group.label);
+    history.replaceState(null,'',url);
+  }
   renderMajors();
   renderResults();
-  document.getElementById("resultsHead").scrollIntoView({behavior:"smooth",block:"start"});
+  $('resultsHead').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-/* ═══ عرض النتائج ═══ */
-function renderResults(){
-  const g=GROUPS.find(x=>x.key===selectedKey); if(!g) return;
-  $("pickedName").textContent=g.label;
-  $("resultsHead").style.display="flex";
+/* ═══════════════════════════════════════════════════════════
+   اختيار النسبة حسب الجنس
+═══════════════════════════════════════════════════════════ */
+function cutoffFor(row){
+  const general = toNumber(row.general_ratio);
+  const male = toNumber(row.male_ratio);
+  const female = toNumber(row.female_ratio);
 
-  if(!hasScores()){
-    $("resCount").textContent="";
-    $("legend").style.display="none";
-    $("disclaimer").style.display="none";
-    $("resGrid").innerHTML=`<div class="state"><div class="ic"><i class="fa-solid fa-keyboard"></i></div><b>أدخل درجاتك أولاً</b><p>عبّي القدرات والتحصيلي والثانوي فوق، وبنرتّب لك الجامعات حسب موزونتك مباشرة.</p></div>`;
-    $("q").focus();
+  if(gender === 'male'){
+    if(male !== null) return {value:male,label:'طلاب'};
+    if(general !== null) return {value:general,label:'عام'};
+    return {value:null,label:'لا توجد نسبة للطلاب'};
+  }
+  if(gender === 'female'){
+    if(female !== null) return {value:female,label:'طالبات'};
+    if(general !== null) return {value:general,label:'عام'};
+    return {value:null,label:'لا توجد نسبة للطالبات'};
+  }
+
+  if(general !== null) return {value:general,label:'عام'};
+  if(male !== null && female !== null && Math.abs(male-female) < .001) return {value:male,label:'طلاب وطالبات'};
+  return {value:null,label:'اختر طلاب أو طالبات'};
+}
+
+/* ═══════════════════════════════════════════════════════════
+   مطابقة سجل القبول بمسار القبول الصحيح
+═══════════════════════════════════════════════════════════ */
+function textCategory(text){
+  const s = normalizeArabic(text);
+  return {
+    diploma:/دبلوم|تطبيقي/.test(s),
+    health:/صحي|طب |طب$|صيدله|تمريض|مختبر|اشعه|علاج|قباله|بصريات|صحه/.test(s),
+    engineering:/هندس|عماره|تشييد|طاقه شمسيه|مساحه/.test(s),
+    computing:/حاسب|برمج|ذكاء|سيبراني|بيانات|معلومات|شبكات/.test(s),
+    science:/علوم|كيمياء|فيزياء|رياضيات|احياء|احصاء|بيئه|طاقه متجدده/.test(s),
+    humanities:/اداره|قانون|لغه|شريعه|اداب|تربيه|تسويق|محاسبه|موارد|انساني|نظري|سياحه|اعلام/.test(s),
+    male:/طلاب|بنين/.test(s),
+    female:/طالبات|بنات/.test(s)
+  };
+}
+function trackScore(track, row, groupLabel){
+  const trackText = normalizeArabic(`${track.name || ''} ${track.description || ''} ${track.weight?.note || ''}`);
+  const rowText = normalizeArabic(`${row.ratio_type || ''} ${row.major_name || ''} ${row.college_name || ''} ${row.note || ''} ${groupLabel || ''}`);
+  const c = textCategory(rowText);
+  let score = 0;
+
+  if(c.diploma && /دبلوم|تطبيقي/.test(trackText)) score += 14;
+  if(!c.diploma && /دبلوم|تطبيقي/.test(trackText)) score -= 5;
+  if(c.health && /صحي|طب|صيدله|تمريض/.test(trackText)) score += 13;
+  if(c.engineering && /هندس/.test(trackText)) score += 11;
+  if(c.computing && /حاسب|حاسوبي|تقني/.test(trackText)) score += 11;
+  if(c.science && /علمي|علوم|مركبه 1|موزونه/.test(trackText)) score += 7;
+  if(c.humanities && /اداري|انساني|نظري|مكافئ|مكافيه/.test(trackText)) score += 10;
+
+  if(gender === 'male'){
+    if(/طلاب|بنين/.test(trackText)) score += 8;
+    if(/طالبات|بنات/.test(trackText)) score -= 20;
+  }else if(gender === 'female'){
+    if(/طالبات|بنات/.test(trackText)) score += 8;
+    if(/طلاب|بنين/.test(trackText)) score -= 20;
+  }
+
+  const ratioType = normalizeArabic(row.ratio_type || '');
+  const trackName = normalizeArabic(track.name || '');
+  if(ratioType && trackName && (ratioType.includes(trackName) || trackName.includes(ratioType))) score += 10;
+
+  return score;
+}
+function resolveWeight(row, groupLabel){
+  const explicitTrackId = row.track_id != null ? String(row.track_id) : null;
+  if(explicitTrackId && WEIGHTS_BY_TRACK.has(explicitTrackId)){
+    const track = [...(TRACKS_BY_UNI.get(row.university_id) || [])].find(t => String(t.id) === explicitTrackId);
+    return {weight:WEIGHTS_BY_TRACK.get(explicitTrackId),track,confidence:'exact'};
+  }
+
+  const options = (TRACKS_BY_UNI.get(row.university_id) || [])
+    .map(track => ({...track,weight:WEIGHTS_BY_TRACK.get(String(track.id))}))
+    .filter(track => track.weight);
+
+  if(options.length === 1) return {weight:options[0].weight,track:options[0],confidence:'single'};
+
+  if(options.length > 1){
+    const ranked = options.map(track => ({track,score:trackScore(track,row,groupLabel)})).sort((a,b)=>b.score-a.score);
+    if(ranked[0].score > 0 && (ranked.length === 1 || ranked[0].score > ranked[1].score)){
+      return {weight:ranked[0].track.weight,track:ranked[0].track,confidence:ranked[0].score >= 10 ? 'high' : 'heuristic'};
+    }
+  }
+
+  const fallback = FALLBACK_WEIGHTS_BY_UNI.get(row.university_id);
+  if(fallback && [fallback.qodrat_weight,fallback.tahsili_weight,fallback.school_weight].some(v => toNumber(v) !== null)){
+    return {weight:fallback,track:{name:'معيار الجامعة الافتراضي'},confidence:'fallback'};
+  }
+
+  return {weight:null,track:null,confidence:'none'};
+}
+function requiredScoreKeys(weight){
+  if(!weight) return [];
+  return [
+    ['q',normWeight(weight.qodrat_weight)],
+    ['t',normWeight(weight.tahsili_weight)],
+    ['s',normWeight(weight.school_weight)]
+  ].filter(([,w]) => w > 0).map(([key])=>key);
+}
+function calculateWeightedScore(weight){
+  if(!weight) return {value:null,missing:[]};
+  const scores = currentScores();
+  const required = requiredScoreKeys(weight);
+  const missing = required.filter(key => scores[key] === null);
+  if(missing.length) return {value:null,missing};
+
+  const value =
+    (scores.q ?? 0) * normWeight(weight.qodrat_weight) +
+    (scores.t ?? 0) * normWeight(weight.tahsili_weight) +
+    (scores.s ?? 0) * normWeight(weight.school_weight);
+  return {value,missing:[]};
+}
+function formulaText(weight){
+  if(!weight) return 'لم يُحدد معيار الحساب لهذا السجل.';
+  const parts = [];
+  const q = normWeight(weight.qodrat_weight), t = normWeight(weight.tahsili_weight), s = normWeight(weight.school_weight);
+  if(s>0) parts.push(`${Math.round(s*100)}% ثانوي`);
+  if(q>0) parts.push(`${Math.round(q*100)}% قدرات`);
+  if(t>0) parts.push(`${Math.round(t*100)}% تحصيلي`);
+  return parts.join(' + ') || 'لا توجد أوزان مكتملة.';
+}
+function classify(score,cutoff){
+  if(score === null || cutoff === null) return 'unknown';
+  if(score >= cutoff) return 'ok';
+  if(score >= cutoff - CLOSE_MARGIN) return 'mid';
+  return 'no';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   تكوين نتائج جامعة واحدة
+═══════════════════════════════════════════════════════════ */
+function buildUniversityResult(group, universityId){
+  const offerings = group.offerings.filter(x => x.university_id === universityId && offeringAllowedByGender(x));
+  const ratios = group.ratios.filter(x => x.university_id === universityId);
+
+  const options = ratios.map(row => {
+    const cutoff = cutoffFor(row);
+    const resolved = resolveWeight(row,group.label);
+    const calculated = calculateWeightedScore(resolved.weight);
+    const status = classify(calculated.value,cutoff.value);
+    const gap = calculated.value !== null && cutoff.value !== null ? calculated.value-cutoff.value : null;
+    return {row,cutoff,resolved,score:calculated.value,missing:calculated.missing,status,gap};
+  });
+
+  options.sort((a,b) => {
+    const rank = {ok:4,mid:3,no:2,unknown:1};
+    if(rank[b.status] !== rank[a.status]) return rank[b.status]-rank[a.status];
+    if(a.gap !== null && b.gap !== null) return b.gap-a.gap;
+    return 0;
+  });
+
+  const best = options[0] || {
+    row:null, cutoff:{value:null,label:'لا توجد نسبة سابقة'}, resolved:{weight:null,track:null,confidence:'none'},
+    score:null, missing:[], status:'unknown', gap:null
+  };
+
+  return {universityId,university:UNIS.get(universityId),offerings,options,best};
+}
+function resultUniversities(group){
+  const ids = new Set([
+    ...group.offerings.filter(offeringAllowedByGender).map(x=>x.university_id),
+    ...group.ratios.map(x=>x.university_id)
+  ]);
+  return [...ids].filter(id => UNIS.has(id));
+}
+
+/* ═══════════════════════════════════════════════════════════
+   عرض النتائج
+═══════════════════════════════════════════════════════════ */
+function statusLabel(status){
+  return ({ok:'أعلى من الحد السابق',mid:'قريب من الحد السابق',no:'أقل من الحد السابق',unknown:'بيانات غير مكتملة'})[status];
+}
+function statusIcon(status){
+  return ({ok:'fa-circle-check',mid:'fa-circle-half-stroke',no:'fa-circle-xmark',unknown:'fa-circle-info'})[status];
+}
+function optionTitle(option){
+  const row = option.row || {};
+  return row.college_name || row.ratio_type || row.major_name || 'سجل القبول';
+}
+function missingText(option){
+  if(option.missing?.length) return `أدخل ${option.missing.map(scoreLabel).join(' و')} لإكمال الحساب.`;
+  if(option.cutoff.value === null) return option.cutoff.label || 'لا توجد نسبة قبول صالحة للمقارنة.';
+  if(!option.resolved.weight) return 'لم نتمكن من تحديد مسار القبول ووزنه لهذا السجل.';
+  return 'لا توجد بيانات كافية للمقارنة.';
+}
+function renderOption(option){
+  const row = option.row || {};
+  const ratioLabel = option.cutoff.value !== null ? formatPercent(option.cutoff.value) : '—';
+  const scoreLabelValue = option.score !== null ? formatPercent(option.score) : '—';
+  const trackName = option.resolved.track?.name || 'المسار غير محدد';
+  return `
+    <div class="option">
+      <div>
+        <b>${esc(optionTitle(option))}</b>
+        <p>${esc(row.ratio_type || '')}${row.year ? ` · سنة ${esc(row.year)}` : ''}${option.cutoff.label ? ` · ${esc(option.cutoff.label)}` : ''}</p>
+        <span class="source-pill"><i class="fa-solid fa-route"></i>${esc(trackName)}</span>
+      </div>
+      <div class="option-score">
+        موزونتك ${scoreLabelValue}<br>الحد السابق ${ratioLabel}
+      </div>
+    </div>`;
+}
+function renderUniversityCard(result,index){
+  const {universityId,university,offerings,options,best} = result;
+  const status = best.status;
+  const collegeNames = [...new Set(offerings.map(x => COLLEGES.get(String(x.college_id))?.name).filter(Boolean))];
+  const bestRow = best.row || {};
+  const displayCollege = bestRow.college_name || collegeNames[0] || '';
+  const scoreText = best.score !== null ? formatPercent(best.score,1) : '—';
+  const cutoffText = best.cutoff.value !== null ? formatPercent(best.cutoff.value,1) : '—';
+  const gapText = best.gap !== null
+    ? (best.gap >= 0 ? `+${best.gap.toFixed(2)} فوق الحد السابق` : `${best.gap.toFixed(2)} تحت الحد السابق`)
+    : missingText(best);
+  const logo = university?.logo ? `<img class="logo" src="${esc(university.logo)}" alt="شعار ${esc(university.name)}" loading="lazy" onerror="this.remove()">` : '';
+  const otherOptions = options.slice(1);
+  const offeringNote = offerings.length ? `${offerings.length} طرح أكاديمي مسجل` : 'ظهر في بيانات نسب القبول فقط';
+  const confidenceNote = ['heuristic','fallback'].includes(best.resolved.confidence)
+    ? '<span><i class="fa-solid fa-triangle-exclamation"></i> اختيار الوزن استنتاجي ويحتاج ربط track_id</span>' : '';
+
+  return `
+  <article class="res ${status} reveal" style="animation-delay:${Math.min(index*.04,.4)}s">
+    <div class="res-main">
+      <span class="res-rank">${index+1}</span>
+      <div class="res-mid">
+        <div class="res-title-row">${logo}<h3>${esc(university?.name || 'جامعة')}</h3></div>
+        <div class="res-meta">
+          ${displayCollege ? `<span><i class="fa-solid fa-graduation-cap"></i>${esc(displayCollege)}</span>` : ''}
+          <span><i class="fa-solid fa-layer-group"></i>${esc(offeringNote)}</span>
+          ${bestRow.year ? `<span><i class="fa-solid fa-calendar"></i>${esc(bestRow.year)}</span>` : ''}
+          ${confidenceNote}
+        </div>
+        <div class="formula">${esc(best.resolved.track?.name || 'المسار غير محدد')} · ${esc(formulaText(best.resolved.weight))}</div>
+        <a class="details-link" href="details.html?id=${encodeURIComponent(universityId)}"><i class="fa-solid fa-arrow-up-left-from-square"></i> تفاصيل الجامعة</a>
+      </div>
+      <div class="res-right">
+        <span class="res-badge"><i class="fa-solid ${statusIcon(status)}"></i>${statusLabel(status)}</span>
+        <div class="res-nums"><span class="you">${scoreText}</span><span class="vs">مقابل</span><span class="cut">${cutoffText}</span></div>
+        <div class="res-gap">${esc(gapText)}</div>
+      </div>
+    </div>
+    ${otherOptions.length ? `
+      <details class="more">
+        <summary><i class="fa-solid fa-chevron-down"></i> عرض ${otherOptions.length} سجل قبول إضافي</summary>
+        <div class="option-list">${otherOptions.map(renderOption).join('')}</div>
+      </details>` : ''}
+  </article>`;
+}
+function renderResults(){
+  if(!selectedKey) return;
+  const group = GROUPS.find(x => x.key === selectedKey);
+  if(!group) return;
+
+  $('pickedName').textContent = group.label;
+  $('resultsHead').style.display = 'flex';
+  $('legend').style.display = 'flex';
+  $('summary').style.display = 'grid';
+  $('disclaimer').style.display = 'flex';
+
+  const results = resultUniversities(group).map(id => buildUniversityResult(group,id));
+  const showNoData = $('showNoData').checked;
+  const filtered = showNoData ? results : results.filter(r => r.best.status !== 'unknown');
+  const priority = {ok:4,mid:3,no:2,unknown:1};
+  filtered.sort((a,b) => {
+    if(priority[b.best.status] !== priority[a.best.status]) return priority[b.best.status]-priority[a.best.status];
+    const ag = a.best.gap ?? -999, bg = b.best.gap ?? -999;
+    if(bg !== ag) return bg-ag;
+    return universityName(a.universityId).localeCompare(universityName(b.universityId),'ar');
+  });
+
+  const counts = {ok:0,mid:0,no:0,unknown:0};
+  results.forEach(r => counts[r.best.status]++);
+  $('sumOk').textContent = counts.ok;
+  $('sumMid').textContent = counts.mid;
+  $('sumNo').textContent = counts.no;
+  $('sumUnknown').textContent = counts.unknown;
+  $('resCount').textContent = `${results.length} جامعة`;
+
+  if(!filtered.length){
+    $('resGrid').innerHTML = '<div class="state"><div class="ic"><i class="fa-solid fa-filter-circle-xmark"></i></div><b>لا توجد نتائج وفق الفلتر الحالي</b><p>فعّل خيار عرض الجامعات دون نسبة سابقة أو اختر تخصصًا آخر.</p></div>';
     return;
   }
 
-  // كل جامعة تقدّم هذا التخصص (المصدر: التخصصات نفسها) + إثراء بالنسبة لو وُجدت
-  const items=g.offers.map(o=>{
-    const uni=UNIS[o.university_id];
-    const moz=mozFor(uni);
-    const rat=ratioFor(o);
-    const cut=(rat && rat.has_data!==false)?cutoffFor(rat):null;
-    return {o,uni,rat,moz,cut,status:(moz!=null&&cut!=null)?classify(moz,cut):null};
-  }).filter(x=>x.uni);
-
-  // إزالة تكرار نفس (الجامعة + التخصص)
-  const seen=new Set();
-  const uniq=items.filter(x=>{const k=x.o.university_id+"::"+normName(x.o.major_name);if(seen.has(k))return false;seen.add(k);return true;});
-
-  // اللي لها نسبة ترتّب حسب الفرصة، والباقي حسب الموزونة
-  const withRatio=uniq.filter(x=>x.status).sort((a,b)=>(b.moz-b.cut)-(a.moz-a.cut));
-  const noRatio  =uniq.filter(x=>!x.status).sort((a,b)=>(b.moz||0)-(a.moz||0));
-  const ordered=[...withRatio,...noRatio];
-
-  $("resCount").textContent=`${ordered.length} جامعة تقدّم التخصص`;
-  $("legend").style.display=withRatio.length?"flex":"none";
-  $("disclaimer").style.display=withRatio.length?"flex":"none";
-
-  const labelOf={ok:"فرصتك عالية",mid:"قريبة",no:"أقل من القبول"};
-  const iconOf ={ok:"fa-circle-check",mid:"fa-circle-half-stroke",no:"fa-circle-xmark"};
-
-  const metaOf=o=>`<div class="res-meta">
-      ${o.college_name?`<span><i class="fa-solid fa-graduation-cap"></i> ${esc(o.college_name)}</span>`:""}
-      ${o.major_code?`<span><i class="fa-solid fa-hashtag"></i> ${esc(o.major_code)}</span>`:""}
-      ${o.gender?`<span><i class="fa-solid fa-venus-mars"></i> ${esc(o.gender)}</span>`:""}
-    </div>`;
-
-  $("resGrid").innerHTML = ordered.length ? ordered.map((x,i)=>{
-    if(x.status){
-      const gap=x.moz-x.cut;
-      const gapTxt=gap>=0?`+${gap.toFixed(2)} فوق القبول`:`${gap.toFixed(2)} تحت القبول`;
-      return `<a href="details.html?id=${esc(x.o.university_id)}" class="res ${x.status} reveal" style="animation-delay:${Math.min(i*.03,.4)}s">
-        <span class="res-rank">${i+1}</span>
-        <div class="res-mid"><h3>${esc(x.uni.name)}</h3>${metaOf(x.o)}</div>
-        <div class="res-right">
-          <span class="res-badge"><i class="fa-solid ${iconOf[x.status]}"></i> ${labelOf[x.status]}</span>
-          <div class="res-nums"><span class="you">${x.moz.toFixed(1)}%</span><span class="vs">مقابل</span><span class="cut">${x.cut.toFixed(1)}%</span></div>
-          <div class="res-gap">${gapTxt}</div>
-        </div></a>`;
-    }
-    return `<a href="details.html?id=${esc(x.o.university_id)}" class="res res-nodata reveal" style="animation-delay:${Math.min(i*.03,.4)}s">
-        <span class="res-rank">${i+1}</span>
-        <div class="res-mid"><h3>${esc(x.uni.name)}</h3>${metaOf(x.o)}</div>
-        <div class="res-right">موزونتك ${x.moz!=null?`<b style="color:var(--primary)">${x.moz.toFixed(1)}%</b>`:"—"}<br><span style="font-size:11px">نسبة العام الماضي غير متوفرة</span></div>
-      </a>`;
-  }).join("") : `<div class="state"><div class="ic"><i class="fa-solid fa-circle-question"></i></div><b>ما فيه جامعات مرتبطة بهذا التخصص</b><p>التخصص موجود بالاسم بس بدون جامعات مسجّلة فيه بعد.</p></div>`;
+  $('resGrid').innerHTML = filtered.map(renderUniversityCard).join('');
 }
 
-/* ═══ حالات أولية ═══ */
+/* ═══════════════════════════════════════════════════════════
+   حالات التحميل والخطأ
+═══════════════════════════════════════════════════════════ */
 function showLoading(){
-  $("resGrid").innerHTML=Array(4).fill(`<div class="skel"><div class="skel-c"></div><div><div class="skel-b" style="width:55%;margin-bottom:9px"></div><div class="skel-b" style="width:35%"></div></div><div class="skel-b" style="width:70px;height:30px"></div></div>`).join("");
+  $('resGrid').innerHTML = Array(4).fill('<div class="skel"><div class="skel-c"></div><div><div class="skel-b" style="width:55%;margin-bottom:9px"></div><div class="skel-b" style="width:35%"></div></div><div class="skel-b" style="width:80px;height:30px"></div></div>').join('');
 }
 function showStart(){
-  $("resGrid").innerHTML=`<div class="state"><div class="ic"><i class="fa-solid fa-hand-pointer"></i></div><b>اختر تخصص للبداية</b><p>دوّر عن تخصصك فوق أو اختر من القائمة، وبنعرض لك كل جامعة تقدّمه مرتّبة حسب فرصتك.</p></div>`;
+  $('resGrid').innerHTML = '<div class="state"><div class="ic"><i class="fa-solid fa-hand-pointer"></i></div><b>اختر تخصصًا للبداية</b><p>قائمة التخصصات مبنية من جدول التخصصات الفعلي، ثم تربط بما يتوفر من نسب قبول سابقة.</p></div>';
+}
+function showDataNotice(message){
+  $('dataNoticeText').textContent = message;
+  $('dataNotice').style.display = 'flex';
+}
+function hideDataNotice(){
+  $('dataNotice').style.display = 'none';
 }
 
-/* ═══ تحميل البيانات ═══ */
+/* ═══════════════════════════════════════════════════════════
+   تحميل البيانات مع تراجع آمن عند تعذر بعض الجداول
+═══════════════════════════════════════════════════════════ */
+async function safeQuery(promise,label){
+  const {data,error} = await promise;
+  if(error){
+    console.warn(`${label}:`,error);
+    return {data:[],error};
+  }
+  return {data:data || [],error:null};
+}
 async function load(){
   showLoading();
   try{
-    // 1) الجامعات + الأوزان    2) الكليات والتخصصات (الأساس)    3) النسب (إثراء فقط)
-    const uniReq=sb.from("v_universities_home").select("*");
-    const colReq=sb.from("colleges").select("university_id,name,majors(id,code,name,gender,degree)").eq("is_active",true);
-    const ratReq=sb.from("v_admission_ratios_admin").select("*");
-    const [{data:unis,error:uErr},{data:cols,error:cErr},{data:ratios,error:rErr}]=
-      await Promise.all([uniReq,colReq,ratReq]);
-    if(uErr) throw uErr;
-    if(cErr) throw cErr;
+    const [uniRes,ratioRes,collegeRes,majorRes,trackRes,weightRes] = await Promise.all([
+      safeQuery(sb.from('v_universities_home').select('*'),'v_universities_home'),
+      safeQuery(sb.from('v_admission_ratios_admin').select('*'),'v_admission_ratios_admin'),
+      safeQuery(sb.from('colleges').select('id,university_id,name,description,is_active,display_order'),'colleges'),
+      safeQuery(sb.from('majors').select('id,university_id,college_id,code,name,note,display_order'),'majors'),
+      safeQuery(sb.from('admission_tracks').select('id,university_id,name,description,is_active,display_order'),'admission_tracks'),
+      safeQuery(sb.from('university_weights').select('track_id,qodrat_weight,tahsili_weight,school_weight,note'),'university_weights')
+    ]);
 
-    (unis||[]).forEach(u=>{
-      UNIS[u.id]={
-        name:u.name_ar||u.name||"جامعة",
-        logo:u.logo_url||"",
-        weights:{qodrat:u.qodrat_weight,tahsili:u.tahsili_weight,school:u.school_weight}
-      };
-    });
+    if(uniRes.error) throw new Error('تعذر تحميل الجامعات من v_universities_home');
+    if(ratioRes.error) throw new Error('تعذر تحميل نسب القبول من v_admission_ratios_admin');
 
-    // فهرس النسب للعرض الإضافي فقط (لا يحدّد ظهور التخصص)
-    if(!rErr) (ratios||[]).forEach(r=>{
-      if(r.major_name) RATIOS[r.university_id+"::"+normName(r.major_name)]=r;
-      if(r.major_code) RATIOS[r.university_id+"::#"+r.major_code]=r;
-    });
-
-    // تسطيح التخصصات من كل الجامعات → هذا هو أساس البحث
-    const offers=[];
-    (cols||[]).forEach(c=>{
-      (c.majors||[]).forEach(m=>{
-        offers.push({
-          university_id:c.university_id,
-          college_name:c.name,
-          major_code:m.code||"",
-          major_name:m.name||"",
-          gender:m.gender||""
-        });
+    for(const row of uniRes.data){
+      UNIS.set(row.id,{
+        name:row.name_ar || row.name || 'جامعة',
+        logo:row.logo_url || '',
+        city:row.city || '',
+        fallbackWeight:{
+          qodrat_weight:row.qodrat_weight,
+          tahsili_weight:row.tahsili_weight,
+          school_weight:row.school_weight,
+          note:'الوزن الافتراضي من عرض الجامعات'
+        }
       });
-    });
+      FALLBACK_WEIGHTS_BY_UNI.set(row.id,UNIS.get(row.id).fallbackWeight);
+    }
 
-    buildGroups(offers);
+    for(const row of collegeRes.data) COLLEGES.set(String(row.id),row);
+    ACTUAL_MAJORS = majorRes.data;
+    RATIOS = ratioRes.data;
+
+    for(const row of trackRes.data){
+      if(row.is_active === false) continue;
+      if(!TRACKS_BY_UNI.has(row.university_id)) TRACKS_BY_UNI.set(row.university_id,[]);
+      TRACKS_BY_UNI.get(row.university_id).push(row);
+    }
+    for(const row of weightRes.data) WEIGHTS_BY_TRACK.set(String(row.track_id),row);
+    for(const tracks of TRACKS_BY_UNI.values()) tracks.sort((a,b)=>(a.display_order??999)-(b.display_order??999));
+
+    catalogSource = ACTUAL_MAJORS.length && COLLEGES.size ? 'full' : 'ratios-only';
+    buildCatalog();
     renderMajors();
     showStart();
-  }catch(e){
-    console.error("Load error:",e);
-    $("resGrid").innerHTML=`<div class="state"><div class="ic"><i class="fa-solid fa-triangle-exclamation"></i></div><b>تعذّر تحميل البيانات</b><p>تأكد أن جدولي <code>colleges</code> و<code>majors</code> وفيو الجامعات <code>v_universities_home</code> مقروءين بالـ anon key (RLS).</p></div>`;
+
+    if(catalogSource === 'ratios-only'){
+      showDataNotice('تعذر قراءة جدول التخصصات أو الكليات؛ لذلك بُنيت القائمة مؤقتًا من نسب القبول فقط. امنح anon صلاحية SELECT مع RLS للجداول colleges وmajors.');
+    }else if(!trackRes.data.length || !weightRes.data.length){
+      showDataNotice('تم تحميل التخصصات، لكن مسارات وأوزان القبول غير متاحة بالكامل. بعض النتائج ستستخدم الوزن الافتراضي للجامعة أو تظهر دون حساب.');
+    }else{
+      hideDataNotice();
+    }
+
+    const requested = new URLSearchParams(location.search).get('major');
+    if(requested){
+      const key = resolveExistingGroup(new Map(GROUPS.map(g=>[g.key,g])),requested);
+      if(GROUPS.some(g=>g.key===key)) selectMajor(key);
+    }
+  }catch(error){
+    console.error('Load error:',error);
+    $('resGrid').innerHTML = `<div class="state"><div class="ic"><i class="fa-solid fa-triangle-exclamation"></i></div><b>تعذر تحميل البيانات</b><p>${esc(error.message || 'تحقق من الاتصال وسياسات RLS في Supabase.')}</p></div>`;
   }
 }
 
-/* ═══ تهيئة ═══ */
-window.addEventListener("DOMContentLoaded",()=>{
-  syncIcon();
-  $("q").value=localStorage.getItem("qodrat")||"";
-  $("t").value=localStorage.getItem("tahsili")||"";
-  $("s").value=localStorage.getItem("school")||"";
+/* ═══════════════════════════════════════════════════════════
+   التهيئة
+═══════════════════════════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded',()=>{
+  syncThemeIcon();
+  syncGenderUI();
+  $('q').value = localStorage.getItem('qodrat') || '';
+  $('t').value = localStorage.getItem('tahsili') || '';
+  $('s').value = localStorage.getItem('school') || '';
   load();
 });
 </script>
