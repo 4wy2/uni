@@ -255,20 +255,23 @@ const SUPABASE_URL  = "https://gybksasoembmgdevogpv.supabase.co";
 const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd5YmtzYXNvZW1ibWdkZXZvZ3B2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NzEyNjIsImV4cCI6MjA5NzM0NzI2Mn0.U0QFX7WS9ETbV0JmMYe-VNZhErJAPtZxwEBASep7AA4";
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-/* ═══ الحالة ═══ */
-let GROUPS = [];          // [{id,name_ar,universities_count}] من v_major_groups
-let selectedGroupId = null;
+const MARGIN = 2;                 // هامش "قريبة" بالنسبة المئوية
+let UNIS = {};                    // id -> {name, weights, logo}
+let GROUPS = [];                  // [{key,label,offers:[{university_id,college_name,major_code,major_name,gender}]}]
+let RATIOS = {};                  // "uniId::normName"  /  "uniId::#code"  ->  ratioRow (إثراء فقط)
+let selectedKey = null;
 let gender = "general";
-let reqId = 0;            // لمنع تعارض الطلبات المتزامنة
-let resTimer = null;
 const $ = id => document.getElementById(id);
 
 /* ═══ أدوات ═══ */
 function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
 function clamp(v){if(v==="")return"";let n=Number(v);if(isNaN(n))return"";return String(Math.min(100,Math.max(0,n)))}
+function num(v){const n=Number(v);return isNaN(n)?null:n}
+// يدعم 0.30 و 30 معاً
+function normW(v){const n=Number(v);if(isNaN(n))return 0;return n>1?n/100:n}
 function scores(){return{q:parseFloat(localStorage.getItem("qodrat"))||0,t:parseFloat(localStorage.getItem("tahsili"))||0,s:parseFloat(localStorage.getItem("school"))||0}}
 function hasScores(){const{q,t,s}=scores();return q>0||t>0||s>0}
-// تطبيع عربي — للبحث في قائمة التخصصات فقط (المطابقة الفعلية صارت في السيرفر)
+// تطبيع اسم التخصص للمطابقة بين الجامعات
 function normName(s){return String(s||"").replace(/[ًٌٍَُِّْـ]/g,"").replace(/[أإآ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").replace(/\s+/g," ").trim().toLowerCase()}
 
 /* ═══ الثيم ═══ */
@@ -281,37 +284,74 @@ function onScore(){
   localStorage.setItem("qodrat",$("q").value);
   localStorage.setItem("tahsili",$("t").value);
   localStorage.setItem("school",$("s").value);
-  if(selectedGroupId) scheduleResults();
+  if(selectedKey) renderResults();
 }
-function scheduleResults(){ clearTimeout(resTimer); resTimer=setTimeout(renderResults,350); }
 
-/* ═══ قائمة التخصصات ═══ */
+/* ═══ الموزونة لكل جامعة ═══ */
+function mozFor(uni){
+  if(!uni||!uni.weights) return null;
+  const{q,t,s}=scores(), w=uni.weights;
+  return q*normW(w.qodrat)+t*normW(w.tahsili)+s*normW(w.school);
+}
+/* نسبة القبول حسب الجنس المختار */
+function cutoffFor(row){
+  if(gender==="male"  && row.male_ratio   !=null) return num(row.male_ratio);
+  if(gender==="female"&& row.female_ratio !=null) return num(row.female_ratio);
+  if(row.general_ratio!=null) return num(row.general_ratio);
+  if(row.female_ratio !=null) return num(row.female_ratio);
+  if(row.male_ratio   !=null) return num(row.male_ratio);
+  return null;
+}
+function classify(moz,cut){
+  if(moz>=cut) return "ok";
+  if(moz>=cut-MARGIN) return "mid";
+  return "no";
+}
+
+/* ═══ بناء قائمة التخصصات (من التخصصات نفسها) ═══ */
+function buildGroups(offers){
+  const map=new Map();
+  offers.forEach(o=>{
+    const name=o.major_name; if(!name) return;
+    const key=normName(name); if(!key) return;
+    if(!map.has(key)) map.set(key,{key,label:name,offers:[]});
+    map.get(key).offers.push(o);
+  });
+  GROUPS=[...map.values()].sort((a,b)=>b.offers.length-a.offers.length || a.label.localeCompare(b.label,"ar"));
+}
+/* تجيب نسبة القبول لعرض إضافي فقط (لو موجودة) */
+function ratioFor(o){
+  return RATIOS[o.university_id+"::"+normName(o.major_name)]
+      || (o.major_code?RATIOS[o.university_id+"::#"+o.major_code]:null)
+      || null;
+}
+
 function renderMajors(){
   const term=normName($("majSearch").value);
-  const list=term?GROUPS.filter(g=>normName(g.name_ar).includes(term)):GROUPS;
-  $("majorsList").innerHTML = list.slice(0,80).map(g=>`
-    <button class="maj-chip ${g.id===selectedGroupId?"on":""}" onclick="selectMajor('${esc(g.id)}')">
-      ${esc(g.name_ar)} <span class="n">${g.universities_count??""}</span>
+  const list=term?GROUPS.filter(g=>g.key.includes(term)):GROUPS;
+  $("majorsList").innerHTML = list.slice(0,60).map(g=>`
+    <button class="maj-chip ${g.key===selectedKey?"on":""}" onclick="selectMajor('${esc(g.key)}')">
+      ${esc(g.label)} <span class="n">${g.offers.length}</span>
     </button>`).join("") || `<span style="color:var(--faint);font-size:13px;padding:8px">ما فيه تخصص بهذا الاسم.</span>`;
 }
 
 function setGender(g){
   gender=g;
   $("genderToggle").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.g===g));
-  if(selectedGroupId) renderResults();
+  if(selectedKey) renderResults();
 }
 
-function selectMajor(id){
-  selectedGroupId=id;
+function selectMajor(key){
+  selectedKey=key;
   renderMajors();
   renderResults();
   document.getElementById("resultsHead").scrollIntoView({behavior:"smooth",block:"start"});
 }
 
-/* ═══ النتائج — تُحسب بالكامل في السيرفر (RPC) ═══ */
-async function renderResults(){
-  const g=GROUPS.find(x=>x.id===selectedGroupId); if(!g) return;
-  $("pickedName").textContent=g.name_ar;
+/* ═══ عرض النتائج ═══ */
+function renderResults(){
+  const g=GROUPS.find(x=>x.key===selectedKey); if(!g) return;
+  $("pickedName").textContent=g.label;
   $("resultsHead").style.display="flex";
 
   if(!hasScores()){
@@ -323,88 +363,113 @@ async function renderResults(){
     return;
   }
 
-  const myReq=++reqId;
-  skeletons();
-  const {q,t,s}=scores();
-  let data=null,error=null;
-  try{
-    const res=await sb.rpc("match_universities_by_major",{p_group:selectedGroupId,p_q:q,p_t:t,p_s:s,p_gender:gender});
-    data=res.data; error=res.error;
-  }catch(e){ error=e; }
+  // كل جامعة تقدّم هذا التخصص (المصدر: التخصصات نفسها) + إثراء بالنسبة لو وُجدت
+  const items=g.offers.map(o=>{
+    const uni=UNIS[o.university_id];
+    const moz=mozFor(uni);
+    const rat=ratioFor(o);
+    const cut=(rat && rat.has_data!==false)?cutoffFor(rat):null;
+    return {o,uni,rat,moz,cut,status:(moz!=null&&cut!=null)?classify(moz,cut):null};
+  }).filter(x=>x.uni);
 
-  if(myReq!==reqId) return;                 // وصل طلب أحدث — نتجاهل القديم
-  if(error){ console.error("RPC error:",error); errorState("تأكد أنك شغّلت ملف <code>data-upgrade.sql</code>، وأن الدالة <code>match_universities_by_major</code> موجودة ومسموح بها للـ anon."); return; }
-  renderRows(data||[]);
-}
+  // إزالة تكرار نفس (الجامعة + التخصص)
+  const seen=new Set();
+  const uniq=items.filter(x=>{const k=x.o.university_id+"::"+normName(x.o.major_name);if(seen.has(k))return false;seen.add(k);return true;});
 
-function renderRows(rows){
-  const hasAnyRatio=rows.some(r=>r.status);
-  $("legend").style.display=hasAnyRatio?"flex":"none";
-  $("disclaimer").style.display=hasAnyRatio?"flex":"none";
-  $("resCount").textContent=rows.length?`${rows.length} جامعة تقدّم التخصص`:"";
+  // اللي لها نسبة ترتّب حسب الفرصة، والباقي حسب الموزونة
+  const withRatio=uniq.filter(x=>x.status).sort((a,b)=>(b.moz-b.cut)-(a.moz-a.cut));
+  const noRatio  =uniq.filter(x=>!x.status).sort((a,b)=>(b.moz||0)-(a.moz||0));
+  const ordered=[...withRatio,...noRatio];
 
-  if(!rows.length){
-    $("resGrid").innerHTML=`<div class="state"><div class="ic"><i class="fa-solid fa-circle-question"></i></div><b>ما فيه جامعات مرتبطة بهذا التخصص</b><p>التخصص موجود بس بدون جامعات مسجّلة فيه بعد.</p></div>`;
-    return;
-  }
+  $("resCount").textContent=`${ordered.length} جامعة تقدّم التخصص`;
+  $("legend").style.display=withRatio.length?"flex":"none";
+  $("disclaimer").style.display=withRatio.length?"flex":"none";
 
   const labelOf={ok:"فرصتك عالية",mid:"قريبة",no:"أقل من القبول"};
   const iconOf ={ok:"fa-circle-check",mid:"fa-circle-half-stroke",no:"fa-circle-xmark"};
 
-  const metaOf=r=>`<div class="res-meta">
-      ${r.city?`<span><i class="fa-solid fa-location-dot"></i> ${esc(r.city)}</span>`:""}
-      ${r.college_name?`<span><i class="fa-solid fa-graduation-cap"></i> ${esc(r.college_name)}</span>`:""}
-      ${r.major_code?`<span><i class="fa-solid fa-hashtag"></i> ${esc(r.major_code)}</span>`:""}
-      ${r.gender?`<span><i class="fa-solid fa-venus-mars"></i> ${esc(r.gender)}</span>`:""}
+  const metaOf=o=>`<div class="res-meta">
+      ${o.college_name?`<span><i class="fa-solid fa-graduation-cap"></i> ${esc(o.college_name)}</span>`:""}
+      ${o.major_code?`<span><i class="fa-solid fa-hashtag"></i> ${esc(o.major_code)}</span>`:""}
+      ${o.gender?`<span><i class="fa-solid fa-venus-mars"></i> ${esc(o.gender)}</span>`:""}
     </div>`;
 
-  $("resGrid").innerHTML=rows.map((r,i)=>{
-    const moz=Number(r.weighted)||0;
-    if(r.status){
-      const cut=Number(r.cutoff)||0, gap=Number(r.gap)||0;
+  $("resGrid").innerHTML = ordered.length ? ordered.map((x,i)=>{
+    if(x.status){
+      const gap=x.moz-x.cut;
       const gapTxt=gap>=0?`+${gap.toFixed(2)} فوق القبول`:`${gap.toFixed(2)} تحت القبول`;
-      return `<a href="details.html?id=${esc(r.university_id)}" class="res ${esc(r.status)} reveal" style="animation-delay:${Math.min(i*.03,.4)}s">
+      return `<a href="details.html?id=${esc(x.o.university_id)}" class="res ${x.status} reveal" style="animation-delay:${Math.min(i*.03,.4)}s">
         <span class="res-rank">${i+1}</span>
-        <div class="res-mid"><h3>${esc(r.university_name)}</h3>${metaOf(r)}</div>
+        <div class="res-mid"><h3>${esc(x.uni.name)}</h3>${metaOf(x.o)}</div>
         <div class="res-right">
-          <span class="res-badge"><i class="fa-solid ${iconOf[r.status]}"></i> ${labelOf[r.status]}</span>
-          <div class="res-nums"><span class="you">${moz.toFixed(1)}%</span><span class="vs">مقابل</span><span class="cut">${cut.toFixed(1)}%</span></div>
-          <div class="res-gap">${gapTxt}${r.ratio_year?` · ${esc(r.ratio_year)}`:""}</div>
+          <span class="res-badge"><i class="fa-solid ${iconOf[x.status]}"></i> ${labelOf[x.status]}</span>
+          <div class="res-nums"><span class="you">${x.moz.toFixed(1)}%</span><span class="vs">مقابل</span><span class="cut">${x.cut.toFixed(1)}%</span></div>
+          <div class="res-gap">${gapTxt}</div>
         </div></a>`;
     }
-    return `<a href="details.html?id=${esc(r.university_id)}" class="res res-nodata reveal" style="animation-delay:${Math.min(i*.03,.4)}s">
+    return `<a href="details.html?id=${esc(x.o.university_id)}" class="res res-nodata reveal" style="animation-delay:${Math.min(i*.03,.4)}s">
         <span class="res-rank">${i+1}</span>
-        <div class="res-mid"><h3>${esc(r.university_name)}</h3>${metaOf(r)}</div>
-        <div class="res-right">موزونتك <b style="color:var(--primary)">${moz.toFixed(1)}%</b><br><span style="font-size:11px">نسبة العام الماضي غير متوفرة</span></div>
+        <div class="res-mid"><h3>${esc(x.uni.name)}</h3>${metaOf(x.o)}</div>
+        <div class="res-right">موزونتك ${x.moz!=null?`<b style="color:var(--primary)">${x.moz.toFixed(1)}%</b>`:"—"}<br><span style="font-size:11px">نسبة العام الماضي غير متوفرة</span></div>
       </a>`;
-  }).join("");
+  }).join("") : `<div class="state"><div class="ic"><i class="fa-solid fa-circle-question"></i></div><b>ما فيه جامعات مرتبطة بهذا التخصص</b><p>التخصص موجود بالاسم بس بدون جامعات مسجّلة فيه بعد.</p></div>`;
 }
 
-/* ═══ حالات ═══ */
-function skeletons(){
+/* ═══ حالات أولية ═══ */
+function showLoading(){
   $("resGrid").innerHTML=Array(4).fill(`<div class="skel"><div class="skel-c"></div><div><div class="skel-b" style="width:55%;margin-bottom:9px"></div><div class="skel-b" style="width:35%"></div></div><div class="skel-b" style="width:70px;height:30px"></div></div>`).join("");
 }
 function showStart(){
   $("resGrid").innerHTML=`<div class="state"><div class="ic"><i class="fa-solid fa-hand-pointer"></i></div><b>اختر تخصص للبداية</b><p>دوّر عن تخصصك فوق أو اختر من القائمة، وبنعرض لك كل جامعة تقدّمه مرتّبة حسب فرصتك.</p></div>`;
 }
-function errorState(msg){
-  $("legend").style.display="none";
-  $("disclaimer").style.display="none";
-  $("resGrid").innerHTML=`<div class="state"><div class="ic"><i class="fa-solid fa-triangle-exclamation"></i></div><b>تعذّر تحميل البيانات</b><p>${msg||"حصل خطأ غير متوقع."}</p></div>`;
-}
 
-/* ═══ تحميل قائمة التخصصات (خفيفة) ═══ */
+/* ═══ تحميل البيانات ═══ */
 async function load(){
-  skeletons();
+  showLoading();
   try{
-    const {data,error}=await sb.from("v_major_groups").select("*");
-    if(error) throw error;
-    GROUPS=data||[];
+    // 1) الجامعات + الأوزان    2) الكليات والتخصصات (الأساس)    3) النسب (إثراء فقط)
+    const uniReq=sb.from("v_universities_home").select("*");
+    const colReq=sb.from("colleges").select("university_id,name,majors(id,code,name,gender,degree)").eq("is_active",true);
+    const ratReq=sb.from("v_admission_ratios_admin").select("*");
+    const [{data:unis,error:uErr},{data:cols,error:cErr},{data:ratios,error:rErr}]=
+      await Promise.all([uniReq,colReq,ratReq]);
+    if(uErr) throw uErr;
+    if(cErr) throw cErr;
+
+    (unis||[]).forEach(u=>{
+      UNIS[u.id]={
+        name:u.name_ar||u.name||"جامعة",
+        logo:u.logo_url||"",
+        weights:{qodrat:u.qodrat_weight,tahsili:u.tahsili_weight,school:u.school_weight}
+      };
+    });
+
+    // فهرس النسب للعرض الإضافي فقط (لا يحدّد ظهور التخصص)
+    if(!rErr) (ratios||[]).forEach(r=>{
+      if(r.major_name) RATIOS[r.university_id+"::"+normName(r.major_name)]=r;
+      if(r.major_code) RATIOS[r.university_id+"::#"+r.major_code]=r;
+    });
+
+    // تسطيح التخصصات من كل الجامعات → هذا هو أساس البحث
+    const offers=[];
+    (cols||[]).forEach(c=>{
+      (c.majors||[]).forEach(m=>{
+        offers.push({
+          university_id:c.university_id,
+          college_name:c.name,
+          major_code:m.code||"",
+          major_name:m.name||"",
+          gender:m.gender||""
+        });
+      });
+    });
+
+    buildGroups(offers);
     renderMajors();
     showStart();
   }catch(e){
     console.error("Load error:",e);
-    errorState("تأكد أنك شغّلت <code>data-upgrade.sql</code>، وأن الـ view <code>v_major_groups</code> موجود ومسموح به للـ anon.");
+    $("resGrid").innerHTML=`<div class="state"><div class="ic"><i class="fa-solid fa-triangle-exclamation"></i></div><b>تعذّر تحميل البيانات</b><p>تأكد أن جدولي <code>colleges</code> و<code>majors</code> وفيو الجامعات <code>v_universities_home</code> مقروءين بالـ anon key (RLS).</p></div>`;
   }
 }
 
