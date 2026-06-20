@@ -257,7 +257,8 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 const MARGIN = 2;                 // هامش "قريبة" بالنسبة المئوية
 let UNIS = {};                    // id -> {name, weights, logo}
-let GROUPS = [];                  // [{key,label,rows:[ratioRow...]}]
+let GROUPS = [];                  // [{key,label,offers:[{university_id,college_name,major_code,major_name,gender}]}]
+let RATIOS = {};                  // "uniId::normName"  /  "uniId::#code"  ->  ratioRow (إثراء فقط)
 let selectedKey = null;
 let gender = "general";
 const $ = id => document.getElementById(id);
@@ -307,16 +308,22 @@ function classify(moz,cut){
   return "no";
 }
 
-/* ═══ بناء قائمة التخصصات ═══ */
-function buildGroups(rows){
+/* ═══ بناء قائمة التخصصات (من التخصصات نفسها) ═══ */
+function buildGroups(offers){
   const map=new Map();
-  rows.forEach(r=>{
-    const name=r.major_name; if(!name) return;
+  offers.forEach(o=>{
+    const name=o.major_name; if(!name) return;
     const key=normName(name); if(!key) return;
-    if(!map.has(key)) map.set(key,{key,label:name,rows:[]});
-    map.get(key).rows.push(r);
+    if(!map.has(key)) map.set(key,{key,label:name,offers:[]});
+    map.get(key).offers.push(o);
   });
-  GROUPS=[...map.values()].sort((a,b)=>b.rows.length-a.rows.length || a.label.localeCompare(b.label,"ar"));
+  GROUPS=[...map.values()].sort((a,b)=>b.offers.length-a.offers.length || a.label.localeCompare(b.label,"ar"));
+}
+/* تجيب نسبة القبول لعرض إضافي فقط (لو موجودة) */
+function ratioFor(o){
+  return RATIOS[o.university_id+"::"+normName(o.major_name)]
+      || (o.major_code?RATIOS[o.university_id+"::#"+o.major_code]:null)
+      || null;
 }
 
 function renderMajors(){
@@ -324,7 +331,7 @@ function renderMajors(){
   const list=term?GROUPS.filter(g=>g.key.includes(term)):GROUPS;
   $("majorsList").innerHTML = list.slice(0,60).map(g=>`
     <button class="maj-chip ${g.key===selectedKey?"on":""}" onclick="selectMajor('${esc(g.key)}')">
-      ${esc(g.label)} <span class="n">${g.rows.length}</span>
+      ${esc(g.label)} <span class="n">${g.offers.length}</span>
     </button>`).join("") || `<span style="color:var(--faint);font-size:13px;padding:8px">ما فيه تخصص بهذا الاسم.</span>`;
 }
 
@@ -346,62 +353,66 @@ function renderResults(){
   const g=GROUPS.find(x=>x.key===selectedKey); if(!g) return;
   $("pickedName").textContent=g.label;
   $("resultsHead").style.display="flex";
-  $("legend").style.display="flex";
-  $("disclaimer").style.display="flex";
 
   if(!hasScores()){
     $("resCount").textContent="";
+    $("legend").style.display="none";
+    $("disclaimer").style.display="none";
     $("resGrid").innerHTML=`<div class="state"><div class="ic"><i class="fa-solid fa-keyboard"></i></div><b>أدخل درجاتك أولاً</b><p>عبّي القدرات والتحصيلي والثانوي فوق، وبنرتّب لك الجامعات حسب موزونتك مباشرة.</p></div>`;
     $("q").focus();
     return;
   }
 
-  // صف لكل (جامعة، تخصص) — مع حساب الموزونة والنسبة
-  const items=g.rows.map(r=>{
-    const uni=UNIS[r.university_id];
+  // كل جامعة تقدّم هذا التخصص (المصدر: التخصصات نفسها) + إثراء بالنسبة لو وُجدت
+  const items=g.offers.map(o=>{
+    const uni=UNIS[o.university_id];
     const moz=mozFor(uni);
-    const cut=r.has_data===false?null:cutoffFor(r);
-    return {r,uni,moz,cut,status:(moz!=null&&cut!=null)?classify(moz,cut):null};
+    const rat=ratioFor(o);
+    const cut=(rat && rat.has_data!==false)?cutoffFor(rat):null;
+    return {o,uni,rat,moz,cut,status:(moz!=null&&cut!=null)?classify(moz,cut):null};
   }).filter(x=>x.uni);
 
-  const ranked=items.filter(x=>x.status).sort((a,b)=>(b.moz-b.cut)-(a.moz-a.cut));
-  const noData=items.filter(x=>!x.status);
+  // إزالة تكرار نفس (الجامعة + التخصص)
+  const seen=new Set();
+  const uniq=items.filter(x=>{const k=x.o.university_id+"::"+normName(x.o.major_name);if(seen.has(k))return false;seen.add(k);return true;});
 
-  $("resCount").textContent=`${items.length} جامعة`;
+  // اللي لها نسبة ترتّب حسب الفرصة، والباقي حسب الموزونة
+  const withRatio=uniq.filter(x=>x.status).sort((a,b)=>(b.moz-b.cut)-(a.moz-a.cut));
+  const noRatio  =uniq.filter(x=>!x.status).sort((a,b)=>(b.moz||0)-(a.moz||0));
+  const ordered=[...withRatio,...noRatio];
+
+  $("resCount").textContent=`${ordered.length} جامعة تقدّم التخصص`;
+  $("legend").style.display=withRatio.length?"flex":"none";
+  $("disclaimer").style.display=withRatio.length?"flex":"none";
 
   const labelOf={ok:"فرصتك عالية",mid:"قريبة",no:"أقل من القبول"};
   const iconOf ={ok:"fa-circle-check",mid:"fa-circle-half-stroke",no:"fa-circle-xmark"};
 
-  const cards=ranked.map((x,i)=>{
-    const gap=(x.moz-x.cut);
-    const gapTxt=gap>=0?`+${gap.toFixed(2)} فوق القبول`:`${gap.toFixed(2)} تحت القبول`;
-    return `<a href="details.html?id=${esc(x.r.university_id)}" class="res ${x.status} reveal" style="animation-delay:${Math.min(i*.04,.4)}s">
-      <span class="res-rank">${i+1}</span>
-      <div class="res-mid">
-        <h3>${esc(x.uni.name)}</h3>
-        <div class="res-meta">
-          ${x.r.college_name?`<span><i class="fa-solid fa-graduation-cap"></i> ${esc(x.r.college_name)}</span>`:""}
-          ${x.r.major_code?`<span><i class="fa-solid fa-hashtag"></i> ${esc(x.r.major_code)}</span>`:""}
-          ${x.r.year?`<span><i class="fa-solid fa-calendar"></i> ${esc(x.r.year)}</span>`:""}
-        </div>
-      </div>
-      <div class="res-right">
-        <span class="res-badge"><i class="fa-solid ${iconOf[x.status]}"></i> ${labelOf[x.status]}</span>
-        <div class="res-nums"><span class="you">${x.moz.toFixed(1)}%</span><span class="vs">مقابل</span><span class="cut">${x.cut.toFixed(1)}%</span></div>
-        <div class="res-gap">${gapTxt}</div>
-      </div>
-    </a>`;
-  }).join("");
+  const metaOf=o=>`<div class="res-meta">
+      ${o.college_name?`<span><i class="fa-solid fa-graduation-cap"></i> ${esc(o.college_name)}</span>`:""}
+      ${o.major_code?`<span><i class="fa-solid fa-hashtag"></i> ${esc(o.major_code)}</span>`:""}
+      ${o.gender?`<span><i class="fa-solid fa-venus-mars"></i> ${esc(o.gender)}</span>`:""}
+    </div>`;
 
-  const noCards=noData.map(x=>`<a href="details.html?id=${esc(x.r.university_id)}" class="res res-nodata reveal">
-      <span class="res-rank"><i class="fa-solid fa-minus"></i></span>
-      <div class="res-mid"><h3>${esc(x.uni.name)}</h3>
-        <div class="res-meta">${x.r.college_name?`<span><i class="fa-solid fa-graduation-cap"></i> ${esc(x.r.college_name)}</span>`:""}</div>
-      </div>
-      <div class="res-right">موزونتك ${x.moz!=null?x.moz.toFixed(1)+"%":"—"}<br><span style="font-size:11px">لا توجد نسبة قبول مسجّلة</span></div>
-    </a>`).join("");
-
-  $("resGrid").innerHTML = (cards+noCards) || `<div class="state"><div class="ic"><i class="fa-solid fa-circle-question"></i></div><b>ما فيه نسب لهذا التخصص</b><p>التخصص موجود بس بدون نسب قبول مسجّلة بعد.</p></div>`;
+  $("resGrid").innerHTML = ordered.length ? ordered.map((x,i)=>{
+    if(x.status){
+      const gap=x.moz-x.cut;
+      const gapTxt=gap>=0?`+${gap.toFixed(2)} فوق القبول`:`${gap.toFixed(2)} تحت القبول`;
+      return `<a href="details.html?id=${esc(x.o.university_id)}" class="res ${x.status} reveal" style="animation-delay:${Math.min(i*.03,.4)}s">
+        <span class="res-rank">${i+1}</span>
+        <div class="res-mid"><h3>${esc(x.uni.name)}</h3>${metaOf(x.o)}</div>
+        <div class="res-right">
+          <span class="res-badge"><i class="fa-solid ${iconOf[x.status]}"></i> ${labelOf[x.status]}</span>
+          <div class="res-nums"><span class="you">${x.moz.toFixed(1)}%</span><span class="vs">مقابل</span><span class="cut">${x.cut.toFixed(1)}%</span></div>
+          <div class="res-gap">${gapTxt}</div>
+        </div></a>`;
+    }
+    return `<a href="details.html?id=${esc(x.o.university_id)}" class="res res-nodata reveal" style="animation-delay:${Math.min(i*.03,.4)}s">
+        <span class="res-rank">${i+1}</span>
+        <div class="res-mid"><h3>${esc(x.uni.name)}</h3>${metaOf(x.o)}</div>
+        <div class="res-right">موزونتك ${x.moz!=null?`<b style="color:var(--primary)">${x.moz.toFixed(1)}%</b>`:"—"}<br><span style="font-size:11px">نسبة العام الماضي غير متوفرة</span></div>
+      </a>`;
+  }).join("") : `<div class="state"><div class="ic"><i class="fa-solid fa-circle-question"></i></div><b>ما فيه جامعات مرتبطة بهذا التخصص</b><p>التخصص موجود بالاسم بس بدون جامعات مسجّلة فيه بعد.</p></div>`;
 }
 
 /* ═══ حالات أولية ═══ */
@@ -416,13 +427,14 @@ function showStart(){
 async function load(){
   showLoading();
   try{
-    // 1) الجامعات + الأوزان (من فيو الصفحة الرئيسية)
+    // 1) الجامعات + الأوزان    2) الكليات والتخصصات (الأساس)    3) النسب (إثراء فقط)
     const uniReq=sb.from("v_universities_home").select("*");
-    // 2) نسب القبول لكل تخصص
+    const colReq=sb.from("colleges").select("university_id,name,majors(id,code,name,gender,degree)").eq("is_active",true);
     const ratReq=sb.from("v_admission_ratios_admin").select("*");
-    const [{data:unis,error:uErr},{data:ratios,error:rErr}]=await Promise.all([uniReq,ratReq]);
+    const [{data:unis,error:uErr},{data:cols,error:cErr},{data:ratios,error:rErr}]=
+      await Promise.all([uniReq,colReq,ratReq]);
     if(uErr) throw uErr;
-    if(rErr) throw rErr;
+    if(cErr) throw cErr;
 
     (unis||[]).forEach(u=>{
       UNIS[u.id]={
@@ -432,12 +444,32 @@ async function load(){
       };
     });
 
-    buildGroups(ratios||[]);
+    // فهرس النسب للعرض الإضافي فقط (لا يحدّد ظهور التخصص)
+    if(!rErr) (ratios||[]).forEach(r=>{
+      if(r.major_name) RATIOS[r.university_id+"::"+normName(r.major_name)]=r;
+      if(r.major_code) RATIOS[r.university_id+"::#"+r.major_code]=r;
+    });
+
+    // تسطيح التخصصات من كل الجامعات → هذا هو أساس البحث
+    const offers=[];
+    (cols||[]).forEach(c=>{
+      (c.majors||[]).forEach(m=>{
+        offers.push({
+          university_id:c.university_id,
+          college_name:c.name,
+          major_code:m.code||"",
+          major_name:m.name||"",
+          gender:m.gender||""
+        });
+      });
+    });
+
+    buildGroups(offers);
     renderMajors();
     showStart();
   }catch(e){
     console.error("Load error:",e);
-    $("resGrid").innerHTML=`<div class="state"><div class="ic"><i class="fa-solid fa-triangle-exclamation"></i></div><b>تعذّر تحميل البيانات</b><p>تأكد أن جدول النسب <code>v_admission_ratios_admin</code> وفيو الجامعات <code>v_universities_home</code> مقروءين بالـ anon key (RLS).</p></div>`;
+    $("resGrid").innerHTML=`<div class="state"><div class="ic"><i class="fa-solid fa-triangle-exclamation"></i></div><b>تعذّر تحميل البيانات</b><p>تأكد أن جدولي <code>colleges</code> و<code>majors</code> وفيو الجامعات <code>v_universities_home</code> مقروءين بالـ anon key (RLS).</p></div>`;
   }
 }
 
