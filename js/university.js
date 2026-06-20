@@ -1,13 +1,48 @@
+"use strict";
+
 // =====================================================
-// University Details Page
-// details.html?id=kfupm
-// يسحب بيانات الجامعة من Supabase
-// + يعرض كل مسارات القبول ومعاييرها بشكل مرتب
-// + يعرض التخصصات مثل أول: رمز التخصص + الاسم فقط
-// + يعرض ملفات Google Drive من university_resources
+// University Details — Premium information architecture
+// لا يحتاج أي تعديل على قاعدة البيانات.
+// يستخدم الجداول الحالية نفسها:
+// universities, admission_tracks, colleges,
+// v_admission_ratios_admin, university_resources,
+// university_sections
 // =====================================================
 
 let currentUniData = null;
+
+const state = {
+    university: null,
+    tracks: [],
+    colleges: [],
+    ratios: [],
+    resources: [],
+    sections: [],
+    majorQuery: "",
+    selectedCollege: "all",
+    selectedDegree: "all",
+    ratioQuery: "",
+    ratioYear: "all",
+    toastTimer: null
+};
+
+const ADMISSION_CRITERIA = [
+    { key: "step_required", label: "STEP", type: "value" },
+    { key: "ielts_required", label: "IELTS", type: "value" },
+    { key: "toefl_required", label: "TOEFL", type: "value" },
+    { key: "duolingo_required", label: "Duolingo", type: "value" },
+    { key: "sat_min", label: "SAT", type: "value" },
+    { key: "sat_required", label: "SAT", type: "value" },
+    { key: "gpa_required", label: "المعدل المطلوب", type: "value" },
+    { key: "english_required", label: "اللغة الإنجليزية", type: "value" },
+
+    { key: "interview_required", label: "مقابلة شخصية", type: "flag" },
+    { key: "portfolio_required", label: "ملف أعمال", type: "flag" },
+    { key: "recommendation_required", label: "خطاب توصية", type: "flag" },
+    { key: "personal_statement_required", label: "Personal Statement", type: "flag" },
+    { key: "essay_required", label: "Essay", type: "flag" },
+    { key: "olympiad_required", label: "أولمبياد", type: "flag" }
+];
 
 function $(id) {
     return document.getElementById(id);
@@ -32,9 +67,42 @@ function isEmpty(value) {
     );
 }
 
+function meaningful(value) {
+    const text = String(value ?? "").trim();
+    return Boolean(
+        text &&
+        text !== "--" &&
+        text !== "غير محدد" &&
+        text !== "لا توجد بيانات"
+    );
+}
+
+function normalizeArabic(value) {
+    return String(value ?? "")
+        .normalize("NFKD")
+        .replace(/[\u064B-\u065F\u0670\u0640]/g, "")
+        .replace(/[أإآ]/g, "ا")
+        .replace(/ى/g, "ي")
+        .replace(/ة/g, "ه")
+        .replace(/ؤ/g, "و")
+        .replace(/ئ/g, "ي")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase();
+}
+
 function getUniversityIdFromUrl() {
+    return new URLSearchParams(window.location.search).get("id");
+}
+
+function getRequestedMajor() {
     const params = new URLSearchParams(window.location.search);
-    return params.get("id");
+
+    return (
+        params.get("major") ||
+        params.get("q") ||
+        ""
+    ).trim();
 }
 
 function getStoredScores() {
@@ -45,636 +113,123 @@ function getStoredScores() {
     };
 }
 
-function formatPercent(value) {
-    if (isEmpty(value)) return "--";
-
-    const n = Number(value);
-    if (Number.isNaN(n)) return "--";
-
-    return `${n.toFixed(2)}%`;
-}
-
 function normalizeWeight(value) {
     if (isEmpty(value)) return 0;
 
-    const n = Number(value);
-    if (Number.isNaN(n)) return 0;
+    const number = Number(value);
+    if (Number.isNaN(number)) return 0;
 
-    // يدعم الحالتين:
-    // 0.50 = 50%
-    // 50   = 50%
-    return n > 1 ? n / 100 : n;
+    return number > 1 ? number / 100 : number;
 }
 
 function formatWeight(value) {
     if (isEmpty(value)) return null;
 
-    const n = Number(value);
-    if (Number.isNaN(n)) return null;
+    const number = Number(value);
+    if (Number.isNaN(number)) return null;
 
-    if (n <= 1) {
-        return `${Math.round(n * 100)}%`;
-    }
-
-    return `${n}%`;
+    return `${Math.round(number <= 1 ? number * 100 : number)}%`;
 }
 
-function formatCriteriaValue(value) {
-    if (isEmpty(value)) return "";
+function formatPercent(value) {
+    if (isEmpty(value)) return "--";
 
-    if (typeof value === "boolean") {
-        return value ? "" : "";
+    const number = Number(value);
+    if (Number.isNaN(number)) return "--";
+
+    return `${number.toFixed(2)}%`;
+}
+
+function formatDate(value) {
+    if (!value) return "غير محدد";
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "غير محدد";
+
+    return new Intl.DateTimeFormat("ar-SA", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+    }).format(date);
+}
+
+function unique(values) {
+    return [...new Set(values.filter(Boolean))];
+}
+
+function genderLabel(value) {
+    const normalized = normalizeArabic(value);
+
+    if (!normalized) return "";
+    if (["male", "بنين", "طلاب", "ذكر"].includes(normalized)) return "طلاب";
+    if (["female", "بنات", "طالبات", "انثى"].includes(normalized)) return "طالبات";
+    if (["both", "mixed", "general", "عام", "طلاب وطالبات"].includes(normalized)) {
+        return "طلاب وطالبات";
     }
 
     return String(value);
 }
 
-// هنا نتحكم بالمعايير اللي تظهر فقط
-// أي Boolean مثل interview_required ما يكتب "نعم"
-// إذا true يطلع اسم الشرط فقط، وإذا false يختفي
-const ADMISSION_CRITERIA = [
-    { key: "step_required", label: "STEP", type: "value" },
-    { key: "ielts_required", label: "IELTS", type: "value" },
-    { key: "toefl_required", label: "TOEFL", type: "value" },
-    { key: "duolingo_required", label: "Duolingo", type: "value" },
-    { key: "sat_min", label: "SAT", type: "value" },
-    { key: "sat_required", label: "SAT", type: "value" },
-    { key: "gpa_required", label: "المعدل المطلوب", type: "value" },
-    { key: "english_required", label: "شرط اللغة الإنجليزية", type: "value" },
+function degreeLabel(value) {
+    const normalized = normalizeArabic(value);
 
-    { key: "interview_required", label: "مقابلة شخصية", type: "flag" },
-    { key: "portfolio_required", label: "ملف أعمال", type: "flag" },
-    { key: "recommendation_required", label: "خطاب توصية", type: "flag" },
-    { key: "personal_statement_required", label: "Personal Statement", type: "flag" },
-    { key: "essay_required", label: "Essay", type: "flag" },
-    { key: "olympiad_required", label: "أولمبياد", type: "flag" }
-];
+    if (!normalized) return "";
+    if (normalized.includes("بكالور")) return "بكالوريوس";
+    if (normalized.includes("دبلوم")) return "دبلوم";
+    if (normalized.includes("ماجستير")) return "ماجستير";
+    if (normalized.includes("دكتور")) return "دكتوراه";
 
-function ensureDynamicStyles() {
-    if (document.getElementById("universityDynamicStyles")) return;
-
-    const style = document.createElement("style");
-    style.id = "universityDynamicStyles";
-
-    style.textContent = `
-        .admission-tracks-grid{
-            display:grid;
-            grid-template-columns:repeat(2,minmax(0,1fr));
-            gap:14px;
-        }
-
-        .track-card-clean{
-            padding:20px;
-            border-radius:24px;
-            overflow:hidden;
-            transition:.18s ease;
-        }
-
-        .track-card-clean:hover{
-            transform:translateY(-2px);
-            border-color:var(--line-strong);
-            box-shadow:var(--shadow-strong);
-        }
-
-        .track-card-clean.default{
-            border-color:color-mix(in srgb,var(--primary) 34%,transparent);
-            background:
-                radial-gradient(420px 190px at 85% -35%,color-mix(in srgb,var(--primary) 16%,transparent),transparent 72%),
-                var(--card-glass);
-        }
-
-        .track-head-clean{
-            display:flex;
-            justify-content:space-between;
-            align-items:flex-start;
-            gap:12px;
-            margin-bottom:14px;
-        }
-
-        .track-name-clean{
-            display:flex;
-            align-items:flex-start;
-            gap:11px;
-            min-width:0;
-        }
-
-        .track-icon-clean{
-            width:44px;
-            height:44px;
-            border-radius:17px;
-            display:grid;
-            place-items:center;
-            color:white;
-            flex:none;
-            background:linear-gradient(135deg,var(--primary),var(--primary-3));
-            box-shadow:0 18px 34px -24px var(--primary);
-        }
-
-        .track-name-clean h3{
-            color:var(--ink);
-            font-size:15px;
-            line-height:1.5;
-            font-weight:900;
-        }
-
-        .track-name-clean p{
-            color:var(--muted);
-            font-size:12px;
-            line-height:1.85;
-            font-weight:600;
-            margin-top:3px;
-        }
-
-        .track-default-badge{
-            white-space:nowrap;
-            display:inline-flex;
-            align-items:center;
-            gap:6px;
-            color:var(--primary);
-            background:color-mix(in srgb,var(--primary) 9%,transparent);
-            border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
-            border-radius:999px;
-            padding:6px 10px;
-            font-size:10px;
-            font-weight:900;
-        }
-
-        .track-weights-clean{
-            display:grid;
-            grid-template-columns:repeat(3,1fr);
-            gap:8px;
-            margin-top:12px;
-        }
-
-        .track-weight-clean{
-            text-align:center;
-            padding:11px 8px;
-            border-radius:16px;
-            background:var(--card-soft);
-            border:1px solid var(--line);
-        }
-
-        .track-weight-clean span{
-            display:block;
-            color:var(--faint);
-            font-size:10px;
-            font-weight:900;
-            margin-bottom:3px;
-        }
-
-        .track-weight-clean b{
-            display:block;
-            color:var(--primary);
-            font-size:17px;
-            font-weight:900;
-        }
-
-        .track-criteria-clean{
-            display:flex;
-            flex-wrap:wrap;
-            gap:7px;
-            margin-top:13px;
-        }
-
-        .criteria-chip-clean{
-            display:inline-flex;
-            align-items:center;
-            gap:6px;
-            padding:7px 10px;
-            border-radius:999px;
-            font-size:11px;
-            font-weight:900;
-            color:var(--primary);
-            background:color-mix(in srgb,var(--primary) 8%,transparent);
-            border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
-        }
-
-        .criteria-chip-clean b{
-            color:var(--ink);
-            font-weight:900;
-        }
-
-        .track-note-clean{
-            margin-top:12px;
-            padding:11px 12px;
-            border-radius:16px;
-            color:var(--muted);
-            background:color-mix(in srgb,var(--primary) 6%,transparent);
-            border:1px solid var(--line);
-            font-size:12px;
-            line-height:1.85;
-            font-weight:600;
-        }
-
-        .track-note-clean i{
-            color:var(--primary);
-            margin-inline-end:5px;
-        }
-
-        @media(max-width:960px){
-            .admission-tracks-grid{
-                grid-template-columns:1fr;
-            }
-        }
-
-        @media(max-width:560px){
-            .track-weights-clean{
-                grid-template-columns:1fr;
-            }
-        }
-    `;
-
-    document.head.appendChild(style);
+    return String(value);
 }
 
-function ensureQuickLink(targetId, label, iconClass) {
-    const quickNav = document.querySelector(".quick-nav-inner");
-    if (!quickNav) return;
+function weightsForTrack(track) {
+    if (!track) return {};
 
-    if (quickNav.querySelector(`a[href="#${targetId}"]`)) return;
-
-    const link = document.createElement("a");
-    link.href = `#${targetId}`;
-    link.className = "quick-link";
-    link.innerHTML = `
-        <i class="fa-solid ${iconClass}"></i>
-        ${esc(label)}
-    `;
-
-    const collegesLink = quickNav.querySelector('a[href="#collegesSection"]');
-
-    if (collegesLink) {
-        collegesLink.insertAdjacentElement("beforebegin", link);
-    } else {
-        quickNav.appendChild(link);
+    if (Array.isArray(track.university_weights)) {
+        return track.university_weights[0] || {};
     }
+
+    return track.university_weights || {};
 }
 
-function ensureSection(id, afterId) {
-    let wrapper = $(id);
-    if (wrapper) return wrapper;
-
-    const main = document.querySelector("main");
-    if (!main) return null;
-
-    wrapper = document.createElement("section");
-    wrapper.id = id;
-    wrapper.className = "student-section";
-
-    const after = $(afterId);
-
-    if (after && after.parentNode) {
-        after.insertAdjacentElement("afterend", wrapper);
-    } else {
-        main.appendChild(wrapper);
-    }
-
-    return wrapper;
+function getDefaultTrack() {
+    return (
+        state.tracks.find(track => track.is_default === true) ||
+        state.tracks.find(track => Object.keys(weightsForTrack(track)).length) ||
+        state.tracks[0] ||
+        null
+    );
 }
 
-async function loadUniversityDetails() {
-    const uniId = getUniversityIdFromUrl();
+function calculateTrack(track) {
+    const weights = weightsForTrack(track);
+    const scores = getStoredScores();
 
-    if (!uniId) {
-        window.location.href = "index.html";
-        return;
-    }
+    const qWeight = normalizeWeight(weights.qodrat_weight);
+    const tWeight = normalizeWeight(weights.tahsili_weight);
+    const sWeight = normalizeWeight(weights.school_weight);
 
-    ensureDynamicStyles();
-    ensureQuickLink("admissionTracksSection", "مسارات القبول", "fa-list-check");
+    const missing = [];
 
-    try {
-        // 1) بيانات الجامعة الأساسية
-        const { data: university, error: uniError } = await supabaseClient
-            .from("universities")
-            .select("*")
-            .eq("id", uniId)
-            .single();
+    if (qWeight > 0 && scores.q <= 0) missing.push("القدرات");
+    if (tWeight > 0 && scores.t <= 0) missing.push("التحصيلي");
+    if (sWeight > 0 && scores.s <= 0) missing.push("الثانوية");
 
-        if (uniError || !university) {
-            throw new Error("University not found");
-        }
+    const hasWeights = qWeight > 0 || tWeight > 0 || sWeight > 0;
 
-        currentUniData = university;
-
-        // 2) كل مسارات القبول + الأوزان
-        const { data: tracks, error: tracksError } = await supabaseClient
-            .from("admission_tracks")
-            .select(`
-                *,
-                university_weights (*)
-            `)
-            .eq("university_id", uniId)
-            .order("display_order", { ascending: true });
-
-        if (tracksError) {
-            console.error("Admission tracks error:", tracksError);
-        }
-
-        const activeTracks = (tracks || [])
-            .filter(track => track.is_active !== false)
-            .sort((a, b) => (a.display_order || 999) - (b.display_order || 999));
-
-        const defaultTrack =
-            activeTracks.find(track => track.is_default === true) ||
-            activeTracks.find(track => track.university_weights && track.university_weights.length) ||
-            activeTracks[0] ||
-            null;
-
-        // 3) الكليات والتخصصات - مثل النسخة القديمة
-        const { data: colleges, error: collegesError } = await supabaseClient
-            .from("colleges")
-            .select(`
-                id,
-                name,
-                description,
-                display_order,
-                majors (
-                    id,
-                    code,
-                    name,
-                    degree,
-                    gender,
-                    note,
-                    display_order
-                )
-            `)
-            .eq("university_id", uniId)
-            .eq("is_active", true)
-            .order("display_order", { ascending: true });
-
-        if (collegesError) {
-            console.error("Colleges error:", collegesError);
-        }
-
-        // 4) نسب القبول
-        const { data: ratios, error: ratiosError } = await supabaseClient
-            .from("v_admission_ratios_admin")
-            .select("*")
-            .eq("university_id", uniId);
-
-        if (ratiosError) {
-            console.error("Ratios error:", ratiosError);
-        }
-
-        // 5) ملفات وروابط الجامعة
-        const { data: resources, error: resourcesError } = await supabaseClient
-            .from("university_resources")
-            .select("*")
-            .eq("university_id", uniId)
-            .eq("is_active", true)
-            .order("display_order", { ascending: true });
-
-        if (resourcesError) {
-            console.error("Resources error:", resourcesError);
-        }
-
-        // 6) الأقسام النصية
-        const { data: sections, error: sectionsError } = await supabaseClient
-            .from("university_sections")
-            .select("*")
-            .eq("university_id", uniId)
-            .eq("is_active", true)
-            .order("display_order", { ascending: true });
-
-        if (sectionsError) {
-            console.error("Sections error:", sectionsError);
-        }
-
-        renderUniversityBasic(university);
-        renderAutoCalculation(defaultTrack);
-        renderAdmissionTracks(activeTracks);
-        renderColleges(colleges || []);
-        renderRatios(ratios || []);
-        renderResources(resources || []);
-        renderSections(sections || []);
-
-    } catch (error) {
-        console.error("Error Loading University:", error);
-        renderError();
-    }
-}
-
-function renderUniversityBasic(data) {
-    document.title = `${data.name_ar || "جامعة"} | مُوجّه`;
-
-    if ($("uniName")) {
-        $("uniName").textContent = data.name_ar || "--";
-    }
-
-    const locationElement = $("uniLocation");
-    const locationSpan = locationElement?.querySelector("span");
-
-    if (locationSpan) {
-        locationSpan.textContent = data.location_text || data.city || "--";
-    } else if (locationElement) {
-        locationElement.textContent = data.location_text || data.city || "--";
-    }
-
-    if ($("statEmp")) {
-        $("statEmp").textContent = data.employment_rate_text || "--";
-    }
-
-    if ($("statLocal")) {
-        $("statLocal").textContent = data.rank_local ? `#${data.rank_local}` : "--";
-    }
-
-    if ($("statAccept")) {
-        $("statAccept").textContent = data.acceptance_difficulty || "--";
-    }
-
-    if ($("uniCompetency")) {
-        $("uniCompetency").textContent = data.competitiveness || "--";
-    }
-
-    if ($("uniAbout")) {
-        $("uniAbout").textContent = data.about || "--";
-    }
-
-    renderUniversityLogo(data);
-}
-
-function renderUniversityLogo(data) {
-    const logoWrap = $("uniLogoWrap");
-    const logoImg = $("uniLogo");
-
-    if (!logoWrap || !logoImg) return;
-
-    if (!data.logo_url) {
-        logoWrap.classList.add("hidden");
-        return;
-    }
-
-    logoImg.src = data.logo_url;
-    logoImg.alt = `شعار ${data.name_ar || "الجامعة"}`;
-
-    logoImg.onerror = () => {
-        logoWrap.classList.add("hidden");
+    return {
+        hasWeights,
+        missing,
+        result: hasWeights && !missing.length
+            ? (scores.q * qWeight) + (scores.t * tWeight) + (scores.s * sWeight)
+            : null,
+        weights: {
+            q: qWeight,
+            t: tWeight,
+            s: sWeight
+        },
+        rawWeights: weights
     };
-
-    logoWrap.classList.remove("hidden");
-}
-
-function renderAutoCalculation(defaultTrack) {
-    if (!defaultTrack || !defaultTrack.university_weights || !defaultTrack.university_weights.length) {
-        return;
-    }
-
-    const weights = defaultTrack.university_weights[0];
-
-    const { q, t, s } = getStoredScores();
-
-    const qW = normalizeWeight(weights.qodrat_weight);
-    const tW = normalizeWeight(weights.tahsili_weight);
-    const sW = normalizeWeight(weights.school_weight);
-
-    const needsQ = qW > 0;
-    const needsT = tW > 0;
-    const needsS = sW > 0;
-
-    const hasRequiredScores =
-        (!needsQ || q > 0) &&
-        (!needsT || t > 0) &&
-        (!needsS || s > 0);
-
-    if (!hasRequiredScores) {
-        return;
-    }
-
-    const total = (q * qW) + (t * tW) + (s * sW);
-
-    const resultSection = $("autoResultSection");
-    const finalResult = $("finalResult");
-    const weightLabels = $("weightLabels");
-
-    if (finalResult) {
-        finalResult.textContent = `${total.toFixed(2)}%`;
-    }
-
-    if (weightLabels) {
-        weightLabels.innerHTML = `
-            ${needsQ ? `<span class="bg-indigo-500/10 px-2 py-1 rounded-lg">قدرات ${formatWeight(weights.qodrat_weight)}</span>` : ""}
-            ${needsT ? `<span class="bg-indigo-500/10 px-2 py-1 rounded-lg">تحصيلي ${formatWeight(weights.tahsili_weight)}</span>` : ""}
-            ${needsS ? `<span class="bg-indigo-500/10 px-2 py-1 rounded-lg">ثانوي ${formatWeight(weights.school_weight)}</span>` : ""}
-        `;
-    }
-
-    if (resultSection) {
-        resultSection.classList.remove("hidden");
-    }
-}
-
-function renderAdmissionTracks(tracks) {
-    const wrapper = ensureSection("admissionTracksSection", "scoreBlock");
-    if (!wrapper) return;
-
-    if (!tracks.length) {
-        wrapper.innerHTML = "";
-        return;
-    }
-
-    wrapper.innerHTML = `
-        <div class="section-head">
-            <div>
-                <div class="section-kicker">
-                    <i class="fa-solid fa-list-check"></i>
-                    مهم قبل التقديم
-                </div>
-
-                <h2 class="section-title">
-                    مسارات القبول ومعاييرها
-                </h2>
-
-                <p class="section-subtitle">
-                    عرض مختصر وواضح للمسارات بدون تفاصيل مزعجة.
-                </p>
-            </div>
-
-            <span class="section-chip">
-                <i class="fa-solid fa-database"></i>
-                ${tracks.length} مسار
-            </span>
-        </div>
-
-        <div class="admission-tracks-grid">
-            ${tracks.map(track => renderTrackCard(track)).join("")}
-        </div>
-    `;
-}
-
-function renderTrackCard(track) {
-    const weights = Array.isArray(track.university_weights)
-        ? track.university_weights
-        : [];
-
-    const firstWeight = weights[0] || {};
-
-    const qW = formatWeight(firstWeight.qodrat_weight);
-    const tW = formatWeight(firstWeight.tahsili_weight);
-    const sW = formatWeight(firstWeight.school_weight);
-
-    const criteria = buildCriteria(firstWeight);
-
-    return `
-        <div class="track-card-clean glass-card ${track.is_default ? "default" : ""}">
-            <div class="track-head-clean">
-                <div class="track-name-clean">
-                    <div class="track-icon-clean">
-                        <i class="fa-solid ${track.is_default ? "fa-star" : "fa-route"}"></i>
-                    </div>
-
-                    <div>
-                        <h3>${esc(track.name || "مسار قبول")}</h3>
-                        ${track.description ? `<p>${esc(track.description)}</p>` : ""}
-                    </div>
-                </div>
-
-                ${track.is_default ? `
-                    <span class="track-default-badge">
-                        <i class="fa-solid fa-check"></i>
-                        افتراضي
-                    </span>
-                ` : ""}
-            </div>
-
-            ${(qW || tW || sW) ? `
-                <div class="track-weights-clean">
-                    <div class="track-weight-clean">
-                        <span>قدرات</span>
-                        <b>${qW || "—"}</b>
-                    </div>
-
-                    <div class="track-weight-clean">
-                        <span>تحصيلي</span>
-                        <b>${tW || "—"}</b>
-                    </div>
-
-                    <div class="track-weight-clean">
-                        <span>ثانوي</span>
-                        <b>${sW || "—"}</b>
-                    </div>
-                </div>
-            ` : ""}
-
-            ${criteria.length ? `
-                <div class="track-criteria-clean">
-                    ${criteria.map(item => `
-                        <span class="criteria-chip-clean">
-                            ${esc(item.label)}
-                            ${item.value ? `<b>${esc(item.value)}</b>` : ""}
-                        </span>
-                    `).join("")}
-                </div>
-            ` : ""}
-
-            ${firstWeight.note ? `
-                <div class="track-note-clean">
-                    <i class="fa-solid fa-circle-info"></i>
-                    ${esc(firstWeight.note)}
-                </div>
-            ` : ""}
-        </div>
-    `;
 }
 
 function buildCriteria(weight) {
@@ -698,7 +253,7 @@ function buildCriteria(weight) {
         if (!isEmpty(value)) {
             result.push({
                 label: item.label,
-                value: formatCriteriaValue(value)
+                value: String(value)
             });
         }
     });
@@ -706,98 +261,751 @@ function buildCriteria(weight) {
     return result;
 }
 
-function renderColleges(colleges) {
-    const collegesGrid = $("collegesGrid");
-    if (!collegesGrid) return;
+function showToast(message) {
+    clearTimeout(state.toastTimer);
 
-    if (!colleges.length) {
-        collegesGrid.innerHTML = `
-            <div class="glass-card p-6 rounded-3xl text-center text-gray-500 text-sm">
-                لم يتم إضافة الكليات والتخصصات بعد.
-            </div>
-        `;
-        return;
-    }
+    $("toast").textContent = message;
+    $("toast").classList.add("show");
 
-    collegesGrid.innerHTML = colleges.map(college => {
-        const majors = (college.majors || [])
-            .sort((a, b) => (a.display_order || 999) - (b.display_order || 999));
-
-        return `
-            <div class="glass-card p-6 rounded-3xl border border-white/5">
-                <h4 class="text-xs font-black text-indigo-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-graduation-cap"></i>
-                    ${esc(college.name)}
-                </h4>
-
-                ${college.description ? `
-                    <p class="text-[11px] text-gray-500 mb-4 leading-relaxed">
-                        ${esc(college.description)}
-                    </p>
-                ` : ""}
-
-                <div class="grid grid-cols-1 gap-2">
-                    ${majors.length ? majors.map(major => `
-                        <div class="text-xs text-gray-400 flex items-center justify-between gap-2 italic bg-white/[0.02] rounded-xl px-3 py-2">
-                            <span class="flex items-center gap-2">
-                                <span class="w-1 h-1 rounded-full bg-indigo-500/50"></span>
-                                ${major.code ? `<b class="text-indigo-400 not-italic">${esc(major.code)}</b>` : ""}
-                                ${esc(major.name || "تخصص غير محدد")}
-                            </span>
-                        </div>
-                    `).join("") : `
-                        <div class="text-xs text-gray-600">لا توجد تخصصات مضافة بعد.</div>
-                    `}
-                </div>
-            </div>
-        `;
-    }).join("");
+    state.toastTimer = setTimeout(() => {
+        $("toast").classList.remove("show");
+    }, 1800);
 }
 
-function renderRatios(ratios) {
-    const ratiosSection = $("ratiosSection");
-    const ratiosContainer = $("ratiosContainer");
+function toggleTheme() {
+    const next = document.documentElement.getAttribute("data-theme") === "dark"
+        ? "light"
+        : "dark";
 
-    if (!ratiosSection || !ratiosContainer) return;
+    document.documentElement.setAttribute("data-theme", next);
+    localStorage.setItem("theme", next);
+    syncThemeIcon();
+}
 
-    if (!ratios.length) {
-        ratiosSection.classList.add("hidden");
+function syncThemeIcon() {
+    const dark = document.documentElement.getAttribute("data-theme") === "dark";
+
+    $("themeToggle").innerHTML = dark
+        ? '<i class="fa-solid fa-sun"></i>'
+        : '<i class="fa-solid fa-moon"></i>';
+}
+
+async function shareUniversity() {
+    const name = state.university?.name_ar || "الجامعة";
+
+    try {
+        if (navigator.share) {
+            await navigator.share({
+                title: `${name} | مُوجّه`,
+                text: `اطلع على ملف ${name} في مُوجّه`,
+                url: window.location.href
+            });
+            return;
+        }
+
+        await navigator.clipboard.writeText(window.location.href);
+        showToast("تم نسخ رابط الجامعة");
+    } catch (error) {
+        if (error?.name !== "AbortError") {
+            showToast("تعذر مشاركة الرابط");
+        }
+    }
+}
+
+function setSectionVisible(sectionId, visible, navKey = null) {
+    const section = $(sectionId);
+    if (section) section.hidden = !visible;
+
+    if (navKey) {
+        const link = document.querySelector(`[data-nav="${navKey}"]`);
+        if (link) link.hidden = !visible;
+    }
+}
+
+async function loadUniversityDetails() {
+    const universityId = getUniversityIdFromUrl();
+
+    if (!universityId) {
+        window.location.href = "index.html";
         return;
     }
 
-    ratiosSection.classList.remove("hidden");
+    renderLoading();
 
-    ratiosContainer.innerHTML = ratios.map(item => {
-        const ratioDisplay = item.has_data
-            ? (
-                item.general_ratio !== null
-                    ? formatPercent(item.general_ratio)
-                    : `بنين: ${formatPercent(item.male_ratio)} | بنات: ${formatPercent(item.female_ratio)}`
-            )
-            : "لا يوجد بيانات";
+    try {
+        const { data: university, error: universityError } = await supabaseClient
+            .from("universities")
+            .select("*")
+            .eq("id", universityId)
+            .single();
 
-        return `
-            <div class="glass-card p-4 rounded-2xl flex justify-between items-center hover:bg-white/5 transition-all border-l-2 border-transparent hover:border-indigo-500">
-                <div>
-                    <span class="text-xs font-bold text-gray-300">
-                        ${item.major_code ? esc(item.major_code) + " - " : ""}${esc(item.major_name || "تخصص غير محدد")}
-                    </span>
-                    <p class="text-[10px] text-gray-600 mt-1">
-                        ${esc(item.college_name || "")} · ${esc(item.year || "")}
-                    </p>
-                </div>
+        if (universityError || !university) {
+            throw new Error("لم يتم العثور على الجامعة");
+        }
 
-                <div class="text-left">
-                    <p class="text-xs font-black ${item.has_data ? "text-indigo-400" : "text-gray-600"}">
-                        ${esc(ratioDisplay)}
-                    </p>
-                    <p class="text-[8px] text-gray-500 mt-1">
-                        ${esc(item.note || item.ratio_type || "")}
-                    </p>
-                </div>
+        currentUniData = university;
+        state.university = university;
+
+        const [
+            tracksResponse,
+            collegesResponse,
+            ratiosResponse,
+            resourcesResponse,
+            sectionsResponse
+        ] = await Promise.all([
+            supabaseClient
+                .from("admission_tracks")
+                .select(`
+                    *,
+                    university_weights (*)
+                `)
+                .eq("university_id", universityId)
+                .order("display_order", { ascending: true }),
+
+            supabaseClient
+                .from("colleges")
+                .select(`
+                    id,
+                    name,
+                    description,
+                    display_order,
+                    majors (
+                        id,
+                        code,
+                        name,
+                        degree,
+                        gender,
+                        note,
+                        display_order
+                    )
+                `)
+                .eq("university_id", universityId)
+                .eq("is_active", true)
+                .order("display_order", { ascending: true }),
+
+            supabaseClient
+                .from("v_admission_ratios_admin")
+                .select("*")
+                .eq("university_id", universityId),
+
+            supabaseClient
+                .from("university_resources")
+                .select("*")
+                .eq("university_id", universityId)
+                .eq("is_active", true)
+                .order("display_order", { ascending: true }),
+
+            supabaseClient
+                .from("university_sections")
+                .select("*")
+                .eq("university_id", universityId)
+                .eq("is_active", true)
+                .order("display_order", { ascending: true })
+        ]);
+
+        if (tracksResponse.error) {
+            console.warn("Admission tracks:", tracksResponse.error);
+        }
+
+        if (collegesResponse.error) {
+            console.warn("Colleges:", collegesResponse.error);
+        }
+
+        if (ratiosResponse.error) {
+            console.warn("Ratios:", ratiosResponse.error);
+        }
+
+        if (resourcesResponse.error) {
+            console.warn("Resources:", resourcesResponse.error);
+        }
+
+        if (sectionsResponse.error) {
+            console.warn("Sections:", sectionsResponse.error);
+        }
+
+        state.tracks = (tracksResponse.data || [])
+            .filter(track => track.is_active !== false)
+            .sort((a, b) => (a.display_order || 999) - (b.display_order || 999));
+
+        state.colleges = (collegesResponse.data || [])
+            .sort((a, b) => (a.display_order || 999) - (b.display_order || 999))
+            .map(college => ({
+                ...college,
+                majors: (college.majors || [])
+                    .sort((a, b) => (a.display_order || 999) - (b.display_order || 999))
+            }));
+
+        state.ratios = (ratiosResponse.data || [])
+            .sort((a, b) => String(b.year || "").localeCompare(String(a.year || ""), "ar"));
+
+        state.resources = resourcesResponse.data || [];
+        state.sections = sectionsResponse.data || [];
+
+        renderAll();
+    } catch (error) {
+        console.error("University details error:", error);
+        renderError(error.message || "تعذر تحميل بيانات الجامعة");
+    }
+}
+
+function renderAll() {
+    renderUniversityBasic();
+    renderSummary();
+    renderCollegeFilters();
+    renderDegreeFilter();
+    renderColleges();
+    renderAdmission();
+    renderRatios();
+    renderResources();
+    renderSections();
+    renderAbout();
+    bindDataDrivenUI();
+    setupSectionSpy();
+
+    const requestedMajor = getRequestedMajor();
+
+    if (requestedMajor) {
+        state.majorQuery = requestedMajor;
+        $("majorSearch").value = requestedMajor;
+        renderColleges();
+    }
+}
+
+function renderUniversityBasic() {
+    const data = state.university;
+
+    document.title = `${data.name_ar || "جامعة"} | مُوجّه`;
+    $("uniName").textContent = data.name_ar || "--";
+    $("uniLocation").querySelector("span").textContent =
+        data.location_text ||
+        [data.city, data.region].filter(Boolean).join("، ") ||
+        "--";
+
+    if (data.logo_url) {
+        $("uniLogo").src = data.logo_url;
+        $("uniLogo").alt = `شعار ${data.name_ar || "الجامعة"}`;
+        $("uniLogo").onerror = () => $("uniLogoWrap").classList.add("hidden");
+        $("uniLogoWrap").classList.remove("hidden");
+    }
+
+    const badges = [];
+
+    const type = data.university_type || data.type;
+    const gender = genderLabel(data.gender);
+    const region = data.region;
+
+    if (type) {
+        badges.push(`<span class="hero-badge"><i class="fa-solid fa-building-columns"></i>${esc(type)}</span>`);
+    }
+
+    if (gender) {
+        badges.push(`<span class="hero-badge"><i class="fa-solid fa-users"></i>${esc(gender)}</span>`);
+    }
+
+    if (region) {
+        badges.push(`<span class="hero-badge"><i class="fa-solid fa-map"></i>${esc(region)}</span>`);
+    }
+
+    $("uniBadges").innerHTML = badges.join("");
+
+    const website =
+        data.website_url ||
+        data.official_url ||
+        data.website ||
+        data.url ||
+        "";
+
+    if (website) {
+        $("officialWebsite").href = website;
+        $("officialWebsite").hidden = false;
+    }
+
+    $("lastUpdated").textContent = formatDate(
+        data.updated_at ||
+        data.housing_updated_at ||
+        data.created_at
+    );
+}
+
+function renderSummary() {
+    const majorsCount = state.colleges.reduce(
+        (total, college) => total + (college.majors || []).length,
+        0
+    );
+
+    $("summaryColleges").textContent = state.colleges.length;
+    $("summaryMajors").textContent = majorsCount;
+    $("summaryTracks").textContent = state.tracks.length;
+    $("summaryResources").textContent = state.resources.length;
+}
+
+function renderCollegeFilters() {
+    const filters = [
+        `<button class="filter-pill ${state.selectedCollege === "all" ? "active" : ""}" data-college="all">كل الكليات</button>`,
+        ...state.colleges.map(college => `
+            <button
+                class="filter-pill ${state.selectedCollege === String(college.id) ? "active" : ""}"
+                data-college="${esc(college.id)}"
+            >
+                ${esc(college.name)}
+            </button>
+        `)
+    ];
+
+    $("collegeFilters").innerHTML = filters.join("");
+}
+
+function renderDegreeFilter() {
+    const degrees = unique(
+        state.colleges.flatMap(college =>
+            (college.majors || []).map(major => degreeLabel(major.degree))
+        )
+    ).sort((a, b) => a.localeCompare(b, "ar"));
+
+    $("degreeFilter").innerHTML = `
+        <option value="all">كل الدرجات</option>
+        ${degrees.map(degree => `
+            <option value="${esc(normalizeArabic(degree))}">
+                ${esc(degree)}
+            </option>
+        `).join("")}
+    `;
+
+    $("degreeFilter").value = state.selectedDegree;
+}
+
+function getFilteredColleges() {
+    const query = normalizeArabic(state.majorQuery);
+
+    return state.colleges
+        .filter(college =>
+            state.selectedCollege === "all" ||
+            String(college.id) === state.selectedCollege
+        )
+        .map(college => {
+            const majors = (college.majors || []).filter(major => {
+                const degree = normalizeArabic(degreeLabel(major.degree));
+
+                const degreeMatches =
+                    state.selectedDegree === "all" ||
+                    degree === state.selectedDegree;
+
+                const searchText = normalizeArabic([
+                    major.code,
+                    major.name,
+                    major.degree,
+                    major.gender,
+                    major.note,
+                    college.name
+                ].filter(Boolean).join(" "));
+
+                const queryMatches =
+                    !query ||
+                    searchText.includes(query);
+
+                return degreeMatches && queryMatches;
+            });
+
+            return {
+                ...college,
+                filteredMajors: majors
+            };
+        })
+        .filter(college =>
+            !query && state.selectedDegree === "all"
+                ? true
+                : college.filteredMajors.length > 0
+        );
+}
+
+function renderColleges() {
+    const filteredColleges = getFilteredColleges();
+    const query = normalizeArabic(state.majorQuery);
+
+    const majorsCount = filteredColleges.reduce(
+        (total, college) => total + college.filteredMajors.length,
+        0
+    );
+
+    $("majorResultCount").textContent = `${majorsCount} تخصص`;
+
+    if (!filteredColleges.length) {
+        $("collegesGrid").innerHTML = `
+            <div class="empty-state" style="grid-column:1/-1">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                لم نجد تخصصًا مطابقًا. جرّب جزءًا أقصر من الاسم أو اختر كلية أخرى.
             </div>
         `;
-    }).join("");
+        return;
+    }
+
+    $("collegesGrid").innerHTML = filteredColleges.map(college => `
+        <article class="college-card">
+            <header class="college-head">
+                <div class="college-title">
+                    <div class="college-icon">
+                        <i class="fa-solid fa-building"></i>
+                    </div>
+
+                    <div>
+                        <h3>${esc(college.name || "كلية")}</h3>
+                        ${college.description ? `<p>${esc(college.description)}</p>` : ""}
+                    </div>
+                </div>
+
+                <span class="college-count">
+                    ${college.filteredMajors.length} تخصص
+                </span>
+            </header>
+
+            <div class="major-list">
+                ${college.filteredMajors.length
+                    ? college.filteredMajors.map(major => {
+                        const nameMatches = query &&
+                            normalizeArabic([
+                                major.code,
+                                major.name,
+                                major.note
+                            ].filter(Boolean).join(" ")).includes(query);
+
+                        const degree = degreeLabel(major.degree);
+                        const gender = genderLabel(major.gender);
+
+                        return `
+                            <div class="major-row ${nameMatches ? "match" : ""}">
+                                <span class="major-code">
+                                    ${esc(major.code || "—")}
+                                </span>
+
+                                <div>
+                                    <div class="major-name">
+                                        ${esc(major.name || "تخصص غير محدد")}
+                                    </div>
+
+                                    ${(degree || gender) ? `
+                                        <div class="major-meta">
+                                            ${degree ? `
+                                                <span class="meta-chip">
+                                                    <i class="fa-solid fa-certificate"></i>
+                                                    ${esc(degree)}
+                                                </span>
+                                            ` : ""}
+
+                                            ${gender ? `
+                                                <span class="meta-chip">
+                                                    <i class="fa-solid fa-venus-mars"></i>
+                                                    ${esc(gender)}
+                                                </span>
+                                            ` : ""}
+                                        </div>
+                                    ` : ""}
+
+                                    ${major.note ? `
+                                        <div class="major-note">
+                                            ${esc(major.note)}
+                                        </div>
+                                    ` : ""}
+                                </div>
+                            </div>
+                        `;
+                    }).join("")
+                    : `
+                        <div class="empty-state">
+                            لا توجد تخصصات مضافة في هذه الكلية.
+                        </div>
+                    `}
+            </div>
+        </article>
+    `).join("");
+}
+
+function renderAdmission() {
+    $("trackCount").textContent = `${state.tracks.length} مسار`;
+
+    const defaultTrack = getDefaultTrack();
+
+    renderDefaultScore(defaultTrack);
+
+    if (!state.tracks.length) {
+        $("admissionTracksGrid").innerHTML = `
+            <div class="empty-state" style="grid-column:1/-1">
+                <i class="fa-solid fa-route"></i>
+                لم تتم إضافة مسارات القبول لهذه الجامعة.
+            </div>
+        `;
+        return;
+    }
+
+    $("admissionTracksGrid").innerHTML = state.tracks
+        .map(track => renderTrackCard(track))
+        .join("");
+}
+
+function renderDefaultScore(track) {
+    if (!track) {
+        $("autoResultSection").hidden = true;
+        $("scoreMessage").textContent = "لا يوجد مسار قبول افتراضي مسجل لهذه الجامعة.";
+        return;
+    }
+
+    const calculation = calculateTrack(track);
+
+    if (!calculation.hasWeights) {
+        $("autoResultSection").hidden = true;
+        $("scoreMessage").textContent = "لا توجد أوزان موزونة مسجلة للمسار الافتراضي.";
+        return;
+    }
+
+    if (calculation.missing.length) {
+        $("autoResultSection").hidden = true;
+        $("scoreMessage").textContent =
+            `أدخل درجات ${calculation.missing.join(" و")} في الأداة الرئيسية لإظهار موزونتك.`;
+        return;
+    }
+
+    $("autoResultSection").hidden = false;
+    $("finalResult").textContent = `${calculation.result.toFixed(2)}%`;
+
+    const weights = calculation.rawWeights;
+
+    $("weightLabels").innerHTML = `
+        ${calculation.weights.q > 0 ? `<span>قدرات ${formatWeight(weights.qodrat_weight)}</span>` : ""}
+        ${calculation.weights.t > 0 ? `<span>تحصيلي ${formatWeight(weights.tahsili_weight)}</span>` : ""}
+        ${calculation.weights.s > 0 ? `<span>ثانوي ${formatWeight(weights.school_weight)}</span>` : ""}
+    `;
+
+    $("scoreMessage").textContent =
+        `المسار الافتراضي المستخدم: ${track.name || "مسار القبول"}.`;
+}
+
+function renderTrackCard(track) {
+    const calculation = calculateTrack(track);
+    const weights = calculation.rawWeights;
+    const criteria = buildCriteria(weights);
+
+    const weightItems = [
+        {
+            label: "قدرات",
+            value: formatWeight(weights.qodrat_weight),
+            percent: calculation.weights.q * 100
+        },
+        {
+            label: "تحصيلي",
+            value: formatWeight(weights.tahsili_weight),
+            percent: calculation.weights.t * 100
+        },
+        {
+            label: "ثانوي",
+            value: formatWeight(weights.school_weight),
+            percent: calculation.weights.s * 100
+        }
+    ];
+
+    return `
+        <article class="track-card ${track.is_default ? "default" : ""}">
+            <div class="track-head">
+                <div class="track-name">
+                    <div class="track-icon">
+                        <i class="fa-solid ${track.is_default ? "fa-star" : "fa-route"}"></i>
+                    </div>
+
+                    <div>
+                        <h3>${esc(track.name || "مسار قبول")}</h3>
+                        ${track.description ? `<p>${esc(track.description)}</p>` : ""}
+                    </div>
+                </div>
+
+                ${track.is_default ? `
+                    <span class="default-badge">
+                        <i class="fa-solid fa-check"></i>
+                        افتراضي
+                    </span>
+                ` : ""}
+            </div>
+
+            ${calculation.hasWeights ? `
+                <div class="weights-grid">
+                    ${weightItems.map(item => `
+                        <div class="weight-box">
+                            <span>${item.label}</span>
+                            <b>${item.value || "—"}</b>
+
+                            <div class="weight-bar">
+                                <span style="width:${Math.min(100, Math.max(0, item.percent))}%"></span>
+                            </div>
+                        </div>
+                    `).join("")}
+                </div>
+            ` : ""}
+
+            ${calculation.result !== null ? `
+                <div class="track-result">
+                    <span>موزونتك في هذا المسار</span>
+                    <strong>${calculation.result.toFixed(2)}%</strong>
+                </div>
+            ` : calculation.missing.length ? `
+                <div class="track-result">
+                    <span>درجات مطلوبة للحساب</span>
+                    <strong>${esc(calculation.missing.join("، "))}</strong>
+                </div>
+            ` : ""}
+
+            ${criteria.length ? `
+                <div class="criteria-list">
+                    ${criteria.map(item => `
+                        <span class="criteria-chip">
+                            ${esc(item.label)}
+                            ${item.value ? `<b>${esc(item.value)}</b>` : ""}
+                        </span>
+                    `).join("")}
+                </div>
+            ` : ""}
+
+            ${weights.note ? `
+                <div class="track-note">
+                    <i class="fa-solid fa-circle-info"></i>
+                    ${esc(weights.note)}
+                </div>
+            ` : ""}
+        </article>
+    `;
+}
+
+function renderRatios() {
+    if (!state.ratios.length) {
+        setSectionVisible("ratiosSection", false, "ratios");
+        return;
+    }
+
+    setSectionVisible("ratiosSection", true, "ratios");
+
+    const years = unique(
+        state.ratios.map(item => String(item.year || "").trim())
+    ).sort((a, b) => b.localeCompare(a, "ar"));
+
+    $("ratioYearFilter").innerHTML = `
+        <option value="all">كل السنوات</option>
+        ${years.map(year => `
+            <option value="${esc(year)}">${esc(year)}</option>
+        `).join("")}
+    `;
+
+    $("ratioYearFilter").value = state.ratioYear;
+
+    renderFilteredRatios();
+}
+
+function getFilteredRatios() {
+    const query = normalizeArabic(state.ratioQuery);
+
+    return state.ratios.filter(item => {
+        const yearMatches =
+            state.ratioYear === "all" ||
+            String(item.year || "") === state.ratioYear;
+
+        const searchText = normalizeArabic([
+            item.major_code,
+            item.major_name,
+            item.college_name,
+            item.ratio_type,
+            item.note,
+            item.year
+        ].filter(Boolean).join(" "));
+
+        const queryMatches =
+            !query ||
+            searchText.includes(query);
+
+        return yearMatches && queryMatches;
+    });
+}
+
+function renderFilteredRatios() {
+    const ratios = getFilteredRatios();
+    $("ratioCount").textContent = `${ratios.length} سجل`;
+
+    if (!ratios.length) {
+        $("ratiosContainer").innerHTML = `
+            <div class="empty-state">
+                <i class="fa-solid fa-chart-simple"></i>
+                لا توجد نسب مطابقة للبحث أو السنة المختارة.
+            </div>
+        `;
+        return;
+    }
+
+    $("ratiosContainer").innerHTML = `
+        <div class="ratio-head">
+            <span>التخصص</span>
+            <span>السنة</span>
+            <span>النوع</span>
+            <span>النسبة</span>
+        </div>
+
+        ${ratios.map(item => {
+            const values = [];
+
+            if (item.general_ratio !== null && item.general_ratio !== undefined) {
+                values.push(`<span class="ratio-value">عام ${formatPercent(item.general_ratio)}</span>`);
+            }
+
+            if (item.male_ratio !== null && item.male_ratio !== undefined) {
+                values.push(`<span class="ratio-value">طلاب ${formatPercent(item.male_ratio)}</span>`);
+            }
+
+            if (item.female_ratio !== null && item.female_ratio !== undefined) {
+                values.push(`<span class="ratio-value">طالبات ${formatPercent(item.female_ratio)}</span>`);
+            }
+
+            if (!values.length || item.has_data === false) {
+                values.push(`<span class="ratio-value">لا توجد بيانات</span>`);
+            }
+
+            return `
+                <article class="ratio-row">
+                    <div class="ratio-major">
+                        <strong>
+                            ${item.major_code ? `${esc(item.major_code)} — ` : ""}
+                            ${esc(item.major_name || "تخصص غير محدد")}
+                        </strong>
+
+                        <span>${esc(item.college_name || "")}</span>
+
+                        ${item.note ? `
+                            <div class="ratio-note">${esc(item.note)}</div>
+                        ` : ""}
+                    </div>
+
+                    <div class="ratio-year">
+                        ${esc(item.year || "غير محدد")}
+                    </div>
+
+                    <div class="ratio-type">
+                        ${esc(item.ratio_type || "نسبة قبول")}
+                    </div>
+
+                    <div class="ratio-values">
+                        ${values.join("")}
+                    </div>
+                </article>
+            `;
+        }).join("")}
+    `;
+}
+
+function resourceTypeLabel(type) {
+    const labels = {
+        admission: "القبول",
+        conditions: "الشروط",
+        housing: "السكن",
+        ratios: "النسب",
+        guide: "الأدلة",
+        calendar: "التقويم",
+        scholarship: "المنح والابتعاث",
+        contact: "التواصل"
+    };
+
+    return labels[type] || "ملفات أخرى";
 }
 
 function resourceIcon(type) {
@@ -812,160 +1020,222 @@ function resourceIcon(type) {
         contact: "fa-address-book"
     };
 
-    return icons[type] || "fa-file-pdf";
+    return icons[type] || "fa-file";
 }
 
-function resourceTypeLabel(type) {
-    const labels = {
-        admission: "القبول",
-        conditions: "الشروط",
-        housing: "السكن",
-        ratios: "النسب",
-        guide: "دليل",
-        calendar: "تقويم",
-        scholarship: "منح / ابتعاث",
-        contact: "تواصل"
-    };
+function renderResources() {
+    if (!state.resources.length) {
+        setSectionVisible("resourcesSection", false, "resources");
+        return;
+    }
 
-    return labels[type] || "ملف";
-}
+    setSectionVisible("resourcesSection", true, "resources");
+    $("resourceCount").textContent = `${state.resources.length} ملف`;
 
-function renderResources(resources) {
-    let wrapper = $("resourcesSection");
+    const groups = new Map();
 
-    if (!wrapper) {
-        const main = document.querySelector("main");
-        const extraSections = $("extraSections");
+    state.resources.forEach(resource => {
+        const key = resource.resource_type || "other";
 
-        if (!main) return;
-
-        wrapper = document.createElement("section");
-        wrapper.id = "resourcesSection";
-        wrapper.className = "student-section mb-10";
-
-        if (extraSections && extraSections.parentNode) {
-            extraSections.parentNode.insertBefore(wrapper, extraSections);
-        } else {
-            main.appendChild(wrapper);
+        if (!groups.has(key)) {
+            groups.set(key, []);
         }
-    }
 
-    if (!resources.length) {
-        wrapper.innerHTML = "";
+        groups.get(key).push(resource);
+    });
+
+    $("resourcesContainer").innerHTML = [...groups.entries()]
+        .map(([type, files]) => `
+            <section class="resource-group">
+                <div class="resource-group-title">
+                    <div>
+                        <i class="fa-solid ${resourceIcon(type)}" style="color:var(--primary);margin-inline-end:6px"></i>
+                        ${esc(resourceTypeLabel(type))}
+                    </div>
+
+                    <span>${files.length} ملف</span>
+                </div>
+
+                <div class="resources-grid">
+                    ${files.map(file => `
+                        <a
+                            class="resource-card"
+                            href="${esc(file.file_url || "#")}"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            <div class="resource-icon">
+                                <i class="fa-solid ${resourceIcon(file.resource_type)}"></i>
+                            </div>
+
+                            <div>
+                                <h3>${esc(file.title || "ملف الجامعة")}</h3>
+
+                                ${file.description ? `
+                                    <p>${esc(file.description)}</p>
+                                ` : ""}
+
+                                <div class="resource-meta">
+                                    ${file.year ? `<span>${esc(file.year)}</span>` : ""}
+                                    ${file.file_type ? `<span>${esc(file.file_type)}</span>` : ""}
+                                    ${file.source_name ? `<span>${esc(file.source_name)}</span>` : ""}
+                                    <span class="${file.is_official ? "official" : ""}">
+                                        ${file.is_official ? "رسمي" : "غير رسمي"}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="resource-open">
+                                <i class="fa-solid fa-arrow-up-left-from-square"></i>
+                            </div>
+                        </a>
+                    `).join("")}
+                </div>
+            </section>
+        `)
+        .join("");
+}
+
+function renderSections() {
+    if (!state.sections.length) {
+        setSectionVisible("extraSections", false, "sections");
         return;
     }
 
-    wrapper.innerHTML = `
-        <div class="section-head">
-            <div>
-                <div class="section-kicker">
-                    <i class="fa-solid fa-folder-open"></i>
-                    ملفات مهمة
-                </div>
+    setSectionVisible("extraSections", true, "sections");
+    $("sectionCount").textContent = `${state.sections.length} قسم`;
 
-                <h2 class="section-title">
-                    ملفات القبول والشروط
-                </h2>
+    $("sectionsContainer").innerHTML = state.sections.map((section, index) => `
+        <details class="extra-card" ${index === 0 ? "open" : ""}>
+            <summary>
+                <span>${esc(section.title || "معلومة إضافية")}</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </summary>
 
-                <p class="section-subtitle">
-                    روابط Google Drive مباشرة لملفات القبول أو السكن أو النسب.
-                </p>
+            <div class="extra-content">
+                ${esc(section.content || "--")}
             </div>
+        </details>
+    `).join("");
+}
 
-            <span class="section-chip">
-                <i class="fa-brands fa-google-drive"></i>
-                Google Drive
-            </span>
-        </div>
+function renderAbout() {
+    const data = state.university;
 
-        <div class="resources-grid">
-            ${resources.map(file => `
-                <a href="${esc(file.file_url)}" target="_blank" rel="noopener" class="resource-card glass-card">
-                    <div class="resource-icon">
-                        <i class="fa-solid ${resourceIcon(file.resource_type)}"></i>
-                    </div>
+    $("uniAbout").textContent = data.about || "--";
+    $("statEmp").textContent = data.employment_rate_text || "--";
+    $("statLocal").textContent = data.rank_local ? `#${data.rank_local}` : "--";
+    $("statAccept").textContent = data.acceptance_difficulty || "--";
+    $("uniCompetency").textContent = data.competitiveness || "--";
 
-                    <div class="resource-body">
-                        <div class="resource-top">
-                            <span>${esc(resourceTypeLabel(file.resource_type))}</span>
-                            ${file.year ? `<b>${esc(file.year)}</b>` : ""}
-                        </div>
+    const metricCards = [
+        ["employment", data.employment_rate_text],
+        ["rank", data.rank_local],
+        ["acceptance", data.acceptance_difficulty],
+        ["competition", data.competitiveness]
+    ];
 
-                        <h3>${esc(file.title)}</h3>
+    metricCards.forEach(([key, value]) => {
+        const card = document.querySelector(`[data-metric="${key}"]`);
+        if (card) card.hidden = !meaningful(value);
+    });
 
-                        ${file.description ? `
-                            <p>${esc(file.description)}</p>
-                        ` : ""}
+    const hasMetrics = metricCards.some(([, value]) => meaningful(value));
+    const hasAbout = meaningful(data.about);
 
-                        <div class="resource-meta">
-                            ${file.file_type ? `<span>${esc(file.file_type)}</span>` : ""}
-                            ${file.is_official ? `<span>رسمي</span>` : `<span>غير رسمي</span>`}
-                            ${file.source_name ? `<span>${esc(file.source_name)}</span>` : ""}
-                        </div>
-                    </div>
+    setSectionVisible("aboutBlock", hasAbout || hasMetrics, "about");
+    $("statsBlock").hidden = !hasMetrics;
+    document.querySelector(".about-card").hidden = !hasAbout;
+}
 
-                    <div class="resource-open">
-                        <i class="fa-solid fa-arrow-up-left-from-square"></i>
-                    </div>
-                </a>
-            `).join("")}
+function renderLoading() {
+    $("collegesGrid").innerHTML = `
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+    `;
+
+    $("admissionTracksGrid").innerHTML = `
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+    `;
+}
+
+function renderError(message) {
+    $("uniName").textContent = "تعذر تحميل بيانات الجامعة";
+
+    document.querySelector(".content-column").innerHTML = `
+        <div class="error-box">
+            <i class="fa-solid fa-triangle-exclamation" style="display:block;font-size:28px;margin-bottom:10px"></i>
+            ${esc(message)}
+            <br>
+            تأكد من رابط الجامعة وصلاحيات القراءة في Supabase.
         </div>
     `;
 }
 
-function renderSections(sections) {
-    let sectionWrapper = $("extraSections");
+function bindDataDrivenUI() {
+    $("majorSearch").addEventListener("input", event => {
+        state.majorQuery = event.target.value.trim();
+        renderColleges();
+    });
 
-    if (!sectionWrapper) {
-        const main = document.querySelector("main");
-        if (!main) return;
+    $("degreeFilter").addEventListener("change", event => {
+        state.selectedDegree = event.target.value;
+        renderColleges();
+    });
 
-        sectionWrapper = document.createElement("section");
-        sectionWrapper.id = "extraSections";
-        sectionWrapper.className = "student-section mb-10";
+    $("collegeFilters").addEventListener("click", event => {
+        const button = event.target.closest("[data-college]");
+        if (!button) return;
 
-        main.appendChild(sectionWrapper);
-    }
+        state.selectedCollege = button.dataset.college;
+        renderCollegeFilters();
+        renderColleges();
+    });
 
-    if (!sections.length) {
-        sectionWrapper.innerHTML = "";
-        return;
-    }
+    $("ratioSearch").addEventListener("input", event => {
+        state.ratioQuery = event.target.value.trim();
+        renderFilteredRatios();
+    });
 
-    sectionWrapper.innerHTML = `
-        <h3 class="text-lg font-black mb-6 flex items-center gap-2">
-            <i class="fa-solid fa-circle-info text-indigo-500"></i>
-            معلومات إضافية
-        </h3>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            ${sections.map(section => `
-                <div class="glass-card p-6 rounded-3xl border border-white/5">
-                    <h4 class="text-xs font-black text-indigo-500 uppercase tracking-widest mb-3">
-                        ${esc(section.title)}
-                    </h4>
-                    <p class="text-gray-400 text-sm leading-relaxed">
-                        ${esc(section.content || "--")}
-                    </p>
-                </div>
-            `).join("")}
-        </div>
-    `;
+    $("ratioYearFilter").addEventListener("change", event => {
+        state.ratioYear = event.target.value;
+        renderFilteredRatios();
+    });
 }
 
-function renderError() {
-    if ($("uniName")) {
-        $("uniName").textContent = "تعذر تحميل بيانات الجامعة";
-    }
+function setupSectionSpy() {
+    const links = [...document.querySelectorAll(".side-link:not([hidden])")];
+    const sections = links
+        .map(link => document.querySelector(link.getAttribute("href")))
+        .filter(Boolean);
 
-    if ($("uniLocation")) {
-        $("uniLocation").textContent = "--";
-    }
+    const observer = new IntersectionObserver(entries => {
+        const visible = entries
+            .filter(entry => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
 
-    if ($("uniAbout")) {
-        $("uniAbout").textContent =
-            "تأكد من أن رابط الجامعة صحيح، وأن بيانات Supabase مضبوطة، وأن الجامعة موجودة في جدول universities.";
-    }
+        if (!visible) return;
+
+        links.forEach(link => {
+            link.classList.toggle(
+                "active",
+                link.getAttribute("href") === `#${visible.target.id}`
+            );
+        });
+    }, {
+        rootMargin: "-24% 0px -62% 0px",
+        threshold: [0, .1, .3]
+    });
+
+    sections.forEach(section => observer.observe(section));
 }
 
-document.addEventListener("DOMContentLoaded", loadUniversityDetails);
+document.addEventListener("DOMContentLoaded", () => {
+    syncThemeIcon();
+
+    $("themeToggle").addEventListener("click", toggleTheme);
+    $("shareUniversity").addEventListener("click", shareUniversity);
+
+    loadUniversityDetails();
+});
