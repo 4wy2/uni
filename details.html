@@ -1589,6 +1589,32 @@
         scroll-behavior:auto;
       }
     }
+  
+
+    /* Original section order — premium visual system */
+    .stats-section-grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:10px;
+    }
+
+    .about-grid-single{
+      grid-template-columns:1fr;
+    }
+
+    @media(max-width:860px){
+      .stats-section-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+    }
+
+    @media(max-width:620px){
+      .stats-section-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:8px;
+      }
+    }
+
   </style>
 </head>
 
@@ -1717,14 +1743,24 @@
             نظرة عامة
           </a>
 
-          <a class="side-link" href="#collegesSection">
-            <i class="fa-solid fa-layer-group"></i>
-            الكليات والتخصصات
-          </a>
-
           <a class="side-link" href="#scoreBlock">
             <i class="fa-solid fa-calculator"></i>
             القبول والموزونة
+          </a>
+
+          <a class="side-link" href="#statsBlock" data-nav="stats">
+            <i class="fa-solid fa-gauge-high"></i>
+            المؤشرات
+          </a>
+
+          <a class="side-link" href="#aboutBlock" data-nav="about">
+            <i class="fa-solid fa-circle-info"></i>
+            عن الجامعة
+          </a>
+
+          <a class="side-link" href="#collegesSection">
+            <i class="fa-solid fa-layer-group"></i>
+            الكليات والتخصصات
           </a>
 
           <a class="side-link" href="#ratiosSection" data-nav="ratios">
@@ -1740,11 +1776,6 @@
           <a class="side-link" href="#extraSections" data-nav="sections">
             <i class="fa-solid fa-file-lines"></i>
             معلومات إضافية
-          </a>
-
-          <a class="side-link" href="#aboutBlock" data-nav="about">
-            <i class="fa-solid fa-circle-info"></i>
-            عن الجامعة
           </a>
         </nav>
 
@@ -1762,45 +1793,6 @@
       </aside>
 
       <div class="content-column">
-        <section id="collegesSection" class="section">
-          <div class="section-header">
-            <div>
-              <div class="section-kicker">
-                <i class="fa-solid fa-layer-group"></i>
-                ابدأ من هنا
-              </div>
-
-              <h2 class="section-title">الكليات والتخصصات</h2>
-
-              <p class="section-description">
-                ابحث داخل برامج الجامعة، ثم صفِّ النتائج حسب الكلية. تظهر الدرجة والفئة والملاحظات عندما تكون مسجلة.
-              </p>
-            </div>
-
-            <span class="section-count" id="majorResultCount">
-              جارٍ التحميل
-            </span>
-          </div>
-
-          <div class="toolbar">
-            <div class="search-wrap">
-              <i class="fa-solid fa-magnifying-glass"></i>
-              <input id="majorSearch" class="search-input" type="search" placeholder="ابحث عن تخصص داخل الجامعة…" autocomplete="off">
-            </div>
-
-            <select id="degreeFilter" class="filter-select" aria-label="فلترة حسب الدرجة">
-              <option value="all">كل الدرجات</option>
-            </select>
-          </div>
-
-          <div class="filter-pills" id="collegeFilters"></div>
-
-          <div id="collegesGrid" class="colleges-grid">
-            <div class="skeleton"></div>
-            <div class="skeleton"></div>
-          </div>
-        </section>
-
         <section id="scoreBlock" class="section">
           <div class="section-header">
             <div>
@@ -1845,6 +1837,111 @@
           </div>
 
           <div id="admissionTracksGrid" class="tracks-grid"></div>
+        </section>
+
+        <section id="statsBlock" class="section" hidden>
+          <div class="section-header">
+            <div>
+              <div class="section-kicker">
+                <i class="fa-solid fa-gauge-high"></i>
+                مؤشرات القرار
+              </div>
+
+              <h2 class="section-title">أرقام سريعة قبل التفاصيل</h2>
+
+              <p class="section-description">
+                هذه المؤشرات تعطي تصورًا سريعًا عن الجامعة، وتظهر فقط عندما تكون بياناتها مسجلة.
+              </p>
+            </div>
+          </div>
+
+          <div class="stats-section-grid">
+            <article class="metric-card" data-metric="employment">
+              <i class="fa-solid fa-briefcase"></i>
+              <span>التوظيف</span>
+              <b id="statEmp">--</b>
+            </article>
+
+            <article class="metric-card" data-metric="rank">
+              <i class="fa-solid fa-ranking-star"></i>
+              <span>التصنيف المحلي</span>
+              <b id="statLocal">--</b>
+            </article>
+
+            <article class="metric-card" data-metric="acceptance">
+              <i class="fa-solid fa-door-open"></i>
+              <span>صعوبة القبول</span>
+              <b id="statAccept">--</b>
+            </article>
+
+            <article class="metric-card" data-metric="competition">
+              <i class="fa-solid fa-fire"></i>
+              <span>التنافسية</span>
+              <b id="uniCompetency">--</b>
+            </article>
+          </div>
+        </section>
+
+        <section id="aboutBlock" class="section" hidden>
+          <div class="section-header">
+            <div>
+              <div class="section-kicker">
+                <i class="fa-solid fa-circle-info"></i>
+                افهم الجامعة
+              </div>
+
+              <h2 class="section-title">عن الجامعة</h2>
+
+              <p class="section-description">
+                نبذة مختصرة تساعدك على فهم طبيعة الجامعة وموقعها وصورتها العامة.
+              </p>
+            </div>
+          </div>
+
+          <div class="about-grid about-grid-single">
+            <article class="about-card">
+              <p id="uniAbout">--</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="collegesSection" class="section">
+          <div class="section-header">
+            <div>
+              <div class="section-kicker">
+                <i class="fa-solid fa-layer-group"></i>
+                الكليات والبرامج
+              </div>
+
+              <h2 class="section-title">الكليات والتخصصات</h2>
+
+              <p class="section-description">
+                ابحث داخل برامج الجامعة، ثم صفِّ النتائج حسب الكلية. تظهر الدرجة والفئة والملاحظات عندما تكون مسجلة.
+              </p>
+            </div>
+
+            <span class="section-count" id="majorResultCount">
+              جارٍ التحميل
+            </span>
+          </div>
+
+          <div class="toolbar">
+            <div class="search-wrap">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input id="majorSearch" class="search-input" type="search" placeholder="ابحث عن تخصص داخل الجامعة…" autocomplete="off">
+            </div>
+
+            <select id="degreeFilter" class="filter-select" aria-label="فلترة حسب الدرجة">
+              <option value="all">كل الدرجات</option>
+            </select>
+          </div>
+
+          <div class="filter-pills" id="collegeFilters"></div>
+
+          <div id="collegesGrid" class="colleges-grid">
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+          </div>
         </section>
 
         <section id="ratiosSection" class="section" hidden>
@@ -1919,55 +2016,6 @@
           </div>
 
           <div id="sectionsContainer" class="extra-grid"></div>
-        </section>
-
-        <section id="aboutBlock" class="section" hidden>
-          <div class="section-header">
-            <div>
-              <div class="section-kicker">
-                <i class="fa-solid fa-circle-info"></i>
-                الصورة العامة
-              </div>
-
-              <h2 class="section-title">عن الجامعة والمؤشرات</h2>
-
-              <p class="section-description">
-                نبذة الجامعة والمؤشرات العامة تأتي بعد المعلومات العملية التي يحتاجها الطالب لاتخاذ القرار.
-              </p>
-            </div>
-          </div>
-
-          <div class="about-grid">
-            <article class="about-card">
-              <p id="uniAbout">--</p>
-            </article>
-
-            <div id="statsBlock" class="metrics-grid">
-              <article class="metric-card" data-metric="employment">
-                <i class="fa-solid fa-briefcase"></i>
-                <span>التوظيف</span>
-                <b id="statEmp">--</b>
-              </article>
-
-              <article class="metric-card" data-metric="rank">
-                <i class="fa-solid fa-ranking-star"></i>
-                <span>التصنيف المحلي</span>
-                <b id="statLocal">--</b>
-              </article>
-
-              <article class="metric-card" data-metric="acceptance">
-                <i class="fa-solid fa-door-open"></i>
-                <span>صعوبة القبول</span>
-                <b id="statAccept">--</b>
-              </article>
-
-              <article class="metric-card" data-metric="competition">
-                <i class="fa-solid fa-fire"></i>
-                <span>التنافسية</span>
-                <b id="uniCompetency">--</b>
-              </article>
-            </div>
-          </div>
         </section>
       </div>
     </div>
