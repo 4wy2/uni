@@ -1,506 +1,1169 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مُوجّه | بوصلتك للجامعات</title>
-<meta name="description" content="احسب موزونتك واستكشف الجامعات السعودية — نسب القبول، التخصصات، والمقارنة في مكان واحد.">
-<meta name="theme-color" content="#6a4fcf">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script>(function(){document.documentElement.setAttribute('data-theme',localStorage.getItem('theme')||'light')})()</script>
-<style>
-:root{
-  --bg:#f4f0fb;--ink:#2a2348;--muted:#736d92;--faint:#a39cc2;
-  --card:#ffffff;--card-2:#f7f4fc;--line:#e7e0f3;--line-strong:#d6cbef;
-  --primary:#6a4fcf;--primary-mid:#7c5fd6;--primary-deep:#4a3a9e;--on-primary:#fff;
-  --gold:#b8902f;--gold-deep:#977322;--red:#d94848;
-  --glow:rgba(106,79,207,.22);--grid:rgba(74,58,158,.05);--input-bg:#f3eefb;
-  --card-shadow:0 16px 40px -26px rgba(74,40,140,.3);
-  --premium-bg:linear-gradient(135deg,#f7efdd,#efeafb);
-  --bloom:radial-gradient(55% 45% at 84% -8%,rgba(124,95,214,.18),transparent 60%),
-          radial-gradient(40% 38% at 8% 2%,rgba(106,79,207,.12),transparent 55%);
-}
-[data-theme="dark"]{
-  --bg:#100f1d;--ink:#f3f1fb;--muted:#9b94bd;--faint:#615b82;
-  --card:rgba(255,255,255,.04);--card-2:rgba(255,255,255,.07);
-  --line:rgba(255,255,255,.09);--line-strong:rgba(150,130,240,.36);
-  --primary:#a78bfa;--primary-mid:#8b6ff0;--primary-deep:#6d4fd0;--on-primary:#fff;
-  --gold:#e7c873;--gold-deep:#c9a84a;--red:#f87171;
-  --glow:rgba(120,90,240,.4);--grid:rgba(255,255,255,.025);--input-bg:rgba(255,255,255,.04);
-  --card-shadow:0 26px 64px -38px rgba(90,60,220,.5);
-  --premium-bg:linear-gradient(135deg,rgba(231,200,115,.09),rgba(124,95,214,.08));
-  --bloom:radial-gradient(55% 45% at 82% -8%,rgba(124,95,214,.30),transparent 60%),
-          radial-gradient(40% 38% at 8% 2%,rgba(67,56,202,.24),transparent 55%);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(--ink);
-  -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
-  min-height:100vh;overflow-x:hidden;position:relative;transition:background .3s,color .3s}
-body::before{content:"";position:fixed;inset:0;z-index:-2;background:var(--bloom)}
-body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
-  background-size:62px 62px;-webkit-mask-image:radial-gradient(85% 60% at 50% 0%,#000,transparent 78%);mask-image:radial-gradient(85% 60% at 50% 0%,#000,transparent 78%)}
-.wrap{max-width:1180px;margin:0 auto;padding:0 22px}
-.reveal{opacity:0;transform:translateY(14px);animation:rise .6s cubic-bezier(.2,.8,.2,1) forwards}
-@keyframes rise{to{opacity:1;transform:none}}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-/* ═══ nav ═══ */
-nav{position:sticky;top:0;z-index:40;backdrop-filter:blur(16px);background:color-mix(in srgb,var(--bg) 80%,transparent);border-bottom:1px solid var(--line)}
-.nav-in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 22px;max-width:1180px;margin:0 auto}
-.brand{display:flex;align-items:center;gap:11px}
-.compass{width:34px;height:34px;flex:none;color:var(--primary);animation:spin 44s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.brand b{font-weight:900;font-size:20px;letter-spacing:.5px}
-.nav-actions{display:flex;align-items:center;gap:9px}
-.icon-btn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--ink);background:var(--card-2);border:1px solid var(--line);font-size:15px;transition:.18s}
-.icon-btn:hover{border-color:var(--line-strong);color:var(--primary)}
-.btn-ghost{font-family:inherit;font-size:13px;font-weight:700;color:var(--ink);background:var(--card-2);border:1px solid var(--line);padding:9px 15px;border-radius:30px;cursor:pointer;transition:.18s}
-.btn-ghost:hover{border-color:var(--line-strong)}
-.btn-gold{font-family:inherit;font-size:13px;font-weight:800;color:#231a06;cursor:pointer;border:none;background:linear-gradient(135deg,var(--gold),var(--gold-deep));padding:10px 17px;border-radius:30px;box-shadow:0 8px 22px -10px color-mix(in srgb,var(--gold) 60%,transparent);transition:.18s}
-.btn-gold:hover{filter:brightness(1.06);transform:translateY(-1px)}
-.hide-sm{display:inline-flex}
-@media(max-width:620px){.hide-sm{display:none}}
+  <title>مُوجّه | دليل الجامعات السعودية</title>
+  <meta name="description" content="استكشف الجامعات السعودية واعرف نبذة الجامعة والمنطقة والمدينة ونوع الجامعة والسكن الجامعي.">
+  <meta name="theme-color" content="#6a4fcf">
+  <meta name="robots" content="index,follow">
 
-/* ═══ hero ═══ */
-.hero{text-align:center;padding:56px 0 6px}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--primary);background:color-mix(in srgb,var(--primary) 10%,transparent);border:1px solid var(--line-strong);padding:6px 14px;border-radius:30px;margin-bottom:22px}
-.hero h1{font-size:clamp(36px,6.4vw,66px);font-weight:900;line-height:1.08;letter-spacing:-.5px}
-.hero h1 .grad{background:linear-gradient(90deg,var(--primary),var(--primary-deep));-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero .sub{color:var(--muted);font-size:clamp(14px,2vw,17px);margin-top:16px;max-width:560px;margin-inline:auto}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 
-/* ═══ calc ═══ */
-.calc{position:relative;max-width:700px;margin:34px auto 0}
-.calc-glow{position:absolute;inset:-1px;border-radius:30px;background:linear-gradient(120deg,var(--primary-mid),transparent 42%,var(--primary-deep));opacity:.35;filter:blur(16px);z-index:-1}
-.calc-card{background:var(--card);border:1px solid var(--line-strong);border-radius:28px;padding:24px;box-shadow:var(--card-shadow)}
-.calc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding:0 4px}
-.calc-head .ttl{font-size:14px;color:var(--muted);font-weight:700}
-.calc-head .live{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--primary);font-weight:700}
-.calc-head .live i{width:7px;height:7px;background:var(--primary);border-radius:50%;animation:pulse 1.6s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.fields{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.field label{display:block;font-size:11px;color:var(--faint);font-weight:800;letter-spacing:2px;margin-bottom:8px}
-.field input{width:100%;background:var(--input-bg);border:1px solid var(--line);border-radius:16px;padding:16px 8px;text-align:center;font-family:inherit;font-size:27px;font-weight:900;color:var(--ink);outline:none;transition:.18s;-moz-appearance:textfield}
-.field input::-webkit-outer-spin-button,.field input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.field input::placeholder{color:var(--faint);opacity:.55}
-.field input:focus{border-color:var(--primary-mid);box-shadow:0 0 0 4px color-mix(in srgb,var(--primary) 18%,transparent)}
-.insight{margin-top:16px;display:none;align-items:center;justify-content:center;gap:10px;background:color-mix(in srgb,var(--gold) 10%,transparent);border:1px solid color-mix(in srgb,var(--gold) 30%,transparent);border-radius:16px;padding:12px 16px;font-size:13.5px}
-.insight.show{display:flex;animation:rise .4s ease}
-.insight i{color:var(--gold-deep)}
-.insight b{color:var(--gold-deep)}
-.calc-foot{margin-top:14px;text-align:center;font-size:12.5px;color:var(--faint)}
-.calc-foot b{color:var(--primary)}
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-/* ═══ stats ═══ */
-.stats{display:flex;flex-wrap:wrap;gap:14px;margin:46px 0 8px}
-.stat{flex:1;min-width:140px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;box-shadow:var(--card-shadow)}
-.stat b{display:block;font-size:30px;font-weight:900;background:linear-gradient(90deg,var(--primary),var(--primary-mid));-webkit-background-clip:text;background-clip:text;color:transparent}
-.stat span{font-size:13px;color:var(--muted)}
+  <script>
+    (function () {
+      const saved = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", saved || (prefersDark ? "dark" : "light"));
+    })();
+  </script>
 
-/* ═══ tools ═══ */
-.tools{margin:34px 0 22px}
-.search{position:relative}
-.search i{position:absolute;right:18px;top:50%;transform:translateY(-50%);color:var(--faint);transition:.18s}
-.search input{width:100%;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 48px 16px 18px;font-family:inherit;font-size:15px;color:var(--ink);outline:none;transition:.18s;box-shadow:var(--card-shadow)}
-.search input:focus{border-color:var(--line-strong)}
-.search:focus-within i{color:var(--primary)}
-.filters{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-top:16px}
-.chip-group{display:flex;gap:7px;flex-wrap:wrap}
-.chip{font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;color:var(--muted);background:var(--card);border:1px solid var(--line);padding:8px 16px;border-radius:30px;transition:.15s}
-.chip:hover{color:var(--ink);border-color:var(--line-strong)}
-.chip.on{background:var(--primary);border-color:var(--primary);color:var(--on-primary);font-weight:700}
-.sep{width:1px;height:24px;background:var(--line);margin:0 4px}
-.sort{margin-inline-start:auto;display:inline-flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:30px;padding:4px}
-.sort button{font-family:inherit;font-size:12.5px;font-weight:700;color:var(--muted);background:none;border:none;padding:7px 13px;border-radius:26px;cursor:pointer;transition:.15s}
-.sort button.on{background:var(--primary);color:var(--on-primary)}
-.count{font-size:12.5px;color:var(--faint);margin-top:10px}
+  <style>
+    :root{
+      --bg:#f4f0fb;
+      --ink:#2a2348;
+      --muted:#736d92;
+      --faint:#a39cc2;
+      --card:#ffffff;
+      --card-2:#f7f4fc;
+      --line:#e7e0f3;
+      --line-strong:#d6cbef;
+      --primary:#6a4fcf;
+      --primary-mid:#7c5fd6;
+      --primary-deep:#4a3a9e;
+      --on-primary:#fff;
+      --green:#168345;
+      --green-soft:rgba(22,131,69,.11);
+      --amber:#b7791f;
+      --amber-soft:rgba(183,121,31,.12);
+      --red:#d94848;
+      --red-soft:rgba(217,72,72,.11);
+      --glow:rgba(106,79,207,.22);
+      --grid:rgba(74,58,158,.05);
+      --card-shadow:0 16px 40px -26px rgba(74,40,140,.3);
+      --bloom:
+        radial-gradient(55% 45% at 84% -8%,rgba(124,95,214,.18),transparent 60%),
+        radial-gradient(40% 38% at 8% 2%,rgba(106,79,207,.12),transparent 55%);
+    }
 
-/* ═══ grid + cards ═══ */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px;padding-bottom:20px}
-.card{position:relative;display:block;text-decoration:none;color:inherit;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:22px;box-shadow:var(--card-shadow);transition:transform .2s,border-color .2s,box-shadow .2s}
-.card:hover{transform:translateY(-5px);border-color:var(--line-strong);box-shadow:0 26px 60px -34px var(--glow)}
-.card:active{transform:scale(.99)}
-.card .top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.mono{width:52px;height:52px;border-radius:16px;flex:none;display:grid;place-items:center;font-size:24px;font-weight:900;color:var(--primary);background:color-mix(in srgb,var(--primary) 14%,transparent);border:1px solid var(--line-strong)}
-.mono.has-logo{background:#fff;padding:7px;overflow:hidden}
-[data-theme="dark"] .mono.has-logo{background:rgba(255,255,255,.92)}
-.mono.has-logo img{width:100%;height:100%;object-fit:contain;display:block}
-.tags{display:flex;gap:6px;flex-wrap:wrap}
-.tag{font-size:10px;font-weight:800;letter-spacing:1.2px;padding:5px 11px;border-radius:30px;color:var(--primary);background:color-mix(in srgb,var(--primary) 10%,transparent);border:1px solid var(--line-strong)}
-.tag.elite{color:var(--gold-deep);background:color-mix(in srgb,var(--gold) 12%,transparent);border-color:color-mix(in srgb,var(--gold) 32%,transparent)}
-.tag.new{color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent);border-color:var(--line-strong);font-size:9px}
-.card h3{font-size:18px;font-weight:800;margin:16px 0 4px}
-.card .loc{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
-.score{margin-top:18px;border-top:1px solid var(--line);padding-top:15px}
-.score .pre{display:flex;align-items:center;justify-content:space-between}
-.score .hint{font-size:12px;color:var(--faint)}
-.badge{display:none;align-items:baseline;gap:6px}
-.badge.show{display:inline-flex}
-.badge .lbl{font-size:11px;color:var(--muted)}
-.badge .val{font-size:23px;font-weight:900;color:var(--primary)}
-.go{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;color:var(--faint);background:var(--card-2);transition:.18s}
-.card:hover .go{color:var(--primary);background:color-mix(in srgb,var(--primary) 14%,transparent)}
-.bar{height:6px;border-radius:6px;background:color-mix(in srgb,var(--ink) 8%,transparent);margin-top:12px;overflow:hidden;display:none}
-.bar.show{display:block}
-.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--primary-deep),var(--primary));transition:width .5s ease}
-.lock{margin-top:12px;display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--gold-deep);background:color-mix(in srgb,var(--gold) 9%,transparent);border:1px solid color-mix(in srgb,var(--gold) 24%,transparent);padding:4px 10px;border-radius:30px}
+    [data-theme="dark"]{
+      --bg:#100f1d;
+      --ink:#f3f1fb;
+      --muted:#9b94bd;
+      --faint:#615b82;
+      --card:#181624;
+      --card-2:#211e31;
+      --line:rgba(255,255,255,.09);
+      --line-strong:rgba(150,130,240,.36);
+      --primary:#a78bfa;
+      --primary-mid:#8b6ff0;
+      --primary-deep:#6d4fd0;
+      --on-primary:#fff;
+      --green:#4ade80;
+      --green-soft:rgba(74,222,128,.11);
+      --amber:#f1b951;
+      --amber-soft:rgba(241,185,81,.11);
+      --red:#f87171;
+      --red-soft:rgba(248,113,113,.11);
+      --glow:rgba(120,90,240,.4);
+      --grid:rgba(255,255,255,.025);
+      --card-shadow:0 26px 64px -38px rgba(90,60,220,.5);
+      --bloom:
+        radial-gradient(55% 45% at 82% -8%,rgba(124,95,214,.30),transparent 60%),
+        radial-gradient(40% 38% at 8% 2%,rgba(67,56,202,.24),transparent 55%);
+    }
 
-/* ═══ skeleton ═══ */
-.skel{border-radius:26px;padding:22px;background:var(--card);border:1px solid var(--line)}
-.skel-line{height:14px;border-radius:8px;background:color-mix(in srgb,var(--ink) 8%,transparent);animation:shimmer 1.4s infinite}
-.skel-line.w60{width:60%}.skel-line.w40{width:40%}.skel-line.w80{width:80%}
-.skel-circle{width:52px;height:52px;border-radius:16px;background:color-mix(in srgb,var(--ink) 8%,transparent);animation:shimmer 1.4s infinite}
-@keyframes shimmer{0%{opacity:1}50%{opacity:.4}100%{opacity:1}}
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:"Tajawal",system-ui,sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+      -webkit-font-smoothing:antialiased;
+      -webkit-tap-highlight-color:transparent;
+      min-height:100vh;
+      overflow-x:hidden;
+      position:relative;
+      transition:background .3s,color .3s;
+    }
 
-.empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted)}
-.empty b{display:block;font-size:20px;font-weight:800;color:var(--ink);margin-bottom:6px}
-.error-hint{font-size:12px;color:var(--red);margin-top:8px;direction:ltr;font-family:monospace;opacity:.7}
+    body::before{content:"";position:fixed;inset:0;z-index:-2;background:var(--bloom)}
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-1;
+      pointer-events:none;
+      background-image:
+        linear-gradient(var(--grid) 1px,transparent 1px),
+        linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+      background-size:62px 62px;
+      mask-image:radial-gradient(85% 60% at 50% 0%,#000,transparent 78%);
+    }
 
-/* ═══ premium ═══ */
-.premium{margin:30px 0 50px;border:1px solid color-mix(in srgb,var(--gold) 28%,transparent);border-radius:28px;overflow:hidden;background:var(--premium-bg)}
-.premium-in{padding:30px 26px;display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between}
-.premium h2{font-size:24px;font-weight:900;margin-bottom:6px}
-.premium h2 .g{color:var(--gold-deep)}
-.premium p{color:var(--muted);font-size:14px;max-width:430px}
-.plans{display:flex;gap:10px;flex-wrap:wrap}
-.plan{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 18px;min-width:150px}
-.plan .k{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:8px}
-.plan ul{list-style:none;font-size:12.5px;display:flex;flex-direction:column;gap:5px}
-.plan li{display:flex;align-items:center;gap:7px;color:var(--muted)}
-.plan li i{font-size:10px;color:var(--primary)}
-.plan.pro{border-color:color-mix(in srgb,var(--gold) 40%,transparent)}
-.plan.pro li{color:var(--ink)}
-.plan.pro li i{color:var(--gold-deep)}
+    a{color:inherit}
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    .wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+    .reveal{opacity:0;transform:translateY(14px);animation:rise .6s cubic-bezier(.2,.8,.2,1) forwards}
+    @keyframes rise{to{opacity:1;transform:none}}
 
-footer{border-top:1px solid var(--line);text-align:center;padding:30px 20px;color:var(--faint);font-size:13px}
-footer b{color:var(--muted);font-weight:700}
+    /* NAV */
+    nav{
+      position:sticky;
+      top:0;
+      z-index:40;
+      backdrop-filter:blur(16px);
+      background:color-mix(in srgb,var(--bg) 80%,transparent);
+      border-bottom:1px solid var(--line);
+    }
 
-@media(max-width:560px){.hero{padding-top:40px}.field input{font-size:23px;padding:14px 5px}.stat b{font-size:24px}.sep{display:none}}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}.reveal{opacity:1;transform:none}}
-:focus-visible{outline:2px solid var(--primary);outline-offset:3px}
-</style>
+    .nav-in{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:13px 22px;
+      max-width:1180px;
+      margin:0 auto;
+    }
+
+    .brand{display:flex;align-items:center;gap:11px;text-decoration:none}
+    .compass{width:34px;height:34px;flex:none;color:var(--primary);animation:spin 44s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .brand b{font-weight:900;font-size:20px;letter-spacing:.5px}
+    .nav-actions{display:flex;align-items:center;gap:9px}
+
+    .icon-btn,.nav-btn{
+      color:var(--ink);
+      background:var(--card-2);
+      border:1px solid var(--line);
+      transition:.18s;
+    }
+
+    .icon-btn{
+      width:40px;
+      height:40px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      font-size:15px;
+    }
+
+    .nav-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 15px;
+      border-radius:30px;
+      text-decoration:none;
+      font-size:13px;
+      font-weight:800;
+    }
+
+    .icon-btn:hover,.nav-btn:hover{
+      border-color:var(--line-strong);
+      color:var(--primary);
+      transform:translateY(-1px);
+    }
+
+    /* HERO */
+    .hero{text-align:center;padding:62px 0 20px}
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:12.5px;
+      color:var(--primary);
+      background:color-mix(in srgb,var(--primary) 10%,transparent);
+      border:1px solid var(--line-strong);
+      padding:6px 14px;
+      border-radius:30px;
+      margin-bottom:22px;
+    }
+
+    .hero h1{
+      font-size:clamp(38px,6.4vw,68px);
+      font-weight:900;
+      line-height:1.08;
+      letter-spacing:-.5px;
+    }
+
+    .hero h1 .grad{
+      background:linear-gradient(90deg,var(--primary),var(--primary-deep));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .hero .sub{
+      color:var(--muted);
+      font-size:clamp(14px,2vw,18px);
+      margin:17px auto 0;
+      max-width:650px;
+      line-height:1.9;
+    }
+
+    .hero-action{
+      display:flex;
+      justify-content:center;
+      margin-top:23px;
+    }
+
+    .major-search-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:9px;
+      min-height:44px;
+      padding:10px 19px;
+      border:1px solid var(--primary);
+      border-radius:30px;
+      color:#fff;
+      background:linear-gradient(135deg,var(--primary),var(--primary-deep));
+      box-shadow:0 14px 30px -18px color-mix(in srgb,var(--primary) 72%,transparent);
+      text-decoration:none;
+      font-size:13px;
+      font-weight:900;
+      transition:.18s;
+    }
+
+    .major-search-btn:hover{
+      transform:translateY(-2px);
+      filter:brightness(1.04);
+    }
+
+    /* STATS */
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+      margin:42px 0 10px;
+    }
+
+    .stat{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:18px 20px;
+      box-shadow:var(--card-shadow);
+    }
+
+    .stat b{
+      display:block;
+      font-size:30px;
+      font-weight:900;
+      background:linear-gradient(90deg,var(--primary),var(--primary-mid));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .stat span{font-size:13px;color:var(--muted)}
+
+    /* TOOLS */
+    .section-head{margin:46px 0 18px}
+    .section-head h2{font-size:clamp(25px,4vw,36px);font-weight:900}
+    .section-head p{margin-top:6px;color:var(--muted);font-size:14px}
+
+    .tools{
+      background:color-mix(in srgb,var(--card) 88%,transparent);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:17px;
+      box-shadow:var(--card-shadow);
+      backdrop-filter:blur(12px);
+    }
+
+    .search{position:relative}
+    .search i{
+      position:absolute;
+      right:18px;
+      top:50%;
+      transform:translateY(-50%);
+      color:var(--faint);
+    }
+
+    .search input{
+      width:100%;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:15px 48px 15px 18px;
+      font-size:15px;
+      color:var(--ink);
+      outline:none;
+      transition:.18s;
+    }
+
+    .search input:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 4px color-mix(in srgb,var(--primary) 14%,transparent);
+    }
+
+    .filters{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr)) auto;
+      gap:9px;
+      margin-top:11px;
+    }
+
+    .select-wrap{position:relative}
+    .select-wrap::after{
+      content:"\f107";
+      position:absolute;
+      left:13px;
+      top:50%;
+      transform:translateY(-50%);
+      color:var(--faint);
+      font-family:"Font Awesome 6 Free";
+      font-weight:900;
+      pointer-events:none;
+    }
+
+    .filters select{
+      width:100%;
+      min-height:43px;
+      padding:8px 12px 8px 35px;
+      border:1px solid var(--line);
+      border-radius:13px;
+      outline:none;
+      appearance:none;
+      background:var(--card);
+      color:var(--ink);
+      font-size:12.5px;
+    }
+
+    .clear-btn{
+      min-height:43px;
+      padding:8px 14px;
+      border:1px solid var(--line);
+      border-radius:13px;
+      background:var(--card);
+      color:var(--muted);
+      font-weight:800;
+    }
+
+    .clear-btn:hover{border-color:var(--line-strong);color:var(--primary)}
+    .count{font-size:12.5px;color:var(--faint);margin-top:11px}
+
+    /* GRID + CARD */
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(310px,1fr));
+      gap:18px;
+      padding:18px 0 40px;
+    }
+
+    .card{
+      position:relative;
+      display:block;
+      text-decoration:none;
+      color:inherit;
+      overflow:hidden;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:26px;
+      padding:22px;
+      box-shadow:var(--card-shadow);
+      transition:transform .2s,border-color .2s,box-shadow .2s;
+    }
+
+    .card:hover{
+      transform:translateY(-5px);
+      border-color:var(--line-strong);
+      box-shadow:0 26px 60px -34px var(--glow);
+    }
+
+    .card:active{transform:scale(.99)}
+    .card .top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+
+    .mono{
+      width:56px;
+      height:56px;
+      border-radius:17px;
+      flex:none;
+      display:grid;
+      place-items:center;
+      font-size:24px;
+      font-weight:900;
+      color:var(--primary);
+      background:color-mix(in srgb,var(--primary) 14%,transparent);
+      border:1px solid var(--line-strong);
+    }
+
+    .mono.has-logo{background:#fff;padding:7px;overflow:hidden}
+    [data-theme="dark"] .mono.has-logo{background:rgba(255,255,255,.94)}
+    .mono.has-logo img{width:100%;height:100%;object-fit:contain;display:block}
+
+    .tags{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      max-width:76%;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:5px;
+      font-size:10px;
+      font-weight:800;
+      padding:5px 10px;
+      border-radius:30px;
+      color:var(--primary);
+      background:color-mix(in srgb,var(--primary) 10%,transparent);
+      border:1px solid var(--line-strong);
+    }
+
+    .tag.housing-yes{
+      color:var(--green);
+      background:var(--green-soft);
+      border-color:color-mix(in srgb,var(--green) 30%,transparent);
+    }
+
+    .tag.housing-limited{
+      color:var(--amber);
+      background:var(--amber-soft);
+      border-color:color-mix(in srgb,var(--amber) 30%,transparent);
+    }
+
+    .tag.housing-no{color:var(--muted)}
+
+    .card h3{
+      font-size:18px;
+      font-weight:900;
+      margin:16px 0 4px;
+      line-height:1.5;
+    }
+
+    .loc{
+      font-size:12.5px;
+      color:var(--muted);
+      display:flex;
+      align-items:flex-start;
+      gap:6px;
+      line-height:1.7;
+    }
+
+    .loc i{margin-top:4px}
+
+    .about{
+      margin-top:15px;
+      color:var(--muted);
+      font-size:12.5px;
+      line-height:1.9;
+      display:-webkit-box;
+      -webkit-line-clamp:3;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
+      min-height:71px;
+    }
+
+    .facts{
+      display:flex;
+      flex-wrap:wrap;
+      gap:7px;
+      margin-top:16px;
+    }
+
+    .fact{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:7px 10px;
+      border-radius:12px;
+      background:var(--card-2);
+      color:var(--muted);
+      font-size:11px;
+      font-weight:700;
+    }
+
+    .fact i{color:var(--primary)}
+
+    .card-foot{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-top:17px;
+      padding-top:14px;
+      border-top:1px solid var(--line);
+    }
+
+    .updated{font-size:10.5px;color:var(--faint)}
+
+    .go{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      color:var(--primary);
+      font-size:12px;
+      font-weight:900;
+    }
+
+    /* STATES */
+    .skel{
+      border-radius:26px;
+      padding:22px;
+      background:var(--card);
+      border:1px solid var(--line);
+    }
+
+    .skel-line{
+      height:14px;
+      border-radius:8px;
+      background:color-mix(in srgb,var(--ink) 8%,transparent);
+      animation:shimmer 1.4s infinite;
+    }
+
+    .skel-circle{
+      width:56px;
+      height:56px;
+      border-radius:17px;
+      background:color-mix(in srgb,var(--ink) 8%,transparent);
+      animation:shimmer 1.4s infinite;
+    }
+
+    @keyframes shimmer{0%,100%{opacity:1}50%{opacity:.4}}
+
+    .empty{
+      grid-column:1/-1;
+      text-align:center;
+      padding:60px 20px;
+      color:var(--muted);
+    }
+
+    .empty i{font-size:30px;color:var(--primary);margin-bottom:13px}
+    .empty b{display:block;font-size:20px;font-weight:900;color:var(--ink);margin-bottom:6px}
+
+    footer{
+      border-top:1px solid var(--line);
+      text-align:center;
+      padding:30px 20px;
+      color:var(--faint);
+      font-size:13px;
+    }
+
+    @media(max-width:900px){
+      .filters{grid-template-columns:repeat(2,1fr)}
+      .clear-btn{grid-column:span 2}
+    }
+
+    @media(max-width:650px){
+      .hero{padding-top:44px}
+      .stats{grid-template-columns:1fr}
+      .filters{grid-template-columns:1fr}
+      .clear-btn{grid-column:auto}
+      .grid{grid-template-columns:1fr}
+      .hide-sm{display:none}
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      *{animation:none!important;transition:none!important;scroll-behavior:auto}
+      .reveal{opacity:1;transform:none}
+    }
+
+    :focus-visible{outline:2px solid var(--primary);outline-offset:3px}
+  </style>
 </head>
+
 <body>
+  <nav>
+    <div class="nav-in">
+      <a class="brand" href="index.html">
+        <svg class="compass" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+          <circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="3"/>
+          <circle cx="50" cy="50" r="3" fill="currentColor"/>
+          <polygon points="50,16 58,50 50,46 42,50" fill="currentColor"/>
+          <polygon points="50,84 42,50 50,54 58,50" fill="currentColor" opacity=".55"/>
+        </svg>
+        <b>مُوجّه</b>
+      </a>
 
-<nav>
-  <div class="nav-in">
-    <div class="brand">
-      <svg class="compass" viewBox="0 0 100 100" fill="none" aria-hidden="true">
-        <circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="3"/>
-        <circle cx="50" cy="50" r="3" fill="currentColor"/>
-        <polygon points="50,16 58,50 50,46 42,50" fill="currentColor"/>
-        <polygon points="50,84 42,50 50,54 58,50" fill="currentColor" opacity=".55"/>
-      </svg>
-      <b>مُوجّه</b>
-    </div>
-    <div class="nav-actions">
-      <button class="icon-btn" id="themeToggle" onclick="toggleTheme()" aria-label="تبديل الوضع الليلي/النهاري"><i class="fa-solid fa-moon"></i></button>
-      <button class="btn-ghost hide-sm" onclick="document.getElementById('globalQ').focus()">احسب موزونتك</button>
-      <button class="btn-gold" onclick="document.getElementById('premium').scrollIntoView({behavior:'smooth'})">وصول كامل</button>
-    </div>
-  </div>
-</nav>
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeToggle" aria-label="تبديل الوضع الليلي والنهاري">
+          <i class="fa-solid fa-moon"></i>
+        </button>
 
-<header class="hero wrap">
-  <div class="eyebrow reveal"><i class="fa-solid fa-compass"></i> بوصلتك للجامعات السعودية</div>
-  <h1 class="reveal" style="animation-delay:.05s">اعرف <span class="grad">موزونتك</span><br>واستكشف مستقبلك</h1>
-  <p class="sub reveal" style="animation-delay:.1s">أدخل درجاتك مرة واحدة، وشوف موزونتك تتحسب على كل جامعة — ورتّبها من الأعلى بضغطة.</p>
-  <div class="calc reveal" style="animation-delay:.15s">
-    <div class="calc-glow"></div>
-    <div class="calc-card">
-      <div class="calc-head">
-        <span class="ttl">درجاتك</span>
-        <span class="live"><i></i> تُحسب مباشرة</span>
-      </div>
-      <div class="fields">
-        <div class="field"><label>قدرات</label><input type="number" id="globalQ" placeholder="0" min="0" max="100" inputmode="decimal" aria-label="درجة القدرات" oninput="saveAndCalc()"></div>
-        <div class="field"><label>تحصيلي</label><input type="number" id="globalT" placeholder="0" min="0" max="100" inputmode="decimal" aria-label="درجة التحصيلي" oninput="saveAndCalc()"></div>
-        <div class="field"><label>ثانوي</label><input type="number" id="globalS" placeholder="0" min="0" max="100" inputmode="decimal" aria-label="معدل الثانوي" oninput="saveAndCalc()"></div>
-      </div>
-      <div class="insight" id="insight"><i class="fa-solid fa-wand-magic-sparkles"></i> <span id="insightText"></span></div>
-      <div class="calc-foot">موزونتك تظهر على بطاقة كل جامعة · <b>تُحفظ تلقائياً</b></div>
-    </div>
-  </div>
-</header>
-
-<main class="wrap">
-  <div class="stats reveal" id="stats" style="animation-delay:.2s"></div>
-  <div class="tools">
-    <div class="search">
-      <input type="text" id="uniSearch" placeholder="ابحث عن جامعة، مدينة، أو تخصص…" aria-label="بحث" oninput="debouncedRender()">
-      <i class="fa-solid fa-magnifying-glass"></i>
-    </div>
-    <div class="filters">
-      <div class="chip-group" id="cityChips"></div>
-      <div class="sep"></div>
-      <div class="chip-group" id="typeChips"></div>
-      <div class="sort">
-        <button id="sortDefault" class="on" onclick="setSort('default')">الافتراضي</button>
-        <button id="sortScore" onclick="setSort('score')">الأعلى موزونة</button>
+        <a class="nav-btn hide-sm" href="#universities">
+          <i class="fa-solid fa-building-columns"></i>
+          الجامعات
+        </a>
       </div>
     </div>
-    <div class="count" id="count"></div>
-  </div>
-  <div class="grid" id="unisGrid"></div>
+  </nav>
 
-  <section class="premium" id="premium">
-    <div class="premium-in">
-      <div>
-        <h2>وصول <span class="g">كامل</span> لمُوجّه</h2>
-        <p>افتح نسب القبول لكل تخصص، والمقارنة بين الجامعات، وأداة موجّه القبول الذكية — كل ما تحتاجه لقرار مدروس.</p>
-        <button class="btn-gold" style="margin-top:14px" onclick="alert('قريباً — نظام الاشتراك')">اشترك الآن</button>
+  <header class="hero wrap">
+    <div class="eyebrow reveal">
+      <i class="fa-solid fa-compass"></i>
+      بوصلتك للجامعات السعودية
+    </div>
+
+    <h1 class="reveal" style="animation-delay:.05s">
+      تعرّف على جامعتك
+      <span class="grad">قبل أن تختار</span>
+    </h1>
+
+    <p class="sub reveal" style="animation-delay:.1s">
+      معلومات مختصرة وواضحة عن الجامعة والمنطقة والسكن وأهم التفاصيل
+      التي يحتاجها الطالب قبل اتخاذ قراره.
+    </p>
+
+    <div class="hero-action reveal" style="animation-delay:.15s">
+      <a class="major-search-btn" href="major-search.html">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        ابحث باسم التخصص
+      </a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="stats reveal" id="stats" style="animation-delay:.2s"></section>
+
+    <section id="universities">
+      <div class="section-head">
+        <h2>الجامعات السعودية</h2>
+        <p>اختر الجامعة المناسبة، ثم افتح صفحتها للاطلاع على التفاصيل الكاملة.</p>
       </div>
-      <div class="plans">
-        <div class="plan">
-          <div class="k">مجاني</div>
-          <ul>
-            <li><i class="fa-solid fa-check"></i> تصفّح الجامعات</li>
-            <li><i class="fa-solid fa-check"></i> حساب الموزونة</li>
-            <li><i class="fa-solid fa-check"></i> البحث والفلترة</li>
-          </ul>
+
+      <div class="tools">
+        <div class="search">
+          <input id="uniSearch" type="search" placeholder="ابحث عن جامعة أو مدينة…" aria-label="البحث عن جامعة أو مدينة">
+          <i class="fa-solid fa-magnifying-glass"></i>
         </div>
-        <div class="plan pro">
-          <div class="k" style="color:var(--gold-deep)">وصول كامل</div>
-          <ul>
-            <li><i class="fa-solid fa-star"></i> نسب القبول لكل تخصص</li>
-            <li><i class="fa-solid fa-star"></i> المقارنة بين الجامعات</li>
-            <li><i class="fa-solid fa-star"></i> موجّه القبول الذكي</li>
-          </ul>
+
+        <div class="count" id="count"></div>
+      </div>
+
+      <div class="grid" id="unisGrid"></div>
+    </section>
+  </main>
+
+  <footer>
+    مُوجّه — المعلومات إرشادية، والمرجع النهائي هو الموقع الرسمي للجامعة.
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    "use strict";
+
+    const SUPABASE_URL = "https://gybksasoembmgdevogpv.supabase.co";
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd5YmtzYXNvZW1ibWdkZXZvZ3B2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NzEyNjIsImV4cCI6MjA5NzM0NzI2Mn0.U0QFX7WS9ETbV0JmMYe-VNZhErJAPtZxwEBASep7AA4";
+
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    let ALL = [];
+    let searchTimer = null;
+
+    const state = {
+      query: "",
+      region: "",
+      city: "",
+      type: "",
+      housing: ""
+    };
+
+    const $ = id => document.getElementById(id);
+
+    function esc(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function normalize(value) {
+      return String(value ?? "")
+        .normalize("NFKD")
+        .replace(/[\u064B-\u065F\u0670\u0640]/g, "")
+        .replace(/[أإآ]/g, "ا")
+        .replace(/ى/g, "ي")
+        .replace(/ة/g, "ه")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase();
+    }
+
+    function unique(values) {
+      return [...new Set(values.filter(Boolean))];
+    }
+
+    function formatDate(value) {
+      if (!value) return "غير محدد";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "غير محدد";
+
+      return new Intl.DateTimeFormat("ar-SA", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      }).format(date);
+    }
+
+    function toggleTheme() {
+      const next =
+        document.documentElement.getAttribute("data-theme") === "dark"
+          ? "light"
+          : "dark";
+
+      document.documentElement.setAttribute("data-theme", next);
+      localStorage.setItem("theme", next);
+      syncThemeIcon();
+    }
+
+    function syncThemeIcon() {
+      const dark =
+        document.documentElement.getAttribute("data-theme") === "dark";
+
+      $("themeToggle").innerHTML = dark
+        ? '<i class="fa-solid fa-sun"></i>'
+        : '<i class="fa-solid fa-moon"></i>';
+    }
+
+    async function fetchAll(table, columns = "*", orderColumn = null) {
+      const pageSize = 1000;
+      const rows = [];
+      let from = 0;
+
+      while (true) {
+        let query = sb
+          .from(table)
+          .select(columns)
+          .range(from, from + pageSize - 1);
+
+        if (orderColumn) {
+          query = query.order(orderColumn, { ascending: true });
+        }
+
+        const { data, error } = await query;
+        if (error) throw error;
+
+        const page = data || [];
+        rows.push(...page);
+
+        if (page.length < pageSize) break;
+        from += pageSize;
+      }
+
+      return rows;
+    }
+
+    async function optionalFetch(table, columns = "*") {
+      try {
+        return await fetchAll(table, columns);
+      } catch (error) {
+        console.warn(`تعذر تحميل ${table}:`, error);
+        return [];
+      }
+    }
+
+    function genderLabel(value) {
+      const labels = {
+        male: "طلاب",
+        female: "طالبات",
+        both: "طلاب وطالبات",
+        mixed: "طلاب وطالبات",
+        general: "طلاب وطالبات",
+        unknown: "غير محدد"
+      };
+
+      return labels[value] || value || "غير محدد";
+    }
+
+    function housingLabel(status, gender) {
+      const genderText = {
+        male: " للطلاب",
+        female: " للطالبات",
+        both: " للطلاب والطالبات",
+        unknown: ""
+      }[gender] || "";
+
+      if (status === "available") return `يتوفر سكن${genderText}`;
+      if (status === "limited") return `سكن بشروط${genderText}`;
+      if (status === "unavailable") return "لا يتوفر سكن";
+
+      return "السكن غير محدد";
+    }
+
+    function housingTagClass(status) {
+      if (status === "available") return "housing-yes";
+      if (status === "limited") return "housing-limited";
+      if (status === "unavailable") return "housing-no";
+      return "";
+    }
+
+    function mergeRows(universityRows, housingRows) {
+      const housingMap = new Map(
+        housingRows.map(row => [String(row.university_id), row])
+      );
+
+      return universityRows
+        .filter(row => row.is_active !== false)
+        .map(row => {
+          const housing = housingMap.get(String(row.id)) || {};
+
+          const name = row.name_ar || row.name || "جامعة";
+          const city = row.city || "";
+          const region = row.region || "";
+          const location =
+            row.location_text ||
+            [city, region].filter(Boolean).join("، ");
+
+          const housingStatus =
+            housing.housing_status ||
+            row.housing_status ||
+            "unknown";
+
+          const housingGender =
+            housing.housing_gender ||
+            row.housing_gender ||
+            "unknown";
+
+          const housingFee =
+            housing.housing_fee_text ||
+            row.housing_fee_text ||
+            "";
+
+          const housingNote =
+            housing.housing_note ||
+            row.housing_note ||
+            "";
+
+          const housingUpdated =
+            housing.housing_updated_at ||
+            row.housing_updated_at ||
+            row.updated_at ||
+            row.created_at ||
+            null;
+
+          return {
+            id: row.id,
+            name,
+            city,
+            region,
+            location,
+            type: row.university_type || row.type || "غير محدد",
+            gender: row.gender || "unknown",
+            logo_url: row.logo_url || "",
+            about: row.about || "",
+            housing_status: housingStatus,
+            housing_gender: housingGender,
+            housing_fee_text: housingFee,
+            housing_note: housingNote,
+            updated_at: housingUpdated,
+            display_order: Number(row.display_order || 9999),
+            search_text: normalize([
+              name,
+              city,
+              region,
+              location,
+              row.university_type
+            ].join(" "))
+          };
+        })
+        .sort((a, b) =>
+          a.display_order - b.display_order ||
+          a.name.localeCompare(b.name, "ar")
+        );
+    }
+
+    function logoHTML(uni) {
+      const letter = esc(
+        (uni.name || "؟")
+          .replace(/^جامعة\s*/, "")
+          .trim()[0] || "ج"
+      );
+
+      if (!uni.logo_url) {
+        return `<div class="mono">${letter}</div>`;
+      }
+
+      return `
+        <div class="mono has-logo" data-fallback="${letter}">
+          <img
+            src="${esc(uni.logo_url)}"
+            alt="شعار ${esc(uni.name)}"
+            loading="lazy"
+            referrerpolicy="no-referrer"
+            onerror="this.parentElement.classList.remove('has-logo');this.parentElement.textContent=this.parentElement.dataset.fallback"
+          >
         </div>
-      </div>
-    </div>
-  </section>
-</main>
+      `;
+    }
 
-<footer>مُوجّه · <b>بوصلتك للجامعات</b> — موزونتك بين يديك.</footer>
+    function card(uni, index) {
+      const housingText = housingLabel(
+        uni.housing_status,
+        uni.housing_gender
+      );
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-/* ═══════════════════════════════════════════════
-   الإعدادات
-   ═══════════════════════════════════════════════ */
-const SUPABASE_URL  = "https://gybksasoembmgdevogpv.supabase.co";
-const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd5YmtzYXNvZW1ibWdkZXZvZ3B2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NzEyNjIsImV4cCI6MjA5NzM0NzI2Mn0.U0QFX7WS9ETbV0JmMYe-VNZhErJAPtZxwEBASep7AA4";
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+      const housingClass = housingTagClass(
+        uni.housing_status
+      );
 
-/* بيانات احتياطية — تظهر لو Supabase تعطل */
+      return `
+        <a
+          href="details.html?id=${encodeURIComponent(uni.id)}"
+          class="card reveal"
+          style="animation-delay:${Math.min(index * .04, .4)}s"
+        >
+          <div class="top">
+            ${logoHTML(uni)}
 
+            <div class="tags">
+              <span class="tag">
+                <i class="fa-solid fa-building-columns"></i>
+                ${esc(uni.type)}
+              </span>
 
-/* ═══════════════════════════════════════════════
-   حالة التطبيق
-   ═══════════════════════════════════════════════ */
-let ALL = [], activeCity = "", activeType = "";
-let sortMode = localStorage.getItem("sortMode") || "default";
-let searchTimer = null;
-const $ = id => document.getElementById(id);
+              <span
+                class="tag ${housingClass}"
+                title="${esc(uni.housing_note || housingText)}"
+              >
+                <i class="fa-solid fa-house"></i>
+                ${esc(housingText)}
+              </span>
+            </div>
+          </div>
 
-/* ═══════════════════════════════════════════════
-   أدوات مساعدة
-   ═══════════════════════════════════════════════ */
-function esc(v){ return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;") }
-function cityOf(u){ return (u.location||"").split("،")[0].trim() }
-function clamp(v){ if(v==="")return""; let n=Number(v); if(isNaN(n))return""; return String(Math.min(100,Math.max(0,n))) }
-function scores(){ return {q:parseFloat(localStorage.getItem("qodrat"))||0,t:parseFloat(localStorage.getItem("tahsili"))||0,s:parseFloat(localStorage.getItem("school"))||0} }
+          <h3>${esc(uni.name)}</h3>
 
-function readyFor(uni){
-  const {q,t,s}=scores(), w=uni.weights||{};
-  return (!(+w.qodrat>0)||q>0) && (!(+w.tahsili>0)||t>0) && (!(+w.school>0)||s>0);
-}
-function scoreFor(uni){
-  if(!readyFor(uni)) return null;
-  const {q,t,s}=scores(), w=uni.weights||{};
-  return q*(+w.qodrat||0)+t*(+w.tahsili||0)+s*(+w.school||0);
-}
+          <div class="loc">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>${esc(uni.location || "الموقع غير محدد")}</span>
+          </div>
 
-/* ═══════════════════════════════════════════════
-   الثيم
-   ═══════════════════════════════════════════════ */
-function toggleTheme(){
-  const next = document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";
-  document.documentElement.setAttribute("data-theme",next);
-  localStorage.setItem("theme",next);
-  syncIcon();
-}
-function syncIcon(){
-  const d = document.documentElement.getAttribute("data-theme")==="dark";
-  $("themeToggle").innerHTML = d?'<i class="fa-solid fa-sun"></i>':'<i class="fa-solid fa-moon"></i>';
-}
+          <div class="facts">
+            ${uni.region ? `
+              <span class="fact">
+                <i class="fa-solid fa-map"></i>
+                ${esc(uni.region)}
+              </span>
+            ` : ""}
 
-/* ═══════════════════════════════════════════════
-   الحاسبة
-   ═══════════════════════════════════════════════ */
-function saveAndCalc(){
-  $("globalQ").value=clamp($("globalQ").value);
-  $("globalT").value=clamp($("globalT").value);
-  $("globalS").value=clamp($("globalS").value);
-  localStorage.setItem("qodrat",$("globalQ").value);
-  localStorage.setItem("tahsili",$("globalT").value);
-  localStorage.setItem("school",$("globalS").value);
-  render(); updateInsight();
-}
+            <span class="fact">
+              <i class="fa-solid fa-users"></i>
+              ${esc(genderLabel(uni.gender))}
+            </span>
 
-function updateInsight(){
-  const box=$("insight");
-  const scored=ALL.map(u=>({u,sc:scoreFor(u)})).filter(x=>x.sc!==null).sort((a,b)=>b.sc-a.sc);
-  if(scored.length){
-    const best=scored[0];
-    $("insightText").innerHTML=`موزونتك محسوبة على <b>${scored.length}</b> جامعة · الأعلى لك: <b>${best.u.name}</b> بنسبة <b>${best.sc.toFixed(2)}%</b>`;
-    box.classList.add("show");
-  } else box.classList.remove("show");
-}
+            ${uni.housing_fee_text ? `
+              <span class="fact" title="${esc(uni.housing_fee_text)}">
+                <i class="fa-solid fa-money-bill"></i>
+                رسوم السكن موضحة
+              </span>
+            ` : ""}
+          </div>
 
-/* ═══════════════════════════════════════════════
-   الترتيب
-   ═══════════════════════════════════════════════ */
-function setSort(mode){
-  sortMode=mode; localStorage.setItem("sortMode",mode);
-  $("sortDefault").classList.toggle("on",mode==="default");
-  $("sortScore").classList.toggle("on",mode==="score");
-  if(mode==="score"&&!ALL.some(u=>scoreFor(u)!==null)) $("globalQ").focus();
-  render();
-}
+          <div class="card-foot">
+            <span class="updated">
+              آخر تحديث: ${esc(formatDate(uni.updated_at))}
+            </span>
 
-/* ═══════════════════════════════════════════════
-   الشعار
-   ═══════════════════════════════════════════════ */
-function logoHTML(uni){
-  const letter=esc((uni.name||"؟").replace(/^جامعة\s*/,"").trim()[0]||"ج");
-  if(!uni.logo_url) return `<div class="mono">${letter}</div>`;
-  return `<div class="mono has-logo" data-fb="${letter}"><img src="${esc(uni.logo_url)}" alt="" loading="lazy" onerror="this.parentElement.classList.remove('has-logo');this.parentElement.textContent=this.parentElement.dataset.fb"></div>`;
-}
+            <span class="go">
+              عرض التفاصيل
+              <i class="fa-solid fa-chevron-left"></i>
+            </span>
+          </div>
+        </a>
+      `;
+    }
 
-/* ═══════════════════════════════════════════════
-   البطاقة
-   ═══════════════════════════════════════════════ */
-function card(uni){
-  const sc=scoreFor(uni), elite=(uni.tags||"").includes("النخبة");
-  const isNew = uni.created_at && (Date.now()-new Date(uni.created_at).getTime())<30*86400000;
-  return `<a href="details.html?id=${esc(uni.id)}" class="card">
-    <div class="top">
-      ${logoHTML(uni)}
-      <div class="tags">
-        ${uni.tags?`<span class="tag ${elite?"elite":""}">${esc(uni.tags)}</span>`:""}
-        ${isNew?'<span class="tag new">جديدة</span>':""}
-      </div>
-    </div>
-    <h3>${esc(uni.name)}</h3>
-    <div class="loc"><i class="fa-solid fa-location-dot"></i> ${esc(uni.location||"")}</div>
-    <div class="score">
-      <div class="pre">
-        <span class="hint" style="${sc!==null?"display:none":""}">أدخل درجاتك لحساب موزونتك</span>
-        <span class="badge ${sc!==null?"show":""}"><span class="lbl">موزونتك</span><span class="val">${sc!==null?sc.toFixed(2)+"%":"—"}</span></span>
-        <span class="go"><i class="fa-solid fa-chevron-left"></i></span>
-      </div>
-      <div class="bar ${sc!==null?"show":""}"><i style="width:${sc!==null?Math.min(sc,100):0}%"></i></div>
-      <span class="lock"><i class="fa-solid fa-lock"></i> نسب القبول بالوصول الكامل</span>
-    </div>
-  </a>`;
-}
+    function applyFilters() {
+      const query = normalize(state.query);
 
-/* ═══════════════════════════════════════════════
-   Skeleton أثناء التحميل
-   ═══════════════════════════════════════════════ */
-function showSkeletons(){
-  $("unisGrid").innerHTML = Array(6).fill(`<div class="skel"><div class="skel-circle" style="margin-bottom:16px"></div><div class="skel-line w60" style="margin-bottom:10px"></div><div class="skel-line w40" style="margin-bottom:20px"></div><div class="skel-line w80"></div></div>`).join("");
-}
+      return ALL.filter(uni => {
+        if (state.region && uni.region !== state.region) return false;
+        if (state.city && uni.city !== state.city) return false;
+        if (state.type && uni.type !== state.type) return false;
+        if (state.housing && uni.housing_status !== state.housing) return false;
+        if (query && !uni.search_text.includes(query)) return false;
 
-/* ═══════════════════════════════════════════════
-   Render + Debounce
-   ═══════════════════════════════════════════════ */
-function render(){
-  const term=($("uniSearch").value||"").toLowerCase();
-  let list=ALL.filter(u=>{
-    if(activeCity && cityOf(u)!==activeCity) return false;
-    if(activeType && (u.type||"")!==activeType) return false;
-    if(term){ const hay=`${u.name} ${u.location} ${u.tags||""} ${u.type||""}`.toLowerCase(); if(!hay.includes(term)) return false; }
-    return true;
-  });
-  if(sortMode==="score") list=[...list].sort((a,b)=>(scoreFor(b)||0)-(scoreFor(a)||0));
+        return true;
+      });
+    }
 
-  $("count").textContent = list.length===ALL.length ? `${ALL.length} جامعة` : `${list.length} من ${ALL.length} جامعة`;
+    function render() {
+      const list = applyFilters();
 
-  $("unisGrid").innerHTML = list.length
-    ? list.map((u,i)=>card(u).replace('class="card"',`class="card reveal" style="animation-delay:${Math.min(i*.04,.4)}s"`)).join("")
-    : `<div class="empty"><b>ما فيه نتائج</b>جرّب كلمة أعم أو غيّر الفلتر.</div>`;
-}
-function debouncedRender(){ clearTimeout(searchTimer); searchTimer=setTimeout(render,180); }
+      $("count").textContent =
+        list.length === ALL.length
+          ? `${ALL.length} جامعة`
+          : `${list.length} من ${ALL.length} جامعة`;
 
-/* ═══════════════════════════════════════════════
-   Chips (المدن + الأنواع)
-   ═══════════════════════════════════════════════ */
-function buildChips(){
-  const cities=[...new Set(ALL.map(cityOf).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ar"));
-  $("cityChips").innerHTML=`<button class="chip on" data-v="">كل المدن</button>`+cities.map(c=>`<button class="chip" data-v="${esc(c)}">${esc(c)}</button>`).join("");
-  $("cityChips").querySelectorAll(".chip").forEach(ch=>ch.onclick=()=>{
-    $("cityChips").querySelectorAll(".chip").forEach(c=>c.classList.remove("on"));
-    ch.classList.add("on"); activeCity=ch.dataset.v; render();
-  });
+      $("unisGrid").innerHTML = list.length
+        ? list.map(card).join("")
+        : `
+          <div class="empty">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <b>لا توجد نتائج</b>
+            جرّب اسم جامعة أو مدينة أخرى.
+          </div>
+        `;
+    }
 
-  const types=[...new Set(ALL.map(u=>u.type).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ar"));
-  if(types.length>1){
-    $("typeChips").innerHTML=`<button class="chip on" data-v="">كل الأنواع</button>`+types.map(t=>`<button class="chip" data-v="${esc(t)}">${esc(t)}</button>`).join("");
-    $("typeChips").querySelectorAll(".chip").forEach(ch=>ch.onclick=()=>{
-      $("typeChips").querySelectorAll(".chip").forEach(c=>c.classList.remove("on"));
-      ch.classList.add("on"); activeType=ch.dataset.v; render();
+    function fillSelect(id, values, firstLabel) {
+      const select = $(id);
+
+      select.innerHTML =
+        `<option value="">${esc(firstLabel)}</option>` +
+        values
+          .map(value =>
+            `<option value="${esc(value)}">${esc(value)}</option>`
+          )
+          .join("");
+    }
+
+    function buildFilters() {
+      fillSelect(
+        "regionFilter",
+        unique(ALL.map(item => item.region))
+          .sort((a, b) => a.localeCompare(b, "ar")),
+        "كل المناطق"
+      );
+
+      fillSelect(
+        "cityFilter",
+        unique(ALL.map(item => item.city))
+          .sort((a, b) => a.localeCompare(b, "ar")),
+        "كل المدن"
+      );
+
+      fillSelect(
+        "typeFilter",
+        unique(ALL.map(item => item.type))
+          .sort((a, b) => a.localeCompare(b, "ar")),
+        "كل الأنواع"
+      );
+    }
+
+    function buildStats() {
+      const regions = unique(
+        ALL.map(item => item.region)
+      ).length;
+
+      const stats = [
+        [ALL.length, "جامعة"],
+        [regions, "منطقة"]      ];
+
+      $("stats").innerHTML = stats
+        .map(([value, label], index) => `
+          <div
+            class="stat reveal"
+            style="animation-delay:${Math.min(index * .05, .2)}s"
+          >
+            <b>${esc(value)}</b>
+            <span>${esc(label)}</span>
+          </div>
+        `)
+        .join("");
+    }
+
+    function showSkeletons() {
+      $("unisGrid").innerHTML = Array(6)
+        .fill(`
+          <div class="skel">
+            <div class="skel-circle" style="margin-bottom:16px"></div>
+            <div class="skel-line" style="width:60%;margin-bottom:10px"></div>
+            <div class="skel-line" style="width:40%;margin-bottom:16px"></div>
+            <div class="skel-line" style="height:70px;margin-bottom:16px"></div>
+            <div class="skel-line" style="width:75%"></div>
+          </div>
+        `)
+        .join("");
+    }
+
+    async function load() {
+      showSkeletons();
+
+      try {
+        const universityRows = await fetchAll(
+          "v_universities_home",
+          "*",
+          "display_order"
+        );
+
+        if (!universityRows.length) {
+          throw new Error("لا توجد جامعات متاحة");
+        }
+
+        // السكن View إضافي فقط. إذا لم يعمل، الصفحة لا تتعطل.
+        const housingRows = await optionalFetch(
+          "v_university_housing",
+          "*"
+        );
+
+        ALL = mergeRows(universityRows, housingRows);
+
+        buildStats();
+        render();
+      } catch (error) {
+        console.error("Load error:", error);
+
+        $("unisGrid").innerHTML = `
+          <div class="empty">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <b>تعذر تحميل الجامعات</b>
+            <div>
+              تأكد أن <code>v_universities_home</code>
+              متاح للقراءة بمفتاح anon.
+            </div>
+            <div class="error-hint">${esc(error.message || "Unknown error")}</div>
+          </div>
+        `;
+      }
+    }
+
+    function clearFilters() {
+      state.query = "";
+      state.region = "";
+      state.city = "";
+      state.type = "";
+      state.housing = "";
+
+      $("uniSearch").value = "";
+      $("regionFilter").value = "";
+      $("cityFilter").value = "";
+      $("typeFilter").value = "";
+      $("housingFilter").value = "";
+
+      render();
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      syncThemeIcon();
+
+      $("themeToggle").addEventListener(
+        "click",
+        toggleTheme
+      );
+
+      $("uniSearch").addEventListener(
+        "input",
+        event => {
+          clearTimeout(searchTimer);
+
+          searchTimer = setTimeout(() => {
+            state.query = event.target.value.trim();
+            render();
+          }, 160);
+        }
+      );
+
+      load();
     });
-  }
-}
+  </script>
 
-function buildStats(){
-  const cities=new Set(ALL.map(cityOf).filter(Boolean));
-  [[ALL.length,"جامعة"],[cities.size,"مدينة"],["ثوانٍ","حساب الموزونة"],["2025","بيانات القبول"]].forEach(s=>{
-    $("stats").innerHTML+= `<div class="stat"><b>${s[0]}</b><span>${s[1]}</span></div>`;
-  });
-}
-
-/* ═══════════════════════════════════════════════
-   تحويل صف Supabase لعنصر
-   ═══════════════════════════════════════════════ */
-function mapRow(u){
-  return {
-    id:u.id, name:u.name_ar, created_at:u.created_at||null,
-    location:u.location_text||[u.city,u.region].filter(Boolean).join("، "),
-    logo_url:u.logo_url||"",
-    tags: u.is_featured?"النخبة": u.university_type||"جامعة",
-    type: u.university_type||"حكومية",
-    weights:{qodrat:Number(u.qodrat_weight||0),tahsili:Number(u.tahsili_weight||0),school:Number(u.school_weight||0)}
-  };
-}
-
-/* ═══════════════════════════════════════════════
-   تحميل البيانات
-   ═══════════════════════════════════════════════ */
-async function load(){
-  showSkeletons();
-  try{
-    if(!SUPABASE_URL||SUPABASE_URL.includes("PUT_YOUR")) throw new Error("URL غير مضاف");
-    const {data,error}=await sb.from("v_universities_home").select("*").order("display_order",{ascending:true});
-    if(error) throw error;
-    if(!data?.length) throw new Error("لا توجد بيانات");
-    ALL=data.map(mapRow);
-  }catch(e){
-    console.warn("Supabase:",e.message,"→ fallback");
-    ALL=FALLBACK;
-  }
-  $("stats").innerHTML="";
-  buildStats(); buildChips(); render(); updateInsight();
-}
-
-/* ═══════════════════════════════════════════════
-   تهيئة
-   ═══════════════════════════════════════════════ */
-window.addEventListener("DOMContentLoaded",()=>{
-  syncIcon();
-  $("globalQ").value=localStorage.getItem("qodrat")||"";
-  $("globalT").value=localStorage.getItem("tahsili")||"";
-  $("globalS").value=localStorage.getItem("school")||"";
-  $("sortDefault").classList.toggle("on",sortMode==="default");
-  $("sortScore").classList.toggle("on",sortMode==="score");
-  load();
-});
-</script>
 </body>
 </html>
