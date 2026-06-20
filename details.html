@@ -1,21 +1,21 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
-  <title>تفاصيل الجامعة | مُوجّه</title>
-  <meta name="description" content="ملف الجامعة: التخصصات، مسارات القبول، الموزونة، نسب القبول والملفات الرسمية.">
-  <meta name="theme-color" content="#6a4fcf">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-  <script>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<title>تفاصيل الجامعة | مُوجّه</title>
+<meta content="ملف الجامعة: التخصصات، مسارات القبول، الموزونة، نسب القبول والملفات الرسمية." name="description"/>
+<meta content="light dark" name="color-scheme"/>
+<meta content="#6a4fcf" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#100f1d" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://cdnjs.cloudflare.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/><link href="css/details.css" rel="stylesheet"/>
+<script>
     (function(){
       const saved = localStorage.getItem("theme");
       const dark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
@@ -23,2152 +23,283 @@
     })();
   </script>
 
-  <style>
-    :root{
-      --bg:#f5f1fb;
-      --surface:#ffffff;
-      --surface-2:#faf8fd;
-      --surface-glass:rgba(255,255,255,.84);
-
-      --ink:#292142;
-      --muted:#716a8b;
-      --faint:#9c95b5;
-
-      --line:rgba(106,79,207,.13);
-      --line-strong:rgba(106,79,207,.28);
-
-      --primary:#6a4fcf;
-      --primary-2:#8b5cf6;
-      --primary-deep:#493997;
-
-      --green:#168345;
-      --green-soft:rgba(22,131,69,.10);
-      --amber:#b7791f;
-      --amber-soft:rgba(183,121,31,.10);
-      --red:#d94848;
-      --red-soft:rgba(217,72,72,.10);
-      --blue:#2563eb;
-      --blue-soft:rgba(37,99,235,.10);
-
-      --shadow:0 18px 48px -34px rgba(74,40,140,.42);
-      --shadow-strong:0 34px 100px -52px rgba(74,40,140,.64);
-
-      --page-bg:
-        radial-gradient(760px 360px at 88% -12%,rgba(139,92,246,.22),transparent 65%),
-        radial-gradient(520px 290px at 3% 0%,rgba(37,99,235,.09),transparent 60%),
-        linear-gradient(180deg,#faf8ff,#f3eefb);
-    }
-
-    [data-theme="dark"]{
-      --bg:#100f1d;
-      --surface:#191724;
-      --surface-2:#211e31;
-      --surface-glass:rgba(25,23,36,.86);
-
-      --ink:#f5f2fc;
-      --muted:#aaa3c3;
-      --faint:#746e8d;
-
-      --line:rgba(255,255,255,.09);
-      --line-strong:rgba(167,139,250,.31);
-
-      --primary:#a78bfa;
-      --primary-2:#8b6ff0;
-      --primary-deep:#6d4fd0;
-
-      --green:#4ade80;
-      --green-soft:rgba(74,222,128,.10);
-      --amber:#f1b951;
-      --amber-soft:rgba(241,185,81,.10);
-      --red:#f87171;
-      --red-soft:rgba(248,113,113,.10);
-      --blue:#60a5fa;
-      --blue-soft:rgba(96,165,250,.10);
-
-      --shadow:0 24px 64px -42px rgba(92,72,230,.62);
-      --shadow-strong:0 38px 115px -58px rgba(124,95,214,.78);
-
-      --page-bg:
-        radial-gradient(760px 360px at 88% -12%,rgba(139,92,246,.33),transparent 65%),
-        radial-gradient(520px 290px at 3% 0%,rgba(96,165,250,.08),transparent 60%),
-        linear-gradient(180deg,#100f1d,#19162c);
-    }
-
-    *{box-sizing:border-box;margin:0;padding:0}
-    html{scroll-behavior:smooth}
-
-    body{
-      min-height:100vh;
-      overflow-x:hidden;
-      position:relative;
-      font-family:"Tajawal",system-ui,sans-serif;
-      color:var(--ink);
-      background:var(--page-bg);
-      -webkit-font-smoothing:antialiased;
-      -webkit-tap-highlight-color:transparent;
-      transition:background .3s,color .3s;
-    }
-
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      z-index:-1;
-      pointer-events:none;
-      background-image:
-        linear-gradient(rgba(106,79,207,.04) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(106,79,207,.04) 1px,transparent 1px);
-      background-size:64px 64px;
-      mask-image:radial-gradient(75% 56% at 50% 0%,#000,transparent 82%);
-    }
-
-    a{color:inherit;text-decoration:none}
-    button,input,select{font:inherit}
-    button{cursor:pointer}
-    [hidden]{display:none!important}
-
-    .wrap{
-      width:min(1180px,calc(100% - 32px));
-      margin-inline:auto;
-    }
-
-    .page{
-      padding:24px 0 58px;
-    }
-
-    .glass{
-      border:1px solid var(--line);
-      background:var(--surface-glass);
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(18px);
-    }
-
-    /* NAV */
-    .top-nav{
-      position:sticky;
-      top:0;
-      z-index:80;
-      border-bottom:1px solid var(--line);
-      background:color-mix(in srgb,var(--bg) 84%,transparent);
-      backdrop-filter:blur(18px);
-    }
-
-    .top-nav-inner{
-      min-height:66px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:11px;
-    }
-
-    .brand-mark{
-      width:40px;
-      height:40px;
-      display:grid;
-      place-items:center;
-      border-radius:15px;
-      color:#fff;
-      background:
-        radial-gradient(circle at 28% 18%,rgba(255,255,255,.42),transparent 28%),
-        linear-gradient(135deg,var(--primary),var(--primary-deep));
-      box-shadow:0 18px 36px -24px var(--primary);
-    }
-
-    .brand-mark svg{
-      width:24px;
-      height:24px;
-      animation:spin 44s linear infinite;
-    }
-
-    @keyframes spin{to{transform:rotate(360deg)}}
-
-    .brand-copy{display:flex;flex-direction:column;line-height:1.05}
-    .brand-copy b{font-size:20px;font-weight:900}
-    .brand-copy span{margin-top:3px;color:var(--muted);font-size:10px;font-weight:800}
-
-    .nav-actions{display:flex;align-items:center;gap:8px}
-
-    .nav-button{
-      min-height:42px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      padding:0 14px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      color:var(--ink);
-      background:var(--surface-glass);
-      font-size:12.5px;
-      font-weight:900;
-      transition:.18s;
-      backdrop-filter:blur(12px);
-    }
-
-    .nav-button.icon{
-      width:42px;
-      padding:0;
-      border-radius:50%;
-    }
-
-    .nav-button:hover{
-      color:var(--primary);
-      border-color:var(--line-strong);
-      transform:translateY(-1px);
-    }
-
-    /* HERO */
-    .hero{
-      position:relative;
-      overflow:hidden;
-      border:1px solid var(--line-strong);
-      border-radius:34px;
-      background:
-        radial-gradient(670px 300px at 84% -18%,color-mix(in srgb,var(--primary) 23%,transparent),transparent 68%),
-        radial-gradient(380px 230px at 7% 0%,color-mix(in srgb,var(--blue) 12%,transparent),transparent 65%),
-        var(--surface-glass);
-      box-shadow:var(--shadow-strong);
-      backdrop-filter:blur(20px);
-    }
-
-    .hero::after{
-      content:"";
-      position:absolute;
-      width:320px;
-      height:320px;
-      inset:auto -115px -160px auto;
-      border-radius:50%;
-      background:radial-gradient(circle,color-mix(in srgb,var(--primary) 18%,transparent),transparent 70%);
-      pointer-events:none;
-    }
-
-    .hero-main{
-      position:relative;
-      z-index:1;
-      display:grid;
-      grid-template-columns:minmax(0,1fr) auto;
-      gap:22px;
-      align-items:start;
-      padding:30px 30px 24px;
-    }
-
-    .hero-identity{
-      display:flex;
-      gap:18px;
-      min-width:0;
-    }
-
-    .uni-logo{
-      width:92px;
-      height:92px;
-      flex:none;
-      display:grid;
-      place-items:center;
-      overflow:hidden;
-      border:1px solid var(--line-strong);
-      border-radius:27px;
-      background:#fff;
-      box-shadow:var(--shadow);
-    }
-
-    .uni-logo.hidden{display:none}
-    .uni-logo img{width:76px;height:76px;object-fit:contain}
-
-    .hero-content{min-width:0}
-
-    .eyebrow{
-      display:inline-flex;
-      align-items:center;
-      gap:7px;
-      padding:7px 11px;
-      border:1px solid color-mix(in srgb,var(--primary) 20%,transparent);
-      border-radius:999px;
-      color:var(--primary);
-      background:color-mix(in srgb,var(--primary) 9%,transparent);
-      font-size:10.5px;
-      font-weight:900;
-    }
-
-    .hero-title{
-      max-width:780px;
-      margin-top:13px;
-      color:var(--ink);
-      font-size:clamp(34px,5vw,58px);
-      font-weight:900;
-      letter-spacing:-.05em;
-      line-height:1.12;
-      overflow-wrap:anywhere;
-    }
-
-    .hero-location{
-      display:flex;
-      align-items:flex-start;
-      gap:8px;
-      margin-top:12px;
-      color:var(--muted);
-      font-size:14px;
-      font-weight:800;
-      line-height:1.7;
-    }
-
-    .hero-location i{margin-top:4px;color:var(--primary)}
-
-    .hero-badges{
-      display:flex;
-      flex-wrap:wrap;
-      gap:7px;
-      margin-top:14px;
-    }
-
-    .hero-badge{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:7px 10px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      color:var(--muted);
-      background:var(--surface-2);
-      font-size:10.5px;
-      font-weight:900;
-    }
-
-    .hero-actions{
-      display:flex;
-      flex-direction:column;
-      align-items:stretch;
-      gap:8px;
-      min-width:155px;
-    }
-
-    .hero-action{
-      min-height:42px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      padding:9px 13px;
-      border:1px solid var(--line);
-      border-radius:14px;
-      color:var(--ink);
-      background:var(--surface);
-      font-size:11.5px;
-      font-weight:900;
-      transition:.18s;
-    }
-
-    .hero-action.primary{
-      color:#fff;
-      border-color:var(--primary);
-      background:linear-gradient(135deg,var(--primary),var(--primary-deep));
-    }
-
-    .hero-action:hover{
-      transform:translateY(-1px);
-      border-color:var(--line-strong);
-    }
-
-    .hero-summary{
-      position:relative;
-      z-index:1;
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      border-top:1px solid var(--line);
-      background:color-mix(in srgb,var(--surface) 70%,transparent);
-    }
-
-    .summary-item{
-      min-height:96px;
-      display:flex;
-      align-items:center;
-      gap:11px;
-      padding:18px;
-      border-inline-start:1px solid var(--line);
-    }
-
-    .summary-item:first-child{border-inline-start:0}
-
-    .summary-icon{
-      width:40px;
-      height:40px;
-      flex:none;
-      display:grid;
-      place-items:center;
-      border-radius:14px;
-      color:var(--primary);
-      background:color-mix(in srgb,var(--primary) 9%,transparent);
-      border:1px solid color-mix(in srgb,var(--primary) 16%,transparent);
-    }
-
-    .summary-value{
-      display:block;
-      color:var(--ink);
-      font-size:21px;
-      font-weight:900;
-      line-height:1;
-    }
-
-    .summary-label{
-      display:block;
-      margin-top:5px;
-      color:var(--muted);
-      font-size:10.5px;
-      font-weight:800;
-    }
-
-    /* CONTENT LAYOUT */
-    .content-layout{
-      display:grid;
-      grid-template-columns:235px minmax(0,1fr);
-      gap:22px;
-      align-items:start;
-      margin-top:22px;
-    }
-
-    .side-panel{
-      position:sticky;
-      top:88px;
-      overflow:hidden;
-      border-radius:24px;
-    }
-
-    .side-title{
-      padding:17px 17px 12px;
-      color:var(--ink);
-      font-size:13px;
-      font-weight:900;
-    }
-
-    .side-links{
-      display:grid;
-      padding:0 8px 8px;
-    }
-
-    .side-link{
-      min-height:44px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 11px;
-      border-radius:13px;
-      color:var(--muted);
-      font-size:11.5px;
-      font-weight:900;
-      transition:.18s;
-    }
-
-    .side-link i{
-      width:24px;
-      color:var(--faint);
-      text-align:center;
-    }
-
-    .side-link:hover,
-    .side-link.active{
-      color:var(--primary);
-      background:color-mix(in srgb,var(--primary) 9%,transparent);
-    }
-
-    .side-link:hover i,
-    .side-link.active i{color:var(--primary)}
-
-    .side-meta{
-      display:grid;
-      gap:8px;
-      padding:14px;
-      border-top:1px solid var(--line);
-      background:var(--surface-2);
-    }
-
-    .side-meta-row{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:8px;
-      color:var(--muted);
-      font-size:10px;
-      line-height:1.5;
-    }
-
-    .side-meta-row b{
-      color:var(--ink);
-      font-weight:900;
-      text-align:left;
-    }
-
-    .content-column{min-width:0}
-
-    .section{
-      margin-bottom:28px;
-      scroll-margin-top:92px;
-    }
-
-    .section-card{
-      overflow:hidden;
-      border-radius:26px;
-    }
-
-    .section-header{
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap:14px;
-      margin-bottom:13px;
-    }
-
-    .section-kicker{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      margin-bottom:4px;
-      color:var(--primary);
-      font-size:10px;
-      font-weight:900;
-    }
-
-    .section-title{
-      color:var(--ink);
-      font-size:22px;
-      font-weight:900;
-      line-height:1.45;
-      letter-spacing:-.02em;
-    }
-
-    .section-description{
-      max-width:760px;
-      margin-top:4px;
-      color:var(--muted);
-      font-size:12px;
-      font-weight:600;
-      line-height:1.75;
-    }
-
-    .section-count{
-      white-space:nowrap;
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:7px 10px;
-      border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
-      border-radius:999px;
-      color:var(--primary);
-      background:color-mix(in srgb,var(--primary) 8%,transparent);
-      font-size:10.5px;
-      font-weight:900;
-    }
-
-    /* TOOLBAR */
-    .toolbar{
-      display:grid;
-      grid-template-columns:minmax(0,1fr) auto;
-      gap:9px;
-      margin-bottom:13px;
-      padding:13px;
-      border:1px solid var(--line);
-      border-radius:18px;
-      background:var(--surface-glass);
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(14px);
-    }
-
-    .search-wrap{position:relative}
-
-    .search-wrap > i{
-      position:absolute;
-      right:15px;
-      top:50%;
-      transform:translateY(-50%);
-      color:var(--faint);
-    }
-
-    .search-input,
-    .filter-select{
-      width:100%;
-      min-height:44px;
-      border:1px solid var(--line);
-      border-radius:13px;
-      outline:none;
-      color:var(--ink);
-      background:var(--surface-2);
-      font-size:12px;
-      transition:.18s;
-    }
-
-    .search-input{
-      padding:10px 42px 10px 13px;
-    }
-
-    .filter-select{
-      min-width:145px;
-      padding:9px 12px;
-    }
-
-    .search-input:focus,
-    .filter-select:focus{
-      border-color:var(--primary);
-      box-shadow:0 0 0 4px color-mix(in srgb,var(--primary) 12%,transparent);
-    }
-
-    .filter-pills{
-      display:flex;
-      gap:7px;
-      overflow-x:auto;
-      margin-bottom:12px;
-      padding-bottom:2px;
-      scrollbar-width:none;
-    }
-
-    .filter-pills::-webkit-scrollbar{display:none}
-
-    .filter-pill{
-      white-space:nowrap;
-      min-height:34px;
-      padding:7px 11px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      color:var(--muted);
-      background:var(--surface);
-      font-size:10.5px;
-      font-weight:900;
-      transition:.16s;
-    }
-
-    .filter-pill:hover,
-    .filter-pill.active{
-      color:#fff;
-      border-color:var(--primary);
-      background:var(--primary);
-    }
-
-    /* COLLEGES */
-    .colleges-grid{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:13px;
-    }
-
-    .college-card{
-      overflow:hidden;
-      border:1px solid var(--line);
-      border-radius:22px;
-      background:var(--surface-glass);
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(16px);
-    }
-
-    .college-head{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:12px;
-      padding:17px 17px 14px;
-      border-bottom:1px solid var(--line);
-      background:
-        radial-gradient(280px 120px at 90% -30%,color-mix(in srgb,var(--primary) 12%,transparent),transparent 70%),
-        var(--surface-2);
-    }
-
-    .college-title{
-      display:flex;
-      align-items:flex-start;
-      gap:10px;
-      min-width:0;
-    }
-
-    .college-icon{
-      width:38px;
-      height:38px;
-      flex:none;
-      display:grid;
-      place-items:center;
-      border-radius:13px;
-      color:#fff;
-      background:linear-gradient(135deg,var(--primary),var(--primary-deep));
-    }
-
-    .college-title h3{
-      color:var(--ink);
-      font-size:14px;
-      font-weight:900;
-      line-height:1.45;
-    }
-
-    .college-title p{
-      margin-top:3px;
-      color:var(--muted);
-      font-size:10.5px;
-      line-height:1.6;
-    }
-
-    .college-count{
-      white-space:nowrap;
-      padding:5px 8px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      color:var(--primary);
-      background:var(--surface);
-      font-size:9.5px;
-      font-weight:900;
-    }
-
-    .major-list{
-      display:grid;
-      gap:7px;
-      padding:13px;
-    }
-
-    .major-row{
-      display:grid;
-      grid-template-columns:auto minmax(0,1fr);
-      gap:9px;
-      align-items:flex-start;
-      padding:10px;
-      border:1px solid var(--line);
-      border-radius:14px;
-      background:var(--surface-2);
-    }
-
-    .major-row.match{
-      border-color:color-mix(in srgb,var(--green) 36%,transparent);
-      background:var(--green-soft);
-    }
-
-    .major-code{
-      min-width:42px;
-      display:inline-flex;
-      justify-content:center;
-      padding:5px 7px;
-      border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
-      border-radius:9px;
-      color:var(--primary);
-      background:color-mix(in srgb,var(--primary) 8%,transparent);
-      font-size:9px;
-      font-weight:900;
-    }
-
-    .major-name{
-      color:var(--ink);
-      font-size:11.5px;
-      font-weight:900;
-      line-height:1.55;
-    }
-
-    .major-meta{
-      display:flex;
-      flex-wrap:wrap;
-      gap:5px;
-      margin-top:6px;
-    }
-
-    .meta-chip{
-      display:inline-flex;
-      align-items:center;
-      gap:5px;
-      padding:4px 7px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      color:var(--muted);
-      background:var(--surface);
-      font-size:8.5px;
-      font-weight:800;
-    }
-
-    .major-note{
-      margin-top:6px;
-      color:var(--muted);
-      font-size:9.5px;
-      line-height:1.6;
-    }
-
-    /* ADMISSION */
-    .score-overview{
-      display:grid;
-      grid-template-columns:.9fr 1.1fr;
-      gap:13px;
-      margin-bottom:13px;
-    }
-
-    .score-card{
-      min-height:190px;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      padding:18px;
-      border:1px solid var(--line);
-      border-radius:22px;
-      text-align:center;
-      background:
-        radial-gradient(340px 160px at 50% -40%,color-mix(in srgb,var(--primary) 22%,transparent),transparent 70%),
-        var(--surface);
-      box-shadow:var(--shadow);
-    }
-
-    .score-label{
-      width:max-content;
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      margin-inline:auto;
-      padding:6px 10px;
-      border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
-      border-radius:999px;
-      color:var(--primary);
-      background:color-mix(in srgb,var(--primary) 8%,transparent);
-      font-size:10px;
-      font-weight:900;
-    }
-
-    .score-number{
-      margin-top:13px;
-      color:var(--ink);
-      font-size:clamp(50px,7vw,78px);
-      font-weight:900;
-      letter-spacing:-.07em;
-      line-height:.95;
-    }
-
-    .weight-labels{
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:center;
-      gap:6px;
-      margin-top:13px;
-    }
-
-    .weight-labels span{
-      padding:5px 8px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      color:var(--muted);
-      background:var(--surface-2);
-      font-size:9px;
-      font-weight:900;
-    }
-
-    .score-help{
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      padding:18px;
-      border:1px solid var(--line);
-      border-radius:22px;
-      background:var(--surface-glass);
-      box-shadow:var(--shadow);
-    }
-
-    .score-help h3{
-      color:var(--ink);
-      font-size:15px;
-      font-weight:900;
-    }
-
-    .score-help p{
-      margin-top:7px;
-      color:var(--muted);
-      font-size:11.5px;
-      line-height:1.8;
-    }
-
-    .score-missing{
-      margin-top:10px;
-      padding:9px 10px;
-      border:1px dashed var(--line-strong);
-      border-radius:12px;
-      color:var(--amber);
-      background:var(--amber-soft);
-      font-size:10px;
-      line-height:1.6;
-      font-weight:800;
-    }
-
-    .tracks-grid{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:13px;
-    }
-
-    .track-card{
-      overflow:hidden;
-      padding:17px;
-      border:1px solid var(--line);
-      border-radius:22px;
-      background:var(--surface-glass);
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(16px);
-    }
-
-    .track-card.default{
-      border-color:color-mix(in srgb,var(--primary) 34%,transparent);
-      background:
-        radial-gradient(360px 150px at 90% -30%,color-mix(in srgb,var(--primary) 14%,transparent),transparent 70%),
-        var(--surface-glass);
-    }
-
-    .track-head{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:10px;
-    }
-
-    .track-name{
-      display:flex;
-      align-items:flex-start;
-      gap:10px;
-      min-width:0;
-    }
-
-    .track-icon{
-      width:39px;
-      height:39px;
-      flex:none;
-      display:grid;
-      place-items:center;
-      border-radius:13px;
-      color:#fff;
-      background:linear-gradient(135deg,var(--primary),var(--primary-deep));
-    }
-
-    .track-name h3{
-      color:var(--ink);
-      font-size:13px;
-      font-weight:900;
-      line-height:1.5;
-    }
-
-    .track-name p{
-      margin-top:3px;
-      color:var(--muted);
-      font-size:10px;
-      line-height:1.65;
-    }
-
-    .default-badge{
-      white-space:nowrap;
-      display:inline-flex;
-      align-items:center;
-      gap:5px;
-      padding:5px 8px;
-      border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
-      border-radius:999px;
-      color:var(--primary);
-      background:color-mix(in srgb,var(--primary) 8%,transparent);
-      font-size:8.5px;
-      font-weight:900;
-    }
-
-    .weights-grid{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:7px;
-      margin-top:12px;
-    }
-
-    .weight-box{
-      overflow:hidden;
-      padding:9px 7px;
-      border:1px solid var(--line);
-      border-radius:13px;
-      text-align:center;
-      background:var(--surface-2);
-    }
-
-    .weight-box span{
-      display:block;
-      color:var(--faint);
-      font-size:8.5px;
-      font-weight:900;
-    }
-
-    .weight-box b{
-      display:block;
-      margin-top:3px;
-      color:var(--primary);
-      font-size:15px;
-      font-weight:900;
-    }
-
-    .weight-bar{
-      height:4px;
-      overflow:hidden;
-      margin-top:6px;
-      border-radius:999px;
-      background:var(--line);
-    }
-
-    .weight-bar span{
-      height:100%;
-      display:block;
-      border-radius:inherit;
-      background:linear-gradient(90deg,var(--primary),var(--primary-2));
-    }
-
-    .track-result{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:9px;
-      margin-top:11px;
-      padding:9px 10px;
-      border:1px solid var(--line);
-      border-radius:12px;
-      color:var(--muted);
-      background:var(--surface-2);
-      font-size:9.5px;
-      font-weight:800;
-    }
-
-    .track-result strong{
-      color:var(--ink);
-      font-size:13px;
-      font-weight:900;
-    }
-
-    .criteria-list{
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-      margin-top:11px;
-    }
-
-    .criteria-chip{
-      display:inline-flex;
-      align-items:center;
-      gap:5px;
-      padding:5px 8px;
-      border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
-      border-radius:999px;
-      color:var(--primary);
-      background:color-mix(in srgb,var(--primary) 7%,transparent);
-      font-size:8.5px;
-      font-weight:900;
-    }
-
-    .track-note{
-      margin-top:10px;
-      padding:9px 10px;
-      border:1px solid var(--line);
-      border-radius:12px;
-      color:var(--muted);
-      background:var(--surface-2);
-      font-size:9.5px;
-      line-height:1.65;
-    }
-
-    /* RATIOS */
-    .ratios-list{
-      display:grid;
-      gap:8px;
-    }
-
-    .ratio-head,
-    .ratio-row{
-      display:grid;
-      grid-template-columns:minmax(180px,1.6fr) 90px 110px minmax(145px,1fr);
-      gap:10px;
-      align-items:center;
-    }
-
-    .ratio-head{
-      padding:0 13px;
-      color:var(--faint);
-      font-size:9px;
-      font-weight:900;
-    }
-
-    .ratio-row{
-      padding:12px 13px;
-      border:1px solid var(--line);
-      border-radius:15px;
-      background:var(--surface-glass);
-      box-shadow:var(--shadow);
-    }
-
-    .ratio-major strong{
-      display:block;
-      color:var(--ink);
-      font-size:11.5px;
-      font-weight:900;
-      line-height:1.5;
-    }
-
-    .ratio-major span{
-      display:block;
-      margin-top:3px;
-      color:var(--muted);
-      font-size:9px;
-      line-height:1.5;
-    }
-
-    .ratio-year,
-    .ratio-type{
-      color:var(--muted);
-      font-size:9.5px;
-      font-weight:800;
-    }
-
-    .ratio-values{
-      display:flex;
-      flex-wrap:wrap;
-      gap:5px;
-      justify-content:flex-start;
-    }
-
-    .ratio-value{
-      display:inline-flex;
-      align-items:center;
-      gap:5px;
-      padding:5px 8px;
-      border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
-      border-radius:999px;
-      color:var(--primary);
-      background:color-mix(in srgb,var(--primary) 7%,transparent);
-      font-size:9px;
-      font-weight:900;
-    }
-
-    .ratio-note{
-      margin-top:5px;
-      color:var(--faint);
-      font-size:8.5px;
-      line-height:1.5;
-    }
-
-    /* RESOURCES */
-    .resource-groups{
-      display:grid;
-      gap:17px;
-    }
-
-    .resource-group-title{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom:9px;
-      color:var(--ink);
-      font-size:13px;
-      font-weight:900;
-    }
-
-    .resource-group-title span{
-      color:var(--faint);
-      font-size:9px;
-      font-weight:800;
-    }
-
-    .resources-grid{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:11px;
-    }
-
-    .resource-card{
-      display:grid;
-      grid-template-columns:auto minmax(0,1fr) auto;
-      gap:11px;
-      align-items:flex-start;
-      padding:14px;
-      border:1px solid var(--line);
-      border-radius:18px;
-      background:var(--surface-glass);
-      box-shadow:var(--shadow);
-      transition:.18s;
-    }
-
-    .resource-card:hover{
-      transform:translateY(-2px);
-      border-color:var(--line-strong);
-      box-shadow:var(--shadow-strong);
-    }
-
-    .resource-icon{
-      width:42px;
-      height:42px;
-      display:grid;
-      place-items:center;
-      border-radius:14px;
-      color:#fff;
-      background:linear-gradient(135deg,var(--primary),var(--primary-deep));
-    }
-
-    .resource-card h3{
-      color:var(--ink);
-      font-size:11.5px;
-      font-weight:900;
-      line-height:1.5;
-    }
-
-    .resource-card p{
-      margin-top:4px;
-      color:var(--muted);
-      font-size:9.5px;
-      line-height:1.65;
-    }
-
-    .resource-meta{
-      display:flex;
-      flex-wrap:wrap;
-      gap:5px;
-      margin-top:7px;
-    }
-
-    .resource-meta span{
-      padding:4px 7px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      color:var(--muted);
-      background:var(--surface-2);
-      font-size:8px;
-      font-weight:800;
-    }
-
-    .official{
-      color:var(--green)!important;
-      border-color:color-mix(in srgb,var(--green) 26%,transparent)!important;
-      background:var(--green-soft)!important;
-    }
-
-    .resource-open{
-      width:31px;
-      height:31px;
-      display:grid;
-      place-items:center;
-      border:1px solid var(--line);
-      border-radius:10px;
-      color:var(--faint);
-      background:var(--surface-2);
-    }
-
-    /* EXTRA SECTIONS */
-    .extra-grid{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:11px;
-    }
-
-    .extra-card{
-      overflow:hidden;
-      border:1px solid var(--line);
-      border-radius:18px;
-      background:var(--surface-glass);
-      box-shadow:var(--shadow);
-    }
-
-    .extra-card summary{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:14px;
-      color:var(--ink);
-      list-style:none;
-      font-size:11.5px;
-      font-weight:900;
-      cursor:pointer;
-    }
-
-    .extra-card summary::-webkit-details-marker{display:none}
-
-    .extra-card summary i{
-      color:var(--primary);
-      transition:.18s;
-    }
-
-    .extra-card[open] summary i{transform:rotate(180deg)}
-
-    .extra-content{
-      padding:0 14px 14px;
-      color:var(--muted);
-      font-size:10.5px;
-      line-height:1.85;
-      white-space:pre-line;
-    }
-
-    /* ABOUT */
-    .about-grid{
-      display:grid;
-      grid-template-columns:minmax(0,1.4fr) minmax(260px,.6fr);
-      gap:13px;
-    }
-
-    .about-card{
-      padding:18px;
-      border:1px solid var(--line);
-      border-radius:20px;
-      background:var(--surface-glass);
-      box-shadow:var(--shadow);
-    }
-
-    .about-card p{
-      color:var(--muted);
-      font-size:11.5px;
-      line-height:1.95;
-      white-space:pre-line;
-    }
-
-    .metrics-grid{
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:9px;
-    }
-
-    .metric-card{
-      min-height:104px;
-      display:flex;
-      flex-direction:column;
-      padding:13px;
-      border:1px solid var(--line);
-      border-radius:16px;
-      background:var(--surface-glass);
-      box-shadow:var(--shadow);
-    }
-
-    .metric-card i{
-      width:32px;
-      height:32px;
-      display:grid;
-      place-items:center;
-      border-radius:11px;
-      color:var(--primary);
-      background:color-mix(in srgb,var(--primary) 8%,transparent);
-    }
-
-    .metric-card span{
-      margin-top:9px;
-      color:var(--faint);
-      font-size:8.5px;
-      font-weight:900;
-    }
-
-    .metric-card b{
-      margin-top:auto;
-      padding-top:5px;
-      color:var(--ink);
-      font-size:12px;
-      font-weight:900;
-      line-height:1.4;
-    }
-
-    /* STATES */
-    .empty-state{
-      padding:32px 20px;
-      border:1px dashed var(--line-strong);
-      border-radius:18px;
-      color:var(--muted);
-      background:var(--surface-2);
-      text-align:center;
-      font-size:11px;
-      line-height:1.8;
-    }
-
-    .empty-state i{
-      display:block;
-      margin-bottom:10px;
-      color:var(--primary);
-      font-size:22px;
-    }
-
-    .error-box{
-      padding:28px;
-      border:1px solid color-mix(in srgb,var(--red) 30%,transparent);
-      border-radius:22px;
-      color:var(--red);
-      background:var(--red-soft);
-      text-align:center;
-      line-height:1.8;
-    }
-
-    .skeleton{
-      position:relative;
-      overflow:hidden;
-      min-height:140px;
-      border:1px solid var(--line);
-      border-radius:20px;
-      background:var(--surface-glass);
-    }
-
-    .skeleton::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      transform:translateX(100%);
-      background:linear-gradient(90deg,transparent,rgba(255,255,255,.24),transparent);
-      animation:shimmer 1.4s infinite;
-    }
-
-    @keyframes shimmer{100%{transform:translateX(-100%)}}
-
-    .toast{
-      position:fixed;
-      left:50%;
-      bottom:24px;
-      z-index:120;
-      padding:10px 15px;
-      border:1px solid var(--line-strong);
-      border-radius:999px;
-      color:var(--ink);
-      background:var(--surface);
-      box-shadow:var(--shadow);
-      font-size:11px;
-      font-weight:900;
-      opacity:0;
-      transform:translate(-50%,18px);
-      pointer-events:none;
-      transition:.2s;
-    }
-
-    .toast.show{
-      opacity:1;
-      transform:translate(-50%,0);
-    }
-
-    ::selection{
-      background:color-mix(in srgb,var(--primary) 25%,transparent);
-    }
-
-    :focus-visible{
-      outline:2px solid var(--primary);
-      outline-offset:3px;
-    }
-
-    @media(max-width:1000px){
-      .content-layout{
-        grid-template-columns:1fr;
-      }
-
-      .side-panel{
-        position:sticky;
-        top:72px;
-        z-index:60;
-        display:flex;
-        align-items:center;
-        overflow-x:auto;
-        border-radius:18px;
-        scrollbar-width:none;
-      }
-
-      .side-panel::-webkit-scrollbar{display:none}
-      .side-title,.side-meta{display:none}
-      .side-links{display:flex;padding:7px}
-      .side-link{white-space:nowrap}
-    }
-
-    @media(max-width:860px){
-      .hero-main{
-        grid-template-columns:1fr;
-      }
-
-      .hero-actions{
-        flex-direction:row;
-        flex-wrap:wrap;
-      }
-
-      .hero-summary{
-        grid-template-columns:repeat(2,1fr);
-      }
-
-      .summary-item:nth-child(3){
-        border-inline-start:0;
-        border-top:1px solid var(--line);
-      }
-
-      .summary-item:nth-child(4){
-        border-top:1px solid var(--line);
-      }
-
-      .colleges-grid,
-      .tracks-grid,
-      .resources-grid,
-      .extra-grid,
-      .about-grid{
-        grid-template-columns:1fr;
-      }
-
-      .score-overview{
-        grid-template-columns:1fr;
-      }
-    }
-
-    @media(max-width:620px){
-      .wrap{
-        width:min(100% - 22px,1180px);
-      }
-
-      .page{
-        padding-top:15px;
-      }
-
-      .hero{
-        border-radius:26px;
-      }
-
-      .hero-main{
-        padding:21px;
-      }
-
-      .hero-identity{
-        flex-direction:column;
-      }
-
-      .hero-title{
-        font-size:34px;
-      }
-
-      .hero-actions{
-        display:grid;
-        grid-template-columns:1fr 1fr;
-        min-width:0;
-      }
-
-      .hero-action.primary{
-        grid-column:1/-1;
-      }
-
-      .summary-item{
-        min-height:84px;
-        padding:14px;
-      }
-
-      .summary-value{
-        font-size:18px;
-      }
-
-      .section-header{
-        align-items:flex-start;
-        flex-direction:column;
-      }
-
-      .toolbar{
-        grid-template-columns:1fr;
-      }
-
-      .filter-select{
-        min-width:0;
-      }
-
-      .ratio-head{
-        display:none;
-      }
-
-      .ratio-row{
-        grid-template-columns:1fr 1fr;
-      }
-
-      .ratio-major{
-        grid-column:1/-1;
-      }
-
-      .ratio-values{
-        grid-column:1/-1;
-      }
-
-      .weights-grid{
-        grid-template-columns:1fr 1fr 1fr;
-      }
-
-      .metrics-grid{
-        grid-template-columns:1fr 1fr;
-      }
-
-      .hide-mobile{
-        display:none;
-      }
-    }
-
-    @media(prefers-reduced-motion:reduce){
-      *{
-        animation:none!important;
-        transition:none!important;
-        scroll-behavior:auto;
-      }
-    }
-  
-
-    /* Original section order — premium visual system */
-    .stats-section-grid{
-      display:grid;
-      grid-template-columns:repeat(4,minmax(0,1fr));
-      gap:10px;
-    }
-
-    .about-grid-single{
-      grid-template-columns:1fr;
-    }
-
-    @media(max-width:860px){
-      .stats-section-grid{
-        grid-template-columns:repeat(2,minmax(0,1fr));
-      }
-    }
-
-    @media(max-width:620px){
-      .stats-section-grid{
-        grid-template-columns:repeat(2,minmax(0,1fr));
-        gap:8px;
-      }
-    }
-
-  
-
-    /* 9.3 polish layer */
-    .hero-actions{
-      min-width:190px;
-    }
-
-    .hero-action.primary{
-      box-shadow:0 16px 34px -24px var(--primary);
-    }
-
-    .summary-item{
-      transition:.18s ease;
-    }
-
-    .summary-item:hover{
-      background:color-mix(in srgb,var(--primary) 4%,transparent);
-    }
-
-    .about-facts{
-      display:grid;
-      grid-template-columns:repeat(4,minmax(0,1fr));
-      gap:9px;
-      margin-top:12px;
-    }
-
-    .about-fact{
-      min-height:82px;
-      padding:12px;
-      border:1px solid var(--line);
-      border-radius:15px;
-      background:var(--surface-glass);
-      box-shadow:var(--shadow);
-    }
-
-    .about-fact span{
-      display:block;
-      color:var(--faint);
-      font-size:8.5px;
-      font-weight:900;
-    }
-
-    .about-fact b{
-      display:block;
-      margin-top:6px;
-      color:var(--ink);
-      font-size:11px;
-      font-weight:900;
-      line-height:1.55;
-    }
-
-    .ratio-source{
-      display:flex;
-      flex-wrap:wrap;
-      gap:5px;
-      margin-top:6px;
-    }
-
-    .ratio-source a,
-    .ratio-source span{
-      display:inline-flex;
-      align-items:center;
-      gap:5px;
-      padding:4px 7px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      color:var(--muted);
-      background:var(--surface-2);
-      font-size:8px;
-      font-weight:800;
-    }
-
-    .ratio-source a:hover{
-      color:var(--primary);
-      border-color:var(--line-strong);
-    }
-
-    @media(max-width:860px){
-      .about-facts{
-        grid-template-columns:repeat(2,minmax(0,1fr));
-      }
-    }
-
-    @media(max-width:620px){
-      .hero-actions{
-        min-width:0;
-      }
-
-      .ratio-row{
-        grid-template-columns:1fr;
-        gap:8px;
-        padding:13px;
-      }
-
-      .ratio-major,
-      .ratio-year,
-      .ratio-type,
-      .ratio-values{
-        grid-column:1/-1;
-      }
-
-      .ratio-year,
-      .ratio-type,
-      .ratio-values{
-        display:grid;
-        grid-template-columns:78px minmax(0,1fr);
-        align-items:start;
-        gap:8px;
-      }
-
-      .ratio-year::before,
-      .ratio-type::before,
-      .ratio-values::before{
-        color:var(--faint);
-        font-size:8.5px;
-        font-weight:900;
-      }
-
-      .ratio-year::before{content:"السنة"}
-      .ratio-type::before{content:"النوع"}
-      .ratio-values::before{content:"النسب"}
-
-      .ratio-values{
-        justify-content:stretch;
-      }
-
-      .ratio-values > div{
-        display:flex;
-        flex-wrap:wrap;
-        gap:5px;
-      }
-
-      .about-facts{
-        grid-template-columns:1fr 1fr;
-      }
-    }
-
-  </style>
 </head>
-
 <body>
-  <nav class="top-nav">
-    <div class="wrap top-nav-inner">
-      <a class="brand" href="index.html">
-        <div class="brand-mark">
-          <svg viewBox="0 0 100 100" fill="none" aria-hidden="true">
-            <circle cx="50" cy="50" r="42" stroke="currentColor" stroke-width="5" opacity=".9"/>
-            <circle cx="50" cy="50" r="4" fill="currentColor"/>
-            <polygon points="50,16 60,52 50,46 40,52" fill="currentColor"/>
-            <polygon points="50,84 40,48 50,54 60,48" fill="currentColor" opacity=".62"/>
-          </svg>
-        </div>
-
-        <div class="brand-copy">
-          <b>مُوجّه</b>
-          <span>دليل الطالب الجامعي</span>
-        </div>
-      </a>
-
-      <div class="nav-actions">
-        <button class="nav-button icon" id="themeToggle" type="button" aria-label="تبديل الوضع">
-          <i class="fa-solid fa-moon"></i>
-        </button>
-
-        <a class="nav-button hide-mobile" href="major-search.html">
-          <i class="fa-solid fa-graduation-cap"></i>
+<a class="skip-link" href="#mainContent">تجاوز إلى المحتوى</a>
+<nav class="top-nav">
+<div class="wrap top-nav-inner">
+<a class="brand" href="index.html">
+<div class="brand-mark">
+<svg aria-hidden="true" fill="none" viewbox="0 0 100 100">
+<circle cx="50" cy="50" opacity=".9" r="42" stroke="currentColor" stroke-width="5"></circle>
+<circle cx="50" cy="50" fill="currentColor" r="4"></circle>
+<polygon fill="currentColor" points="50,16 60,52 50,46 40,52"></polygon>
+<polygon fill="currentColor" opacity=".62" points="50,84 40,48 50,54 60,48"></polygon>
+</svg>
+</div>
+<div class="brand-copy">
+<b>مُوجّه</b>
+<span>دليل الطالب الجامعي</span>
+</div>
+</a>
+<div class="nav-actions">
+<button aria-label="تبديل الوضع" class="nav-button icon" id="themeToggle" type="button">
+<i class="fa-solid fa-moon"></i>
+</button>
+<a class="nav-button hide-mobile" href="major-search.html">
+<i class="fa-solid fa-graduation-cap"></i>
           بحث التخصص
         </a>
-
-        <a class="nav-button" href="index.html">
-          <i class="fa-solid fa-arrow-right"></i>
+<a class="nav-button" href="index.html">
+<i class="fa-solid fa-arrow-right"></i>
           الجامعات
         </a>
-      </div>
-    </div>
-  </nav>
-
-  <main class="wrap page">
-    <section id="overview" class="hero">
-      <div class="hero-main">
-        <div class="hero-identity">
-          <div id="uniLogoWrap" class="uni-logo hidden">
-            <img id="uniLogo" src="" alt="شعار الجامعة">
-          </div>
-
-          <div class="hero-content">
-            <div class="eyebrow">
-              <i class="fa-solid fa-building-columns"></i>
+</div>
+</div>
+</nav>
+<main class="wrap page" id="mainContent">
+<section class="hero" id="overview">
+<div class="hero-main">
+<div class="hero-identity">
+<div class="uni-logo hidden" id="uniLogoWrap">
+<img alt="شعار الجامعة" id="uniLogo"/>
+</div>
+<div class="hero-content">
+<div class="eyebrow">
+<i class="fa-solid fa-building-columns"></i>
               ملف الجامعة
             </div>
-
-            <h1 id="uniName" class="hero-title">جارٍ تحميل الجامعة…</h1>
-
-            <p id="uniLocation" class="hero-location">
-              <i class="fa-solid fa-location-dot"></i>
-              <span>--</span>
-            </p>
-
-            <div class="hero-badges" id="uniBadges"></div>
-          </div>
-        </div>
-
-        <div class="hero-actions">
-          <a class="hero-action primary" href="#scoreBlock">
-            <i class="fa-solid fa-calculator"></i>
-            ابدأ من القبول والموزونة
-          </a>
-
-          <a class="hero-action" href="#collegesSection">
-            <i class="fa-solid fa-layer-group"></i>
-            استكشف التخصصات
-          </a>
-
-          <a class="hero-action" id="officialWebsite" href="#" target="_blank" rel="noopener" hidden>
-            <i class="fa-solid fa-arrow-up-left-from-square"></i>
-            الموقع الرسمي
-          </a>
-
-          <button class="hero-action" id="shareUniversity" type="button">
-            <i class="fa-solid fa-link"></i>
-            مشاركة الصفحة
-          </button>
-        </div>
-      </div>
-
-      <div class="hero-summary">
-        <div class="summary-item">
-          <div class="summary-icon"><i class="fa-solid fa-building"></i></div>
-          <div>
-            <b id="summaryColleges" class="summary-value">--</b>
-            <span class="summary-label">كلية</span>
-          </div>
-        </div>
-
-        <div class="summary-item">
-          <div class="summary-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-          <div>
-            <b id="summaryMajors" class="summary-value">--</b>
-            <span class="summary-label">برنامج أكاديمي</span>
-          </div>
-        </div>
-
-        <div class="summary-item">
-          <div class="summary-icon"><i class="fa-solid fa-route"></i></div>
-          <div>
-            <b id="summaryTracks" class="summary-value">--</b>
-            <span class="summary-label">مسار قبول</span>
-          </div>
-        </div>
-
-        <div class="summary-item">
-          <div class="summary-icon"><i class="fa-solid fa-folder-open"></i></div>
-          <div>
-            <b id="summaryResources" class="summary-value">--</b>
-            <span class="summary-label">ملف ورابط</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <div class="content-layout">
-      <aside class="side-panel glass" aria-label="أقسام صفحة الجامعة">
-        <div class="side-title">محتويات الملف</div>
-
-        <nav class="side-links">
-          <a class="side-link active" href="#overview">
-            <i class="fa-solid fa-house"></i>
-            نظرة عامة
-          </a>
-
-          <a class="side-link" href="#scoreBlock">
-            <i class="fa-solid fa-calculator"></i>
+<h1 class="hero-title" id="uniName">جارٍ تحميل الجامعة…</h1>
+<p class="hero-location" id="uniLocation">
+<i aria-hidden="true" class="fa-solid fa-location-dot"></i>
+<span>--</span>
+</p>
+<div class="hero-badges" id="uniBadges"></div>
+</div>
+</div>
+<div class="hero-actions">
+<a class="hero-action primary" href="#scoreBlock">
+<i class="fa-solid fa-calculator"></i>
             القبول والموزونة
           </a>
-
-          <a class="side-link" href="#statsBlock" data-nav="stats">
-            <i class="fa-solid fa-gauge-high"></i>
-            المؤشرات
+<a class="hero-action" href="#collegesSection">
+<i class="fa-solid fa-layer-group"></i>
+            استكشف التخصصات
           </a>
-
-          <a class="side-link" href="#aboutBlock" data-nav="about">
-            <i class="fa-solid fa-circle-info"></i>
-            عن الجامعة
+<a class="hero-action" hidden="" href="#" id="officialWebsite" rel="noopener" target="_blank">
+<i class="fa-solid fa-arrow-up-left-from-square"></i>
+            الموقع الرسمي
           </a>
+<button class="hero-action" id="shareUniversity" type="button">
+<i class="fa-solid fa-link"></i>
+            مشاركة الصفحة
+          </button>
+</div>
+</div>
+<div class="hero-summary">
+<div class="summary-item">
+<div class="summary-icon"><i class="fa-solid fa-building"></i></div>
+<div>
+<b aria-live="polite" class="summary-value" id="summaryColleges">--</b>
+<span class="summary-label">كلية</span>
+</div>
+</div>
+<div class="summary-item">
+<div class="summary-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+<div>
+<b aria-live="polite" class="summary-value" id="summaryMajors">--</b>
+<span class="summary-label">برنامج أكاديمي</span>
+</div>
+</div>
+<div class="summary-item">
+<div class="summary-icon"><i class="fa-solid fa-route"></i></div>
+<div>
+<b aria-live="polite" class="summary-value" id="summaryTracks">--</b>
+<span class="summary-label">مسار قبول</span>
+</div>
+</div>
+<div class="summary-item">
+<div class="summary-icon"><i class="fa-solid fa-folder-open"></i></div>
+<div>
+<b aria-live="polite" class="summary-value" id="summaryResources">--</b>
+<span class="summary-label">ملف ورابط</span>
+</div>
+</div>
+</div>
+</section>
+<div class="content-layout">
+<aside aria-label="أقسام صفحة الجامعة" class="side-panel glass">
+<div class="side-title">محتويات الملف</div>
+<nav class="side-links">
 
-          <a class="side-link" href="#collegesSection">
-            <i class="fa-solid fa-layer-group"></i>
-            الكليات والتخصصات
-          </a>
 
-          <a class="side-link" href="#ratiosSection" data-nav="ratios">
-            <i class="fa-solid fa-chart-simple"></i>
-            نسب القبول
-          </a>
 
-          <a class="side-link" href="#resourcesSection" data-nav="resources">
-            <i class="fa-solid fa-folder-open"></i>
-            الملفات الرسمية
-          </a>
 
-          <a class="side-link" href="#extraSections" data-nav="sections">
-            <i class="fa-solid fa-file-lines"></i>
-            معلومات إضافية
-          </a>
-        </nav>
 
-        <div class="side-meta">
-          <div class="side-meta-row">
-            <span>آخر تحديث لملف الجامعة</span>
-            <b id="lastUpdated">غير محدد</b>
-          </div>
 
-          <div class="side-meta-row">
-            <span>مصدر البيانات</span>
-            <b>قاعدة مُوجّه</b>
-          </div>
-        </div>
-      </aside>
 
-      <div class="content-column">
-        <section id="scoreBlock" class="section">
-          <div class="section-header">
-            <div>
-              <div class="section-kicker">
-                <i class="fa-solid fa-calculator"></i>
-                مركز القبول
-              </div>
 
-              <h2 class="section-title">مسارات القبول والموزونة</h2>
+<a class="side-link active" href="#overview"><i class="fa-solid fa-house"></i> نظرة عامة</a><a class="side-link" href="#scoreBlock"><i class="fa-solid fa-calculator"></i> القبول والموزونة</a><a class="side-link" data-nav="stats" href="#statsBlock"><i class="fa-solid fa-gauge-high"></i> المؤشرات</a><a class="side-link" data-nav="about" href="#aboutBlock"><i class="fa-solid fa-circle-info"></i> عن الجامعة</a><a class="side-link" href="#collegesSection"><i class="fa-solid fa-layer-group"></i> الكليات والتخصصات</a><a class="side-link" data-nav="ratios" href="#ratiosSection"><i class="fa-solid fa-chart-simple"></i> نسب القبول</a><a class="side-link" data-nav="resources" href="#resourcesSection"><i class="fa-solid fa-folder-open"></i> الملفات الرسمية</a><a class="side-link" data-nav="sections" href="#extraSections"><i class="fa-solid fa-file-lines"></i> معلومات إضافية</a></nav>
+<div class="side-meta">
+<div class="side-meta-row">
+<span>آخر تحديث لملف الجامعة</span>
+<b id="lastUpdated">غير محدد</b>
+</div>
+<div class="side-meta-row">
+<span>مصدر البيانات</span>
+<b>قاعدة مُوجّه</b>
+</div>
+</div>
+</aside>
+<div class="content-column">
+<!-- 1) القبول والموزونة -->
 
-              <p class="section-description">
-                كل مسار يعرض أوزانه وشروطه والنتيجة المحسوبة من درجاتك المحفوظة، دون افتراض بيانات غير موجودة.
-              </p>
-            </div>
+<!-- 2) الكليات والتخصصات -->
 
-            <span class="section-count" id="trackCount" aria-live="polite">جارٍ التحميل</span>
-          </div>
+<!-- 3) نسب القبول -->
 
-          <div class="score-overview">
-            <section id="autoResultSection" class="score-card" hidden>
-              <span class="score-label">
-                <i class="fa-solid fa-calculator"></i>
-                موزونتك في المسار الافتراضي
-              </span>
+<!-- 4) المؤشرات -->
 
-              <h3 id="finalResult" class="score-number">00.00%</h3>
+<!-- 5) عن الجامعة -->
 
-              <div id="weightLabels" class="weight-labels"></div>
-            </section>
+<!-- 6) الملفات الرسمية -->
 
-            <div class="score-help">
-              <h3>كيف تستفيد من هذا القسم؟</h3>
+<!-- 7) معلومات إضافية -->
 
-              <p>
-                ابدأ بالمسار المناسب لك، راجع الأوزان والشروط، ثم قارن موزونتك مع نسب السنوات السابقة. النتيجة استرشادية وليست قبولًا مضمونًا.
-              </p>
-
-              <div class="score-missing" id="scoreMessage">
-                جارٍ التحقق من درجاتك وأوزان الجامعة.
-              </div>
-            </div>
-          </div>
-
-          <div id="admissionTracksGrid" class="tracks-grid"></div>
-        </section>
-
-        <section id="statsBlock" class="section" hidden>
-          <div class="section-header">
-            <div>
-              <div class="section-kicker">
-                <i class="fa-solid fa-gauge-high"></i>
-                مؤشرات القرار
-              </div>
-
-              <h2 class="section-title">أرقام سريعة قبل التفاصيل</h2>
-
-              <p class="section-description">
-                هذه المؤشرات تعطي تصورًا سريعًا عن الجامعة، وتظهر فقط عندما تكون بياناتها مسجلة.
-              </p>
-            </div>
-          </div>
-
-          <div class="stats-section-grid">
-            <article class="metric-card" data-metric="employment">
-              <i class="fa-solid fa-briefcase"></i>
-              <span>التوظيف</span>
-              <b id="statEmp">--</b>
-            </article>
-
-            <article class="metric-card" data-metric="rank">
-              <i class="fa-solid fa-ranking-star"></i>
-              <span>التصنيف المحلي</span>
-              <b id="statLocal">--</b>
-            </article>
-
-            <article class="metric-card" data-metric="acceptance">
-              <i class="fa-solid fa-door-open"></i>
-              <span>صعوبة القبول</span>
-              <b id="statAccept">--</b>
-            </article>
-
-            <article class="metric-card" data-metric="competition">
-              <i class="fa-solid fa-fire"></i>
-              <span>التنافسية</span>
-              <b id="uniCompetency">--</b>
-            </article>
-          </div>
-        </section>
-
-        <section id="aboutBlock" class="section" hidden>
-          <div class="section-header">
-            <div>
-              <div class="section-kicker">
-                <i class="fa-solid fa-circle-info"></i>
-                افهم الجامعة
-              </div>
-
-              <h2 class="section-title">عن الجامعة</h2>
-
-              <p class="section-description">
-                نبذة مختصرة تساعدك على فهم طبيعة الجامعة وموقعها وصورتها العامة.
-              </p>
-            </div>
-          </div>
-
-          <div class="about-grid about-grid-single">
-            <article class="about-card">
-              <p id="uniAbout">--</p>
-            </article>
-
-            <div id="aboutFacts" class="about-facts" hidden></div>
-          </div>
-        </section>
-
-        <section id="collegesSection" class="section">
-          <div class="section-header">
-            <div>
-              <div class="section-kicker">
-                <i class="fa-solid fa-layer-group"></i>
-                الكليات والبرامج
-              </div>
-
-              <h2 class="section-title">الكليات والتخصصات</h2>
-
-              <p class="section-description">
-                ابحث داخل برامج الجامعة، ثم صفِّ النتائج حسب الكلية. تظهر الدرجة والفئة والملاحظات عندما تكون مسجلة.
-              </p>
-            </div>
-
-            <span class="section-count" id="majorResultCount" aria-live="polite">
-              جارٍ التحميل
-            </span>
-          </div>
-
-          <div class="toolbar">
-            <div class="search-wrap">
-              <i class="fa-solid fa-magnifying-glass"></i>
-              <input id="majorSearch" class="search-input" type="search" placeholder="ابحث عن تخصص داخل الجامعة…" autocomplete="off">
-            </div>
-
-            <select id="degreeFilter" class="filter-select" aria-label="فلترة حسب الدرجة">
-              <option value="all">كل الدرجات</option>
-            </select>
-          </div>
-
-          <div class="filter-pills" id="collegeFilters"></div>
-
-          <div id="collegesGrid" class="colleges-grid">
-            <div class="skeleton"></div>
-            <div class="skeleton"></div>
-          </div>
-        </section>
-
-        <section id="ratiosSection" class="section" hidden>
-          <div class="section-header">
-            <div>
-              <div class="section-kicker">
-                <i class="fa-solid fa-chart-simple"></i>
-                بيانات تاريخية
-              </div>
-
-              <h2 class="section-title">نسب القبول السابقة</h2>
-
-              <p class="section-description">
-                اعرض النسب حسب التخصص والسنة، مع فصل النسبة العامة عن نسب الطلاب والطالبات عندما تكون متاحة.
-              </p>
-            </div>
-
-            <span class="section-count" id="ratioCount" aria-live="polite">0 سجل</span>
-          </div>
-
-          <div class="toolbar">
-            <div class="search-wrap">
-              <i class="fa-solid fa-magnifying-glass"></i>
-              <input id="ratioSearch" class="search-input" type="search" placeholder="ابحث داخل نسب القبول…">
-            </div>
-
-            <select id="ratioYearFilter" class="filter-select" aria-label="فلترة نسب القبول حسب السنة">
-              <option value="all">كل السنوات</option>
-            </select>
-          </div>
-
-          <div id="ratiosContainer" class="ratios-list"></div>
-        </section>
-
-        <section id="resourcesSection" class="section" hidden>
-          <div class="section-header">
-            <div>
-              <div class="section-kicker">
-                <i class="fa-solid fa-folder-open"></i>
-                مصادر الطالب
-              </div>
-
-              <h2 class="section-title">الملفات والروابط</h2>
-
-              <p class="section-description">
-                الملفات مصنفة حسب نوعها، مع توضيح السنة والمصدر وحالة الرسمية متى كانت مسجلة.
-              </p>
-            </div>
-
-            <span class="section-count" id="resourceCount">0 ملف</span>
-          </div>
-
-          <div id="resourcesContainer" class="resource-groups"></div>
-        </section>
-
-        <section id="extraSections" class="section" hidden>
-          <div class="section-header">
-            <div>
-              <div class="section-kicker">
-                <i class="fa-solid fa-file-lines"></i>
-                تفاصيل إضافية
-              </div>
-
-              <h2 class="section-title">معلومات الجامعة</h2>
-
-              <p class="section-description">
-                أقسام نصية مرتبة وقابلة للفتح، حتى لا تتحول الصفحة إلى كتل نصية طويلة.
-              </p>
-            </div>
-
-            <span class="section-count" id="sectionCount">0 قسم</span>
-          </div>
-
-          <div id="sectionsContainer" class="extra-grid"></div>
-        </section>
-      </div>
-    </div>
-  </main>
-
-  <div class="toast" id="toast">تم نسخ الرابط</div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-config.js"></script>
-  <script src="js/university.js"></script>
+<section class="section" id="scoreBlock">
+<div class="section-header">
+<div>
+<div class="section-kicker"><i class="fa-solid fa-calculator"></i> مركز القبول</div>
+<h2 class="section-title">مسارات القبول والموزونة</h2>
+<p class="section-description">كل مسار يعرض أوزانه وشروطه والنتيجة المحسوبة من درجاتك المحفوظة، دون افتراض بيانات غير موجودة.</p>
+</div>
+<span aria-live="polite" class="section-count" id="trackCount">جارٍ التحميل</span>
+</div>
+<div class="score-overview" id="scoreOverview">
+<section class="score-card" hidden="" id="autoResultSection">
+<span class="score-label"><i class="fa-solid fa-calculator"></i> موزونتك في المسار الافتراضي</span>
+<h3 class="score-number" id="finalResult">00.00%</h3>
+<div class="weight-labels" id="weightLabels"></div>
+</section>
+<div class="score-help">
+<h3>كيف تستفيد من هذا القسم؟</h3>
+<p>ابدأ بالمسار المناسب لك، راجع الأوزان والشروط، ثم قارن موزونتك مع نسب السنوات السابقة. النتيجة استرشادية وليست قبولًا مضمونًا.</p>
+<div aria-live="polite" class="score-missing" id="scoreMessage" role="status">جارٍ التحقق من درجاتك وأوزان الجامعة.</div>
+</div>
+</div>
+<div class="tracks-grid" id="admissionTracksGrid"></div>
+</section><section class="section" hidden="" id="statsBlock">
+<div class="section-header">
+<div>
+<div class="section-kicker"><i class="fa-solid fa-gauge-high"></i> مؤشرات القرار</div>
+<h2 class="section-title">أرقام سريعة قبل التفاصيل</h2>
+<p class="section-description">هذه المؤشرات تعطي تصورًا سريعًا عن الجامعة، وتظهر فقط عندما تكون بياناتها مسجلة.</p>
+</div>
+</div>
+<div class="stats-section-grid">
+<article class="metric-card" data-metric="employment">
+<i class="fa-solid fa-briefcase"></i>
+<span>التوظيف</span>
+<b id="statEmp">--</b>
+</article>
+<article class="metric-card" data-metric="rank">
+<i class="fa-solid fa-ranking-star"></i>
+<span>التصنيف المحلي</span>
+<b id="statLocal">--</b>
+</article>
+<article class="metric-card" data-metric="acceptance">
+<i class="fa-solid fa-door-open"></i>
+<span>صعوبة القبول</span>
+<b id="statAccept">--</b>
+</article>
+<article class="metric-card" data-metric="competition">
+<i class="fa-solid fa-fire"></i>
+<span>التنافسية</span>
+<b id="uniCompetency">--</b>
+</article>
+</div>
+</section><section class="section" hidden="" id="aboutBlock">
+<div class="section-header">
+<div>
+<div class="section-kicker"><i class="fa-solid fa-circle-info"></i> افهم الجامعة</div>
+<h2 class="section-title">عن الجامعة</h2>
+<p class="section-description">نبذة مختصرة تساعدك على فهم طبيعة الجامعة وموقعها وصورتها العامة.</p>
+</div>
+</div>
+<div class="about-grid about-grid-single">
+<article class="about-card">
+<p id="uniAbout">--</p>
+</article>
+<div class="about-facts" hidden="" id="aboutFacts"></div>
+</div>
+</section><section class="section" id="collegesSection">
+<div class="section-header">
+<div>
+<div class="section-kicker"><i class="fa-solid fa-layer-group"></i> الكليات والبرامج</div>
+<h2 class="section-title">الكليات والتخصصات</h2>
+<p class="section-description">ابحث داخل برامج الجامعة، ثم صفِّ النتائج حسب الكلية. تظهر الدرجة والفئة والملاحظات عندما تكون مسجلة.</p>
+</div>
+<span aria-live="polite" class="section-count" id="majorResultCount">جارٍ التحميل</span>
+</div>
+<div class="toolbar">
+<div class="search-wrap">
+<i aria-hidden="true" class="fa-solid fa-magnifying-glass"></i>
+<input aria-label="ابحث عن تخصص داخل الجامعة" autocomplete="off" class="search-input" id="majorSearch" placeholder="ابحث عن تخصص داخل الجامعة…" type="search"/>
+</div>
+<select aria-label="فلترة حسب الدرجة" class="filter-select" id="degreeFilter">
+<option value="all">كل الدرجات</option>
+</select>
+</div>
+<div class="filter-pills" id="collegeFilters"></div>
+<div class="colleges-grid" id="collegesGrid">
+<div aria-hidden="true" class="skeleton"></div>
+<div aria-hidden="true" class="skeleton"></div>
+</div>
+</section><section class="section" hidden="" id="ratiosSection">
+<div class="section-header">
+<div>
+<div class="section-kicker"><i class="fa-solid fa-chart-simple"></i> بيانات تاريخية</div>
+<h2 class="section-title">نسب القبول السابقة</h2>
+<p class="section-description">اعرض النسب حسب التخصص والسنة، مع فصل النسبة العامة عن نسب الطلاب والطالبات عندما تكون متاحة.</p>
+</div>
+<span aria-live="polite" class="section-count" id="ratioCount">0 سجل</span>
+</div>
+<div class="toolbar">
+<div class="search-wrap">
+<i aria-hidden="true" class="fa-solid fa-magnifying-glass"></i>
+<input aria-label="ابحث داخل نسب القبول" autocomplete="off" class="search-input" id="ratioSearch" placeholder="ابحث داخل نسب القبول…" type="search"/>
+</div>
+<select aria-label="فلترة نسب القبول حسب السنة" class="filter-select" id="ratioYearFilter">
+<option value="all">كل السنوات</option>
+</select>
+</div>
+<div class="ratios-list" id="ratiosContainer"></div>
+</section><section class="section" hidden="" id="resourcesSection">
+<div class="section-header">
+<div>
+<div class="section-kicker"><i class="fa-solid fa-folder-open"></i> مصادر الطالب</div>
+<h2 class="section-title">الملفات والروابط</h2>
+<p class="section-description">الملفات مصنفة حسب نوعها، مع توضيح السنة والمصدر وحالة الرسمية متى كانت مسجلة.</p>
+</div>
+<span aria-live="polite" class="section-count" id="resourceCount">0 ملف</span>
+</div>
+<div class="resource-groups" id="resourcesContainer"></div>
+</section><section class="section" hidden="" id="extraSections">
+<div class="section-header">
+<div>
+<div class="section-kicker"><i class="fa-solid fa-file-lines"></i> تفاصيل إضافية</div>
+<h2 class="section-title">معلومات الجامعة</h2>
+<p class="section-description">أقسام نصية مرتبة وقابلة للفتح، حتى لا تتحول الصفحة إلى كتل نصية طويلة.</p>
+</div>
+<span aria-live="polite" class="section-count" id="sectionCount">0 قسم</span>
+</div>
+<div class="extra-grid" id="sectionsContainer"></div>
+</section></div>
+</div>
+</main>
+<div class="toast" id="toast">تم نسخ الرابط</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/university.js"></script>
 </body>
 </html>
