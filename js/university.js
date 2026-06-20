@@ -23,6 +23,10 @@ const state = {
     selectedDegree: "all",
     ratioQuery: "",
     ratioYear: "all",
+    expandedColleges: new Set(),
+    majorSearchTimer: null,
+    ratioSearchTimer: null,
+    sectionObserver: null,
     toastTimer: null
 };
 
@@ -157,6 +161,31 @@ function unique(values) {
     return [...new Set(values.filter(Boolean))];
 }
 
+function safeExternalUrl(value) {
+    if (!value) return "";
+
+    try {
+        const url = new URL(String(value), window.location.origin);
+
+        if (!["http:", "https:"].includes(url.protocol)) {
+            return "";
+        }
+
+        return url.href;
+    } catch (error) {
+        return "";
+    }
+}
+
+function debounce(callback, delay = 120) {
+    let timer = null;
+
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => callback(...args), delay);
+    };
+}
+
 function genderLabel(value) {
     const normalized = normalizeArabic(value);
 
@@ -217,12 +246,16 @@ function calculateTrack(track) {
 
     const hasWeights = qWeight > 0 || tWeight > 0 || sWeight > 0;
 
+    const weightTotal = qWeight + tWeight + sWeight;
+
     return {
         hasWeights,
         missing,
         result: hasWeights && !missing.length
             ? (scores.q * qWeight) + (scores.t * tWeight) + (scores.s * sWeight)
             : null,
+        weightTotal,
+        weightsBalanced: !hasWeights || Math.abs(weightTotal - 1) <= 0.005,
         weights: {
             q: qWeight,
             t: tWeight,
@@ -331,6 +364,7 @@ async function loadUniversityDetails() {
     }
 
     renderLoading();
+    $("mainContent")?.setAttribute("aria-busy", "true");
 
     try {
         const { data: university, error: universityError } = await supabaseClient
@@ -425,14 +459,14 @@ async function loadUniversityDetails() {
 
         state.tracks = (tracksResponse.data || [])
             .filter(track => track.is_active !== false)
-            .sort((a, b) => (a.display_order || 999) - (b.display_order || 999));
+            .sort((a, b) => (a.display_order ?? 999) - (b.display_order ?? 999));
 
         state.colleges = (collegesResponse.data || [])
-            .sort((a, b) => (a.display_order || 999) - (b.display_order || 999))
+            .sort((a, b) => (a.display_order ?? 999) - (b.display_order ?? 999))
             .map(college => ({
                 ...college,
                 majors: (college.majors || [])
-                    .sort((a, b) => (a.display_order || 999) - (b.display_order || 999))
+                    .sort((a, b) => (a.display_order ?? 999) - (b.display_order ?? 999))
             }));
 
         state.ratios = (ratiosResponse.data || [])
@@ -449,6 +483,13 @@ async function loadUniversityDetails() {
 }
 
 function renderAll() {
+    const requestedMajor = getRequestedMajor();
+
+    if (requestedMajor) {
+        state.majorQuery = requestedMajor;
+        $("majorSearch").value = requestedMajor;
+    }
+
     renderUniversityBasic();
     renderSummary();
     renderCollegeFilters();
@@ -460,15 +501,9 @@ function renderAll() {
     renderSections();
     renderAbout();
     bindDataDrivenUI();
-    setupSectionSpy();
 
-    const requestedMajor = getRequestedMajor();
-
-    if (requestedMajor) {
-        state.majorQuery = requestedMajor;
-        $("majorSearch").value = requestedMajor;
-        renderColleges();
-    }
+    $("mainContent")?.setAttribute("aria-busy", "false");
+    requestAnimationFrame(setupSectionSpy);
 }
 
 function renderUniversityBasic() {
@@ -508,16 +543,19 @@ function renderUniversityBasic() {
 
     $("uniBadges").innerHTML = badges.join("");
 
-    const website =
+    const website = safeExternalUrl(
         data.website_url ||
         data.official_url ||
         data.website ||
         data.url ||
-        "";
+        ""
+    );
 
     if (website) {
         $("officialWebsite").href = website;
         $("officialWebsite").hidden = false;
+    } else {
+        $("officialWebsite").hidden = true;
     }
 
     $("lastUpdated").textContent = formatDate(
@@ -639,84 +677,126 @@ function renderColleges() {
         return;
     }
 
-    $("collegesGrid").innerHTML = filteredColleges.map(college => `
-        <article class="college-card">
-            <header class="college-head">
-                <div class="college-title">
-                    <div class="college-icon">
-                        <i class="fa-solid fa-building"></i>
+    const hasActiveFilter =
+        Boolean(query) ||
+        state.selectedDegree !== "all" ||
+        state.selectedCollege !== "all";
+
+    $("collegesGrid").innerHTML = filteredColleges.map(college => {
+        const collegeKey = String(college.id);
+        const expanded = state.expandedColleges.has(collegeKey);
+        const shouldCollapse =
+            !hasActiveFilter &&
+            !expanded &&
+            college.filteredMajors.length > 6;
+
+        const visibleMajors = shouldCollapse
+            ? college.filteredMajors.slice(0, 6)
+            : college.filteredMajors;
+
+        const remaining = college.filteredMajors.length - visibleMajors.length;
+
+        return `
+            <article class="college-card">
+                <header class="college-head">
+                    <div class="college-title">
+                        <div class="college-icon">
+                            <i class="fa-solid fa-building"></i>
+                        </div>
+
+                        <div>
+                            <h3>${esc(college.name || "كلية")}</h3>
+                            ${college.description ? `<p>${esc(college.description)}</p>` : ""}
+                        </div>
                     </div>
 
-                    <div>
-                        <h3>${esc(college.name || "كلية")}</h3>
-                        ${college.description ? `<p>${esc(college.description)}</p>` : ""}
-                    </div>
+                    <span class="college-count">
+                        ${college.filteredMajors.length} تخصص
+                    </span>
+                </header>
+
+                <div class="major-list">
+                    ${visibleMajors.length
+                        ? visibleMajors.map(major => {
+                            const nameMatches = query &&
+                                normalizeArabic([
+                                    major.code,
+                                    major.name,
+                                    major.note
+                                ].filter(Boolean).join(" ")).includes(query);
+
+                            const degree = degreeLabel(major.degree);
+                            const gender = genderLabel(major.gender);
+
+                            return `
+                                <div class="major-row ${nameMatches ? "match" : ""}">
+                                    <span class="major-code">
+                                        ${esc(major.code || "—")}
+                                    </span>
+
+                                    <div>
+                                        <div class="major-name">
+                                            ${esc(major.name || "تخصص غير محدد")}
+                                        </div>
+
+                                        ${(degree || gender) ? `
+                                            <div class="major-meta">
+                                                ${degree ? `
+                                                    <span class="meta-chip">
+                                                        <i class="fa-solid fa-certificate"></i>
+                                                        ${esc(degree)}
+                                                    </span>
+                                                ` : ""}
+
+                                                ${gender ? `
+                                                    <span class="meta-chip">
+                                                        <i class="fa-solid fa-venus-mars"></i>
+                                                        ${esc(gender)}
+                                                    </span>
+                                                ` : ""}
+                                            </div>
+                                        ` : ""}
+
+                                        ${major.note ? `
+                                            <div class="major-note">
+                                                ${esc(major.note)}
+                                            </div>
+                                        ` : ""}
+                                    </div>
+                                </div>
+                            `;
+                        }).join("")
+                        : `
+                            <div class="empty-state">
+                                لا توجد تخصصات مضافة في هذه الكلية.
+                            </div>
+                        `}
                 </div>
 
-                <span class="college-count">
-                    ${college.filteredMajors.length} تخصص
-                </span>
-            </header>
-
-            <div class="major-list">
-                ${college.filteredMajors.length
-                    ? college.filteredMajors.map(major => {
-                        const nameMatches = query &&
-                            normalizeArabic([
-                                major.code,
-                                major.name,
-                                major.note
-                            ].filter(Boolean).join(" ")).includes(query);
-
-                        const degree = degreeLabel(major.degree);
-                        const gender = genderLabel(major.gender);
-
-                        return `
-                            <div class="major-row ${nameMatches ? "match" : ""}">
-                                <span class="major-code">
-                                    ${esc(major.code || "—")}
-                                </span>
-
-                                <div>
-                                    <div class="major-name">
-                                        ${esc(major.name || "تخصص غير محدد")}
-                                    </div>
-
-                                    ${(degree || gender) ? `
-                                        <div class="major-meta">
-                                            ${degree ? `
-                                                <span class="meta-chip">
-                                                    <i class="fa-solid fa-certificate"></i>
-                                                    ${esc(degree)}
-                                                </span>
-                                            ` : ""}
-
-                                            ${gender ? `
-                                                <span class="meta-chip">
-                                                    <i class="fa-solid fa-venus-mars"></i>
-                                                    ${esc(gender)}
-                                                </span>
-                                            ` : ""}
-                                        </div>
-                                    ` : ""}
-
-                                    ${major.note ? `
-                                        <div class="major-note">
-                                            ${esc(major.note)}
-                                        </div>
-                                    ` : ""}
-                                </div>
-                            </div>
-                        `;
-                    }).join("")
-                    : `
-                        <div class="empty-state">
-                            لا توجد تخصصات مضافة في هذه الكلية.
-                        </div>
-                    `}
-            </div>
-        </article>
-    `).join("");
+                ${remaining > 0 ? `
+                    <button
+                        class="college-expand"
+                        type="button"
+                        data-expand-college="${esc(collegeKey)}"
+                        aria-expanded="false"
+                    >
+                        <i class="fa-solid fa-chevron-down"></i>
+                        عرض ${remaining} تخصصات أخرى
+                    </button>
+                ` : expanded && college.filteredMajors.length > 6 && !hasActiveFilter ? `
+                    <button
+                        class="college-expand"
+                        type="button"
+                        data-collapse-college="${esc(collegeKey)}"
+                        aria-expanded="true"
+                    >
+                        <i class="fa-solid fa-chevron-up"></i>
+                        عرض أقل
+                    </button>
+                ` : ""}
+            </article>
+        `;
+    }).join("");
 }
 
 function renderAdmission() {
@@ -742,8 +822,11 @@ function renderAdmission() {
 }
 
 function renderDefaultScore(track) {
+    const overview = $("scoreOverview");
+
     if (!track) {
         $("autoResultSection").hidden = true;
+        overview?.classList.add("is-single");
         $("scoreMessage").textContent = "لا يوجد مسار قبول افتراضي مسجل لهذه الجامعة.";
         return;
     }
@@ -752,17 +835,20 @@ function renderDefaultScore(track) {
 
     if (!calculation.hasWeights) {
         $("autoResultSection").hidden = true;
+        overview?.classList.add("is-single");
         $("scoreMessage").textContent = "لا توجد أوزان موزونة مسجلة للمسار الافتراضي.";
         return;
     }
 
     if (calculation.missing.length) {
         $("autoResultSection").hidden = true;
+        overview?.classList.add("is-single");
         $("scoreMessage").textContent =
             `أدخل درجات ${calculation.missing.join(" و")} في الأداة الرئيسية لإظهار موزونتك.`;
         return;
     }
 
+    overview?.classList.remove("is-single");
     $("autoResultSection").hidden = false;
     $("finalResult").textContent = `${calculation.result.toFixed(2)}%`;
 
@@ -799,7 +885,7 @@ function renderTrackCard(track) {
             value: formatWeight(weights.school_weight),
             percent: calculation.weights.s * 100
         }
-    ];
+    ].filter(item => item.value !== null);
 
     return `
         <article class="track-card ${track.is_default ? "default" : ""}">
@@ -823,18 +909,29 @@ function renderTrackCard(track) {
                 ` : ""}
             </div>
 
-            ${calculation.hasWeights ? `
+            ${weightItems.length ? `
                 <div class="weights-grid">
                     ${weightItems.map(item => `
                         <div class="weight-box">
                             <span>${item.label}</span>
-                            <b>${item.value || "—"}</b>
+                            <b>${item.value}</b>
 
                             <div class="weight-bar">
                                 <span style="width:${Math.min(100, Math.max(0, item.percent))}%"></span>
                             </div>
                         </div>
                     `).join("")}
+                </div>
+            ` : ""}
+
+            ${calculation.hasWeights && !calculation.weightsBalanced ? `
+                <div class="weight-total-warning">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>
+                        تنبيه بيانات: مجموع الأوزان المسجلة
+                        ${Math.round(calculation.weightTotal * 100)}%
+                        وليس 100%.
+                    </span>
                 </div>
             ` : ""}
 
@@ -909,7 +1006,9 @@ function getFilteredRatios() {
             item.college_name,
             item.ratio_type,
             item.note,
-            item.year
+            item.year,
+            item.source_name,
+            item.source_label
         ].filter(Boolean).join(" "));
 
         const queryMatches =
@@ -945,21 +1044,25 @@ function renderFilteredRatios() {
         ${ratios.map(item => {
             const values = [];
 
-            if (item.general_ratio !== null && item.general_ratio !== undefined) {
-                values.push(`<span class="ratio-value">عام ${formatPercent(item.general_ratio)}</span>`);
+            if (item.has_data !== false) {
+                if (item.general_ratio !== null && item.general_ratio !== undefined) {
+                    values.push(`<span class="ratio-value">عام ${formatPercent(item.general_ratio)}</span>`);
+                }
+
+                if (item.male_ratio !== null && item.male_ratio !== undefined) {
+                    values.push(`<span class="ratio-value">طلاب ${formatPercent(item.male_ratio)}</span>`);
+                }
+
+                if (item.female_ratio !== null && item.female_ratio !== undefined) {
+                    values.push(`<span class="ratio-value">طالبات ${formatPercent(item.female_ratio)}</span>`);
+                }
             }
 
-            if (item.male_ratio !== null && item.male_ratio !== undefined) {
-                values.push(`<span class="ratio-value">طلاب ${formatPercent(item.male_ratio)}</span>`);
-            }
-
-            if (item.female_ratio !== null && item.female_ratio !== undefined) {
-                values.push(`<span class="ratio-value">طالبات ${formatPercent(item.female_ratio)}</span>`);
-            }
-
-            if (!values.length || item.has_data === false) {
+            if (!values.length) {
                 values.push(`<span class="ratio-value">لا توجد بيانات</span>`);
             }
+
+            const sourceUrl = safeExternalUrl(item.source_url);
 
             return `
                 <article class="ratio-row">
@@ -974,6 +1077,22 @@ function renderFilteredRatios() {
                         ${item.note ? `
                             <div class="ratio-note">${esc(item.note)}</div>
                         ` : ""}
+
+                        ${(sourceUrl || item.source_name || item.source_label) ? `
+                            <div class="ratio-source">
+                                ${sourceUrl ? `
+                                    <a href="${esc(sourceUrl)}" target="_blank" rel="noopener">
+                                        <i class="fa-solid fa-arrow-up-left-from-square"></i>
+                                        ${esc(item.source_name || item.source_label || "المصدر")}
+                                    </a>
+                                ` : `
+                                    <span>
+                                        <i class="fa-solid fa-link"></i>
+                                        ${esc(item.source_name || item.source_label)}
+                                    </span>
+                                `}
+                            </div>
+                        ` : ""}
                     </div>
 
                     <div class="ratio-year">
@@ -985,7 +1104,7 @@ function renderFilteredRatios() {
                     </div>
 
                     <div class="ratio-values">
-                        ${values.join("")}
+                        <div>${values.join("")}</div>
                     </div>
                 </article>
             `;
@@ -1032,6 +1151,18 @@ function renderResources() {
     setSectionVisible("resourcesSection", true, "resources");
     $("resourceCount").textContent = `${state.resources.length} ملف`;
 
+    const typeOrder = [
+        "admission",
+        "conditions",
+        "ratios",
+        "guide",
+        "housing",
+        "calendar",
+        "scholarship",
+        "contact",
+        "other"
+    ];
+
     const groups = new Map();
 
     state.resources.forEach(resource => {
@@ -1044,7 +1175,13 @@ function renderResources() {
         groups.get(key).push(resource);
     });
 
-    $("resourcesContainer").innerHTML = [...groups.entries()]
+    const orderedGroups = [...groups.entries()].sort(
+        ([a], [b]) =>
+            (typeOrder.indexOf(a) === -1 ? 999 : typeOrder.indexOf(a)) -
+            (typeOrder.indexOf(b) === -1 ? 999 : typeOrder.indexOf(b))
+    );
+
+    $("resourcesContainer").innerHTML = orderedGroups
         .map(([type, files]) => `
             <section class="resource-group">
                 <div class="resource-group-title">
@@ -1057,39 +1194,48 @@ function renderResources() {
                 </div>
 
                 <div class="resources-grid">
-                    ${files.map(file => `
-                        <a
-                            class="resource-card"
-                            href="${esc(file.file_url || "#")}"
-                            target="_blank"
-                            rel="noopener"
-                        >
-                            <div class="resource-icon">
-                                <i class="fa-solid ${resourceIcon(file.resource_type)}"></i>
-                            </div>
+                    ${files.map(file => {
+                        const fileUrl = safeExternalUrl(file.file_url);
+                        const tag = fileUrl ? "a" : "div";
+                        const attributes = fileUrl
+                            ? `href="${esc(fileUrl)}" target="_blank" rel="noopener"`
+                            : `aria-disabled="true"`;
 
-                            <div>
-                                <h3>${esc(file.title || "ملف الجامعة")}</h3>
-
-                                ${file.description ? `
-                                    <p>${esc(file.description)}</p>
-                                ` : ""}
-
-                                <div class="resource-meta">
-                                    ${file.year ? `<span>${esc(file.year)}</span>` : ""}
-                                    ${file.file_type ? `<span>${esc(file.file_type)}</span>` : ""}
-                                    ${file.source_name ? `<span>${esc(file.source_name)}</span>` : ""}
-                                    <span class="${file.is_official ? "official" : ""}">
-                                        ${file.is_official ? "رسمي" : "غير رسمي"}
-                                    </span>
+                        return `
+                            <${tag}
+                                class="resource-card ${fileUrl ? "" : "is-disabled"}"
+                                ${attributes}
+                            >
+                                <div class="resource-icon">
+                                    <i class="fa-solid ${resourceIcon(file.resource_type)}"></i>
                                 </div>
-                            </div>
 
-                            <div class="resource-open">
-                                <i class="fa-solid fa-arrow-up-left-from-square"></i>
-                            </div>
-                        </a>
-                    `).join("")}
+                                <div>
+                                    <h3>${esc(file.title || "ملف الجامعة")}</h3>
+
+                                    ${file.description ? `
+                                        <p>${esc(file.description)}</p>
+                                    ` : ""}
+
+                                    <div class="resource-meta">
+                                        ${file.year ? `<span>${esc(file.year)}</span>` : ""}
+                                        ${file.file_type ? `<span>${esc(file.file_type)}</span>` : ""}
+                                        ${file.source_name ? `<span>${esc(file.source_name)}</span>` : ""}
+                                        <span class="${file.is_official ? "official" : ""}">
+                                            ${file.is_official ? "رسمي" : "مصدر غير رسمي"}
+                                        </span>
+                                        ${!fileUrl ? `<span class="resource-unavailable">الرابط غير متاح</span>` : ""}
+                                    </div>
+                                </div>
+
+                                ${fileUrl ? `
+                                    <div class="resource-open">
+                                        <i class="fa-solid fa-arrow-up-left-from-square"></i>
+                                    </div>
+                                ` : ""}
+                            </${tag}>
+                        `;
+                    }).join("")}
                 </div>
             </section>
         `)
@@ -1143,25 +1289,53 @@ function renderAbout() {
     const hasMetrics = metricCards.some(([, value]) => meaningful(value));
     const hasAbout = meaningful(data.about);
 
-    setSectionVisible("aboutBlock", hasAbout || hasMetrics, "about");
-    $("statsBlock").hidden = !hasMetrics;
-    document.querySelector(".about-card").hidden = !hasAbout;
+    const facts = [
+        ["النوع", data.university_type || data.type],
+        ["المدينة", data.city],
+        ["المنطقة", data.region],
+        ["الفئة", genderLabel(data.gender)]
+    ].filter(([, value]) => meaningful(value));
+
+    const factsContainer = $("aboutFacts");
+
+    if (factsContainer) {
+        factsContainer.innerHTML = facts.map(([label, value]) => `
+            <div class="about-fact">
+                <span>${esc(label)}</span>
+                <b>${esc(value)}</b>
+            </div>
+        `).join("");
+
+        factsContainer.hidden = !facts.length;
+    }
+
+    setSectionVisible("statsBlock", hasMetrics, "stats");
+    setSectionVisible("aboutBlock", hasAbout || facts.length > 0, "about");
+
+    const aboutCard = document.querySelector("#aboutBlock .about-card");
+    if (aboutCard) {
+        aboutCard.hidden = !hasAbout;
+    }
 }
 
 function renderLoading() {
     $("collegesGrid").innerHTML = `
-        <div class="skeleton"></div>
-        <div class="skeleton"></div>
+        <div class="skeleton" aria-hidden="true"></div>
+        <div class="skeleton" aria-hidden="true"></div>
     `;
 
     $("admissionTracksGrid").innerHTML = `
-        <div class="skeleton"></div>
-        <div class="skeleton"></div>
+        <div class="skeleton" aria-hidden="true"></div>
+        <div class="skeleton" aria-hidden="true"></div>
     `;
 }
 
 function renderError(message) {
     $("uniName").textContent = "تعذر تحميل بيانات الجامعة";
+    $("mainContent")?.setAttribute("aria-busy", "false");
+
+    const sidePanel = document.querySelector(".side-panel");
+    if (sidePanel) sidePanel.hidden = true;
 
     document.querySelector(".content-column").innerHTML = `
         <div class="error-box">
@@ -1174,9 +1348,18 @@ function renderError(message) {
 }
 
 function bindDataDrivenUI() {
-    $("majorSearch").addEventListener("input", event => {
-        state.majorQuery = event.target.value.trim();
+    const renderMajorResults = debounce(value => {
+        state.majorQuery = value;
         renderColleges();
+    }, 100);
+
+    const renderRatioResults = debounce(value => {
+        state.ratioQuery = value;
+        renderFilteredRatios();
+    }, 100);
+
+    $("majorSearch").addEventListener("input", event => {
+        renderMajorResults(event.target.value.trim());
     });
 
     $("degreeFilter").addEventListener("change", event => {
@@ -1193,9 +1376,24 @@ function bindDataDrivenUI() {
         renderColleges();
     });
 
+    $("collegesGrid").addEventListener("click", event => {
+        const expandButton = event.target.closest("[data-expand-college]");
+        const collapseButton = event.target.closest("[data-collapse-college]");
+
+        if (expandButton) {
+            state.expandedColleges.add(expandButton.dataset.expandCollege);
+            renderColleges();
+            return;
+        }
+
+        if (collapseButton) {
+            state.expandedColleges.delete(collapseButton.dataset.collapseCollege);
+            renderColleges();
+        }
+    });
+
     $("ratioSearch").addEventListener("input", event => {
-        state.ratioQuery = event.target.value.trim();
-        renderFilteredRatios();
+        renderRatioResults(event.target.value.trim());
     });
 
     $("ratioYearFilter").addEventListener("change", event => {
@@ -1205,6 +1403,8 @@ function bindDataDrivenUI() {
 }
 
 function setupSectionSpy() {
+    state.sectionObserver?.disconnect();
+
     const links = [...document.querySelectorAll(".side-link:not([hidden])")];
     const sections = links
         .map(link => document.querySelector(link.getAttribute("href")))
@@ -1229,6 +1429,7 @@ function setupSectionSpy() {
     });
 
     sections.forEach(section => observer.observe(section));
+    state.sectionObserver = observer;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
