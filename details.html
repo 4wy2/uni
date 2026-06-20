@@ -3,12 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>التفاصيل | مُوجّه</title>
+  <meta name="description" content="تفاصيل الجامعة: التخصصات، نسب القبول، الموزونة، الملفات والمعلومات المهمة للطالب." />
+  <meta name="theme-color" content="#6a4fcf" />
 
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <script>
     (function(){
@@ -19,81 +26,81 @@
 
   <style>
     :root{
-      --bg:#f7f3ff;
-      --bg-soft:#efe8ff;
-      --ink:#241b45;
-      --muted:#6d648f;
-      --faint:#9b94b9;
+      --bg:#f5f1fb;
+      --bg-soft:#eee7fb;
+      --ink:#261f43;
+      --muted:#70698d;
+      --faint:#9d96b6;
 
       --card:#ffffff;
-      --card-soft:#fbf9ff;
-      --card-glass:rgba(255,255,255,.78);
+      --card-soft:#faf8fd;
+      --glass:rgba(255,255,255,.82);
 
-      --line:rgba(106,79,207,.14);
-      --line-strong:rgba(106,79,207,.28);
+      --line:rgba(106,79,207,.13);
+      --line-strong:rgba(106,79,207,.27);
 
       --primary:#6a4fcf;
       --primary-2:#8b5cf6;
-      --primary-3:#4a3a9e;
+      --primary-deep:#493997;
 
-      --gold:#b8902f;
-      --gold-soft:rgba(184,144,47,.13);
-
-      --green:#16a34a;
-      --green-soft:rgba(22,163,74,.12);
+      --green:#168345;
+      --green-soft:rgba(22,131,69,.11);
 
       --blue:#2563eb;
-      --blue-soft:rgba(37,99,235,.12);
+      --blue-soft:rgba(37,99,235,.10);
 
       --pink:#db4fa5;
-      --pink-soft:rgba(219,79,165,.12);
+      --pink-soft:rgba(219,79,165,.11);
 
-      --shadow:0 18px 50px -34px rgba(74,40,140,.38);
-      --shadow-strong:0 28px 90px -46px rgba(74,40,140,.55);
+      --amber:#b7791f;
+      --amber-soft:rgba(183,121,31,.11);
 
-      --hero:
-        radial-gradient(700px 360px at 88% -10%, rgba(139,92,246,.25), transparent 65%),
-        radial-gradient(520px 300px at 6% 0%, rgba(37,99,235,.13), transparent 60%),
-        linear-gradient(180deg,#f9f6ff,#f0eaff);
+      --shadow:0 18px 46px -34px rgba(74,40,140,.40);
+      --shadow-strong:0 32px 90px -50px rgba(74,40,140,.60);
+
+      --page:
+        radial-gradient(760px 360px at 88% -12%,rgba(139,92,246,.23),transparent 65%),
+        radial-gradient(520px 280px at 4% 0%,rgba(37,99,235,.10),transparent 60%),
+        linear-gradient(180deg,#faf8ff,#f2ecfb);
     }
 
     [data-theme="dark"]{
-      --bg:#111021;
-      --bg-soft:#18142f;
-      --ink:#f7f3ff;
-      --muted:#aaa2ca;
-      --faint:#746e91;
+      --bg:#100f1d;
+      --bg-soft:#18152b;
+      --ink:#f5f2fc;
+      --muted:#aaa3c3;
+      --faint:#746e8d;
 
-      --card:rgba(255,255,255,.075);
-      --card-soft:rgba(255,255,255,.05);
-      --card-glass:rgba(255,255,255,.07);
+      --card:#191724;
+      --card-soft:#211e31;
+      --glass:rgba(25,23,36,.84);
 
-      --line:rgba(255,255,255,.10);
-      --line-strong:rgba(167,139,250,.32);
+      --line:rgba(255,255,255,.09);
+      --line-strong:rgba(167,139,250,.31);
 
       --primary:#a78bfa;
-      --primary-2:#8b5cf6;
-      --primary-3:#6d4fd0;
-
-      --gold:#e7c873;
-      --gold-soft:rgba(231,200,115,.12);
+      --primary-2:#8b6ff0;
+      --primary-deep:#6d4fd0;
 
       --green:#4ade80;
-      --green-soft:rgba(74,222,128,.11);
+      --green-soft:rgba(74,222,128,.10);
 
       --blue:#60a5fa;
       --blue-soft:rgba(96,165,250,.10);
 
       --pink:#f472b6;
-      --pink-soft:rgba(244,114,182,.11);
+      --pink-soft:rgba(244,114,182,.10);
 
-      --shadow:0 22px 65px -42px rgba(92,72,230,.62);
-      --shadow-strong:0 32px 100px -48px rgba(124,95,214,.72);
+      --amber:#f1b951;
+      --amber-soft:rgba(241,185,81,.10);
 
-      --hero:
-        radial-gradient(700px 360px at 88% -10%, rgba(139,92,246,.34), transparent 65%),
-        radial-gradient(520px 300px at 6% 0%, rgba(96,165,250,.10), transparent 60%),
-        linear-gradient(180deg,#111021,#18142f);
+      --shadow:0 24px 64px -42px rgba(92,72,230,.62);
+      --shadow-strong:0 36px 110px -56px rgba(124,95,214,.76);
+
+      --page:
+        radial-gradient(760px 360px at 88% -12%,rgba(139,92,246,.33),transparent 65%),
+        radial-gradient(520px 280px at 4% 0%,rgba(96,165,250,.09),transparent 60%),
+        linear-gradient(180deg,#100f1d,#19162c);
     }
 
     *{
@@ -107,24 +114,26 @@
     }
 
     body{
-      font-family:"Tajawal",system-ui,sans-serif;
       min-height:100vh;
-      background:var(--hero);
-      color:var(--ink);
       overflow-x:hidden;
+      position:relative;
+      font-family:"Tajawal",system-ui,sans-serif;
+      color:var(--ink);
+      background:var(--page);
       -webkit-font-smoothing:antialiased;
       -webkit-tap-highlight-color:transparent;
+      transition:background .3s ease,color .3s ease;
     }
 
     body::before{
       content:"";
       position:fixed;
       inset:0;
-      pointer-events:none;
       z-index:-2;
+      pointer-events:none;
       background-image:
-        linear-gradient(rgba(106,79,207,.055) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(106,79,207,.055) 1px,transparent 1px);
+        linear-gradient(rgba(106,79,207,.045) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(106,79,207,.045) 1px,transparent 1px);
       background-size:64px 64px;
       mask-image:radial-gradient(72% 54% at 50% 0%,#000,transparent 80%);
     }
@@ -134,36 +143,78 @@
       text-decoration:none;
     }
 
+    button{
+      font:inherit;
+    }
+
     .wrap{
-      width:min(1120px,calc(100% - 32px));
+      width:min(1140px,calc(100% - 32px));
       margin-inline:auto;
     }
 
+    .page{
+      padding:26px 0 58px;
+    }
+
+    .glass-card{
+      position:relative;
+      border:1px solid var(--line);
+      background:var(--glass);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(18px);
+    }
+
+    .student-section{
+      position:relative;
+      margin-bottom:38px;
+      scroll-margin-top:122px;
+    }
+
+    .student-section:not(:last-child)::after{
+      content:"";
+      position:absolute;
+      right:0;
+      left:0;
+      bottom:-19px;
+      height:1px;
+      pointer-events:none;
+      background:linear-gradient(90deg,transparent,var(--line),transparent);
+    }
+
+    /* NAV */
     .nav{
       position:sticky;
       top:0;
-      z-index:50;
+      z-index:60;
       border-bottom:1px solid var(--line);
       background:color-mix(in srgb,var(--bg) 82%,transparent);
       backdrop-filter:blur(18px);
     }
 
+    .nav-in{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      min-height:66px;
+    }
+
     .brand{
       display:flex;
       align-items:center;
-      gap:12px;
+      gap:11px;
     }
 
     .brand-logo{
       width:40px;
       height:40px;
-      border-radius:15px;
       display:grid;
       place-items:center;
-      color:white;
+      border-radius:15px;
+      color:#fff;
       background:
-        radial-gradient(circle at 30% 20%,rgba(255,255,255,.45),transparent 28%),
-        linear-gradient(135deg,var(--primary),var(--primary-3));
+        radial-gradient(circle at 28% 18%,rgba(255,255,255,.42),transparent 28%),
+        linear-gradient(135deg,var(--primary),var(--primary-deep));
       box-shadow:0 18px 36px -24px var(--primary);
     }
 
@@ -189,27 +240,27 @@
     }
 
     .brand-text span{
+      margin-top:3px;
+      color:var(--muted);
       font-size:10px;
       font-weight:800;
-      color:var(--muted);
-      margin-top:3px;
     }
 
     .icon-btn,
     .nav-btn{
-      height:42px;
+      min-height:42px;
       border:1px solid var(--line);
-      background:var(--card-glass);
       color:var(--ink);
+      background:var(--glass);
       transition:.18s ease;
       backdrop-filter:blur(12px);
     }
 
     .icon-btn{
       width:42px;
-      border-radius:50%;
       display:grid;
       place-items:center;
+      border-radius:50%;
       cursor:pointer;
     }
 
@@ -226,18 +277,15 @@
 
     .icon-btn:hover,
     .nav-btn:hover{
-      border-color:var(--line-strong);
       color:var(--primary);
+      border-color:var(--line-strong);
       transform:translateY(-1px);
     }
 
-    .page{
-      padding:28px 0 52px;
-    }
-
+    /* HERO */
     .top-layout{
       display:grid;
-      grid-template-columns:minmax(0,1.35fr) 360px;
+      grid-template-columns:minmax(0,1.45fr) minmax(300px,.72fr);
       gap:18px;
       align-items:stretch;
     }
@@ -245,12 +293,13 @@
     .hero-card{
       position:relative;
       overflow:hidden;
-      border-radius:34px;
+      min-height:315px;
       border:1px solid var(--line-strong);
+      border-radius:34px;
       background:
-        radial-gradient(580px 260px at 80% -20%,color-mix(in srgb,var(--primary) 23%,transparent),transparent 68%),
-        radial-gradient(360px 230px at 10% 0%,color-mix(in srgb,var(--blue) 13%,transparent),transparent 65%),
-        var(--card-glass);
+        radial-gradient(620px 270px at 82% -18%,color-mix(in srgb,var(--primary) 23%,transparent),transparent 68%),
+        radial-gradient(360px 220px at 8% 0%,color-mix(in srgb,var(--blue) 12%,transparent),transparent 65%),
+        var(--glass);
       box-shadow:var(--shadow-strong);
       backdrop-filter:blur(20px);
     }
@@ -258,42 +307,42 @@
     .hero-card::after{
       content:"";
       position:absolute;
-      inset:auto -80px -120px auto;
-      width:260px;
-      height:260px;
+      width:280px;
+      height:280px;
+      inset:auto -100px -135px auto;
       border-radius:50%;
-      background:radial-gradient(circle,color-mix(in srgb,var(--primary) 20%,transparent),transparent 70%);
+      background:radial-gradient(circle,color-mix(in srgb,var(--primary) 18%,transparent),transparent 70%);
       pointer-events:none;
     }
 
     .hero-content{
       position:relative;
       z-index:1;
-      padding:30px;
       min-height:315px;
       display:flex;
       flex-direction:column;
       justify-content:space-between;
+      padding:29px;
     }
 
     .uni-logo-wrap{
       width:86px;
       height:86px;
-      border-radius:26px;
       display:grid;
       place-items:center;
-      background:#fff;
-      border:1px solid var(--line-strong);
-      box-shadow:var(--shadow);
-      margin-bottom:18px;
       overflow:hidden;
+      margin-bottom:17px;
+      border:1px solid var(--line-strong);
+      border-radius:25px;
+      background:#fff;
+      box-shadow:var(--shadow);
     }
 
     .uni-logo-wrap img{
       width:72px;
       height:72px;
-      object-fit:contain;
       display:block;
+      object-fit:contain;
     }
 
     .uni-logo-wrap.hidden{
@@ -301,166 +350,187 @@
     }
 
     .crumb{
+      width:max-content;
       display:inline-flex;
       align-items:center;
       gap:7px;
-      width:max-content;
-      padding:7px 12px;
-      border-radius:999px;
-      font-size:11px;
-      font-weight:900;
-      letter-spacing:.12em;
-      color:var(--primary);
-      background:color-mix(in srgb,var(--primary) 10%,transparent);
+      padding:7px 11px;
       border:1px solid color-mix(in srgb,var(--primary) 20%,transparent);
+      border-radius:999px;
+      color:var(--primary);
+      background:color-mix(in srgb,var(--primary) 9%,transparent);
+      font-size:10.5px;
+      font-weight:900;
     }
 
     .uni-title{
-      margin-top:18px;
-      font-size:clamp(34px,5.5vw,62px);
-      font-weight:900;
-      letter-spacing:-.055em;
-      line-height:1.08;
+      max-width:780px;
+      margin-top:14px;
       color:var(--ink);
-      max-width:760px;
+      font-size:clamp(34px,5.2vw,60px);
+      font-weight:900;
+      letter-spacing:-.05em;
+      line-height:1.12;
+      overflow-wrap:anywhere;
     }
 
     .location-line{
-      margin-top:14px;
       display:flex;
-      align-items:center;
-      gap:9px;
+      align-items:flex-start;
+      gap:8px;
+      margin-top:13px;
       color:var(--muted);
       font-size:14px;
       font-weight:800;
+      line-height:1.7;
     }
 
     .location-line i{
+      margin-top:4px;
       color:var(--primary);
     }
 
     .student-actions{
       display:flex;
       flex-wrap:wrap;
-      gap:10px;
-      margin-top:24px;
+      gap:9px;
+      margin-top:22px;
     }
 
     .student-action{
+      min-height:42px;
       display:inline-flex;
       align-items:center;
       justify-content:center;
       gap:8px;
-      padding:11px 15px;
+      padding:9px 14px;
+      border:1px solid var(--line);
       border-radius:999px;
-      font-size:13px;
+      color:var(--ink);
+      background:var(--card);
+      font-size:12px;
       font-weight:900;
       transition:.18s ease;
     }
 
     .student-action.primary{
-      color:white;
-      background:linear-gradient(135deg,var(--primary),var(--primary-3));
+      color:#fff;
+      border-color:var(--primary);
+      background:linear-gradient(135deg,var(--primary),var(--primary-deep));
       box-shadow:0 18px 42px -28px var(--primary);
     }
 
     .student-action.secondary{
-      background:var(--card);
       color:var(--ink);
-      border:1px solid var(--line);
+      background:var(--card);
     }
 
     .student-action:hover{
       transform:translateY(-1px);
+      border-color:var(--line-strong);
     }
 
+    /* STUDENT JOURNEY */
     .priority-card{
-      border-radius:34px;
-      border:1px solid var(--line);
-      background:var(--card-glass);
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(20px);
-      padding:22px;
+      min-height:315px;
       display:flex;
       flex-direction:column;
       justify-content:space-between;
-      min-height:315px;
+      padding:21px;
+      border:1px solid var(--line);
+      border-radius:34px;
+      background:
+        radial-gradient(300px 180px at 100% 0%,color-mix(in srgb,var(--primary) 9%,transparent),transparent 72%),
+        var(--glass);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(20px);
     }
 
     .priority-title{
       display:flex;
       align-items:center;
       gap:10px;
-      font-weight:900;
-      font-size:17px;
       color:var(--ink);
+      font-size:17px;
+      font-weight:900;
     }
 
     .priority-icon{
       width:44px;
       height:44px;
-      border-radius:17px;
       display:grid;
       place-items:center;
-      color:white;
-      background:linear-gradient(135deg,var(--primary),var(--primary-3));
+      flex:none;
+      border-radius:16px;
+      color:#fff;
+      background:linear-gradient(135deg,var(--primary),var(--primary-deep));
       box-shadow:0 18px 34px -24px var(--primary);
     }
 
     .priority-list{
-      margin-top:18px;
       display:grid;
-      gap:10px;
+      gap:9px;
+      margin-top:16px;
     }
 
     .priority-item{
-      display:flex;
-      align-items:flex-start;
+      display:grid;
+      grid-template-columns:auto 1fr;
       gap:10px;
-      padding:12px;
-      border-radius:18px;
-      background:var(--card-soft);
+      align-items:flex-start;
+      padding:11px;
       border:1px solid var(--line);
+      border-radius:16px;
+      background:var(--card-soft);
     }
 
     .priority-item i{
+      width:29px;
+      height:29px;
+      display:grid;
+      place-items:center;
+      margin-top:0;
+      border:1px solid var(--line);
+      border-radius:10px;
       color:var(--primary);
-      margin-top:3px;
+      background:var(--card);
+      font-size:11px;
     }
 
     .priority-item b{
       display:block;
-      font-size:13px;
       color:var(--ink);
+      font-size:12.5px;
       font-weight:900;
     }
 
     .priority-item span{
       display:block;
-      font-size:11px;
-      color:var(--muted);
-      line-height:1.7;
       margin-top:2px;
+      color:var(--muted);
+      font-size:10.5px;
+      line-height:1.65;
     }
 
+    /* QUICK NAV */
     .quick-nav{
-      margin:18px 0;
       position:sticky;
-      top:67px;
-      z-index:35;
-      border:1px solid var(--line);
-      background:color-mix(in srgb,var(--bg) 74%,transparent);
-      backdrop-filter:blur(16px);
-      border-radius:22px;
-      box-shadow:var(--shadow);
+      top:74px;
+      z-index:45;
       overflow:hidden;
+      margin:18px 0 28px;
+      border:1px solid var(--line);
+      border-radius:21px;
+      background:color-mix(in srgb,var(--bg) 76%,transparent);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(16px);
     }
 
     .quick-nav-inner{
       display:flex;
-      gap:6px;
-      padding:7px;
+      gap:5px;
       overflow-x:auto;
+      padding:8px;
       scrollbar-width:none;
     }
 
@@ -469,274 +539,89 @@
     }
 
     .quick-link{
+      min-height:38px;
       white-space:nowrap;
       display:inline-flex;
       align-items:center;
       gap:7px;
       padding:9px 12px;
-      border-radius:16px;
-      font-size:12px;
-      font-weight:900;
+      border-radius:15px;
       color:var(--muted);
+      font-size:11.5px;
+      font-weight:900;
       transition:.18s ease;
     }
 
     .quick-link:hover{
-      background:color-mix(in srgb,var(--primary) 10%,transparent);
       color:var(--primary);
+      background:color-mix(in srgb,var(--primary) 9%,transparent);
     }
 
-    .glass-card{
-      position:relative;
-      background:var(--card-glass);
-      border:1px solid var(--line);
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(18px);
-    }
-
-    .student-section{
-      margin-bottom:22px;
-      scroll-margin-top:120px;
-    }
-
+    /* SECTION HEAD */
     .section-head{
       display:flex;
-      justify-content:space-between;
       align-items:flex-end;
+      justify-content:space-between;
       gap:14px;
-      margin-bottom:14px;
+      margin-bottom:15px;
     }
 
     .section-kicker{
       display:inline-flex;
       align-items:center;
-      gap:7px;
+      gap:6px;
+      margin-bottom:4px;
       color:var(--primary);
-      font-size:11px;
+      font-size:10.5px;
       font-weight:900;
-      margin-bottom:5px;
     }
 
     .section-title{
-      font-size:22px;
-      font-weight:900;
-      color:var(--ink);
       display:flex;
       align-items:center;
-      gap:9px;
+      gap:8px;
+      color:var(--ink);
+      font-size:23px;
+      font-weight:900;
       letter-spacing:-.02em;
+      line-height:1.45;
     }
 
     .section-subtitle{
+      max-width:760px;
       margin-top:4px;
-      color:var(--faint);
-      font-size:13px;
-      font-weight:700;
-      line-height:1.7;
+      color:var(--muted);
+      font-size:12.5px;
+      font-weight:600;
+      line-height:1.75;
     }
 
     .section-chip{
-      display:inline-flex;
-      align-items:center;
-      gap:7px;
-      padding:7px 11px;
-      border-radius:999px;
-      font-size:11px;
-      font-weight:900;
-      color:var(--primary);
-      background:color-mix(in srgb,var(--primary) 9%,transparent);
-      border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
       white-space:nowrap;
-    }
-
-    .score-card{
-      display:grid;
-      grid-template-columns:1fr 1.05fr;
-      gap:18px;
-      align-items:stretch;
-      padding:22px;
-      border-radius:30px;
-      overflow:hidden;
-      border-color:color-mix(in srgb,var(--primary) 28%,transparent);
-      background:
-        radial-gradient(420px 220px at 78% -20%,color-mix(in srgb,var(--primary) 20%,transparent),transparent 70%),
-        var(--card-glass);
-    }
-
-    .score-explain{
-      padding:18px;
-      border-radius:24px;
-      background:var(--card-soft);
-      border:1px solid var(--line);
-    }
-
-    .score-explain h3{
-      font-size:18px;
-      font-weight:900;
-      color:var(--ink);
-      display:flex;
-      align-items:center;
-      gap:9px;
-    }
-
-    .score-explain p{
-      margin-top:9px;
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.9;
-      font-weight:600;
-    }
-
-    .score-result{
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      text-align:center;
-      padding:18px;
-      border-radius:24px;
-      background:
-        radial-gradient(360px 160px at 50% -40%,color-mix(in srgb,var(--primary) 24%,transparent),transparent 70%),
-        var(--card);
-      border:1px solid var(--line);
-    }
-
-    .score-label{
       display:inline-flex;
       align-items:center;
-      justify-content:center;
-      gap:7px;
-      width:max-content;
-      margin-inline:auto;
-      padding:7px 12px;
+      gap:6px;
+      padding:7px 10px;
+      border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
       border-radius:999px;
       color:var(--primary);
-      background:color-mix(in srgb,var(--primary) 9%,transparent);
-      border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
-      font-size:11px;
+      background:color-mix(in srgb,var(--primary) 8%,transparent);
+      font-size:10.5px;
       font-weight:900;
     }
 
-    .result-number{
-      margin-top:14px;
-      font-size:clamp(54px,9vw,90px);
-      font-weight:900;
-      line-height:.9;
-      letter-spacing:-.08em;
-      color:var(--ink);
-    }
-
-    #weightLabels{
-      margin-top:16px;
-    }
-
-    #weightLabels span{
-      background:color-mix(in srgb,var(--primary) 10%,transparent)!important;
-      color:var(--primary)!important;
-      border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
-      font-weight:900;
-      border-radius:999px!important;
-      padding:7px 11px!important;
-    }
-
-    .stats-grid{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:12px;
-    }
-
-    .stat-card{
-      padding:18px;
-      border-radius:24px;
-      transition:.18s ease;
-      overflow:hidden;
-    }
-
-    .stat-card:hover{
-      transform:translateY(-2px);
-      border-color:var(--line-strong);
-      box-shadow:var(--shadow-strong);
-    }
-
-    .stat-icon{
-      width:42px;
-      height:42px;
-      border-radius:16px;
-      display:grid;
-      place-items:center;
-      color:white;
-      margin-bottom:13px;
-      font-size:17px;
-    }
-
-    .stat-card:nth-child(1) .stat-icon{background:linear-gradient(135deg,var(--green),#0f766e)}
-    .stat-card:nth-child(2) .stat-icon{background:linear-gradient(135deg,var(--primary),var(--primary-3))}
-    .stat-card:nth-child(3) .stat-icon{background:linear-gradient(135deg,var(--blue),#1d4ed8)}
-    .stat-card:nth-child(4) .stat-icon{background:linear-gradient(135deg,var(--pink),var(--primary))}
-
-    .stat-label{
-      font-size:10px;
-      font-weight:900;
-      color:var(--faint);
-      letter-spacing:.10em;
-    }
-
-    .stat-value{
-      margin-top:5px;
-      font-size:17px;
-      font-weight:900;
-      color:var(--ink);
-      line-height:1.35;
-    }
-
-    .about-card{
-      padding:24px;
-      border-radius:28px;
-      overflow:hidden;
-    }
-
-    .about-card::before{
-      content:"";
-      position:absolute;
-      inset-inline-start:0;
-      top:0;
-      bottom:0;
-      width:5px;
-      background:linear-gradient(180deg,var(--primary),var(--blue),var(--pink));
-    }
-
-    .about-layout{
-      display:flex;
-      gap:15px;
-      align-items:flex-start;
-    }
-
-    .about-icon{
-      width:50px;
-      height:50px;
-      flex:none;
-      border-radius:18px;
-      display:grid;
-      place-items:center;
-      color:white;
-      background:linear-gradient(135deg,var(--primary),var(--primary-3));
-      box-shadow:0 18px 34px -24px var(--primary);
-    }
-
-    #uniAbout{
-      margin-top:8px;
-      color:var(--muted)!important;
-      line-height:2.05;
-      font-size:15px;
-      font-style:normal!important;
-      font-weight:600;
+    /* COLLEGES */
+    #collegesGrid{
+      align-items:stretch;
     }
 
     #collegesGrid .glass-card{
-      border-radius:24px!important;
-      padding:20px!important;
+      height:100%;
       overflow:hidden;
+      padding:20px!important;
+      border-radius:24px!important;
+      background:var(--glass)!important;
       transition:.18s ease;
-      background:var(--card-glass)!important;
     }
 
     #collegesGrid .glass-card::before{
@@ -767,10 +652,16 @@
       color:var(--muted)!important;
     }
 
+    /* RATIOS */
+    #ratiosContainer{
+      display:grid;
+      gap:12px;
+    }
+
     #ratiosContainer .glass-card{
-      border-radius:20px!important;
-      background:var(--card-glass)!important;
       border:1px solid var(--line)!important;
+      border-radius:20px!important;
+      background:var(--glass)!important;
       transition:.18s ease;
     }
 
@@ -780,21 +671,155 @@
       box-shadow:var(--shadow-strong);
     }
 
-    .resources-grid{
+    /* SCORE */
+    .score-card{
       display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
+      grid-template-columns:1.05fr .95fr;
+      gap:16px;
+      align-items:stretch;
+      overflow:hidden;
+      padding:20px;
+      border-color:color-mix(in srgb,var(--primary) 26%,transparent);
+      border-radius:28px;
+      background:
+        radial-gradient(420px 220px at 78% -20%,color-mix(in srgb,var(--primary) 17%,transparent),transparent 70%),
+        var(--glass);
+    }
+
+    .score-explain{
+      padding:17px;
+      border:1px solid var(--line);
+      border-radius:22px;
+      background:var(--card-soft);
+    }
+
+    .score-explain h3{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color:var(--ink);
+      font-size:16px;
+      font-weight:900;
+    }
+
+    .score-explain p{
+      margin-top:8px;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:600;
+      line-height:1.85;
+    }
+
+    .score-result{
+      min-height:180px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      padding:18px;
+      border:1px solid var(--line);
+      border-radius:22px;
+      text-align:center;
+      background:var(--card);
+    }
+
+    .score-label{
+      width:max-content;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      margin-inline:auto;
+      padding:6px 10px;
+      border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
+      border-radius:999px;
+      color:var(--primary);
+      background:color-mix(in srgb,var(--primary) 8%,transparent);
+      font-size:10.5px;
+      font-weight:900;
+    }
+
+    .result-number{
+      margin-top:13px;
+      color:var(--ink);
+      font-size:clamp(52px,8vw,82px);
+      font-weight:900;
+      letter-spacing:-.07em;
+      line-height:.95;
+    }
+
+    #weightLabels{
+      margin-top:14px;
+    }
+
+    #weightLabels span{
+      padding:6px 10px!important;
+      border:1px solid color-mix(in srgb,var(--primary) 18%,transparent)!important;
+      border-radius:999px!important;
+      color:var(--primary)!important;
+      background:color-mix(in srgb,var(--primary) 8%,transparent)!important;
+      font-size:10.5px!important;
+      font-weight:900!important;
+    }
+
+    /* ABOUT */
+    .about-card{
+      overflow:hidden;
+      padding:22px;
+      border-radius:26px;
+    }
+
+    .about-card::before{
+      content:"";
+      position:absolute;
+      inset-inline-start:0;
+      top:0;
+      bottom:0;
+      width:5px;
+      background:linear-gradient(180deg,var(--primary),var(--blue),var(--pink));
+    }
+
+    .about-layout{
+      display:flex;
+      align-items:flex-start;
       gap:14px;
     }
 
+    .about-icon{
+      width:47px;
+      height:47px;
+      flex:none;
+      display:grid;
+      place-items:center;
+      border-radius:16px;
+      color:#fff;
+      background:linear-gradient(135deg,var(--primary),var(--primary-deep));
+    }
+
+    #uniAbout{
+      margin-top:0;
+      color:var(--muted)!important;
+      font-size:13.5px;
+      font-style:normal!important;
+      font-weight:600;
+      line-height:2!important;
+    }
+
+    /* RESOURCES */
+    .resources-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:13px;
+    }
+
     .resource-card{
+      height:100%;
       display:grid;
       grid-template-columns:auto 1fr auto;
-      gap:14px;
+      gap:13px;
       align-items:flex-start;
-      padding:18px;
-      border-radius:24px;
+      padding:17px;
+      border-radius:22px;
       transition:.18s ease;
-      text-decoration:none;
     }
 
     .resource-card:hover{
@@ -804,15 +829,14 @@
     }
 
     .resource-icon{
-      width:48px;
-      height:48px;
-      border-radius:18px;
+      width:46px;
+      height:46px;
       display:grid;
       place-items:center;
-      color:white;
-      background:linear-gradient(135deg,var(--primary),var(--primary-3));
-      box-shadow:0 18px 34px -24px var(--primary);
-      font-size:18px;
+      border-radius:16px;
+      color:#fff;
+      background:linear-gradient(135deg,var(--primary),var(--primary-deep));
+      font-size:17px;
     }
 
     .resource-body{
@@ -831,17 +855,17 @@
       display:inline-flex;
       align-items:center;
       padding:4px 8px;
+      border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
       border-radius:999px;
-      font-size:10px;
-      font-weight:900;
       color:var(--primary);
       background:color-mix(in srgb,var(--primary) 9%,transparent);
-      border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);
+      font-size:10px;
+      font-weight:900;
     }
 
     .resource-body h3{
       color:var(--ink);
-      font-size:15px;
+      font-size:14px;
       font-weight:900;
       line-height:1.5;
     }
@@ -849,9 +873,9 @@
     .resource-body p{
       margin-top:5px;
       color:var(--muted);
-      font-size:12.5px;
-      line-height:1.8;
+      font-size:11.5px;
       font-weight:600;
+      line-height:1.75;
     }
 
     .resource-meta{
@@ -862,24 +886,24 @@
     }
 
     .resource-meta span{
-      font-size:10px;
-      font-weight:800;
+      padding:4px 8px;
+      border:1px solid var(--line);
+      border-radius:999px;
       color:var(--faint);
       background:var(--card-soft);
-      border:1px solid var(--line);
-      padding:4px 8px;
-      border-radius:999px;
+      font-size:10px;
+      font-weight:800;
     }
 
     .resource-open{
-      color:var(--faint);
-      width:34px;
-      height:34px;
-      border-radius:12px;
+      width:33px;
+      height:33px;
       display:grid;
       place-items:center;
-      background:var(--card-soft);
       border:1px solid var(--line);
+      border-radius:11px;
+      color:var(--faint);
+      background:var(--card-soft);
       transition:.18s ease;
     }
 
@@ -888,27 +912,28 @@
       border-color:var(--line-strong);
     }
 
+    /* EXTRA */
     #extraSections{
       scroll-margin-top:120px;
     }
 
     #extraSections > h3{
-      font-size:22px!important;
-      font-weight:900!important;
-      margin-bottom:14px!important;
+      margin-bottom:13px!important;
       color:var(--ink)!important;
+      font-size:21px!important;
+      font-weight:900!important;
     }
 
     #extraSections .grid{
       display:grid;
       grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:14px;
+      gap:13px;
     }
 
     #extraSections .glass-card{
-      border-radius:24px!important;
-      padding:20px!important;
-      background:var(--card-glass)!important;
+      padding:18px!important;
+      border-radius:22px!important;
+      background:var(--glass)!important;
       transition:.18s ease;
     }
 
@@ -919,23 +944,85 @@
     }
 
     #extraSections h4{
+      margin-bottom:8px!important;
       color:var(--primary)!important;
       font-size:12px!important;
       letter-spacing:0!important;
-      margin-bottom:9px!important;
     }
 
     #extraSections p{
       color:var(--muted)!important;
-      line-height:1.95!important;
-      font-size:13px!important;
+      font-size:12px!important;
       font-weight:600;
+      line-height:1.9!important;
+    }
+
+    /* STATS */
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:11px;
+      align-items:stretch;
+    }
+
+    .stat-card{
+      min-height:142px;
+      display:flex;
+      flex-direction:column;
+      padding:16px;
+      overflow:hidden;
+      border-radius:21px;
+      transition:.18s ease;
+    }
+
+    .stat-card:hover{
+      transform:translateY(-2px);
+      border-color:var(--line-strong);
+      box-shadow:var(--shadow-strong);
+    }
+
+    .stat-icon{
+      width:39px;
+      height:39px;
+      display:grid;
+      place-items:center;
+      margin-bottom:11px;
+      border-radius:13px;
+      color:#fff;
+      font-size:14px;
+    }
+
+    .stat-card:nth-child(1) .stat-icon{background:linear-gradient(135deg,var(--green),#0f766e)}
+    .stat-card:nth-child(2) .stat-icon{background:linear-gradient(135deg,var(--primary),var(--primary-deep))}
+    .stat-card:nth-child(3) .stat-icon{background:linear-gradient(135deg,var(--blue),#1d4ed8)}
+    .stat-card:nth-child(4) .stat-icon{background:linear-gradient(135deg,var(--pink),var(--primary))}
+
+    .stat-label{
+      color:var(--faint);
+      font-size:9.5px;
+      font-weight:900;
+      letter-spacing:.08em;
+    }
+
+    .stat-value{
+      margin-top:auto;
+      padding-top:7px;
+      color:var(--ink);
+      font-size:15px;
+      font-weight:900;
+      line-height:1.4;
+    }
+
+    /* DYNAMIC EMPTY STATES */
+    #resourcesSection:empty,
+    #extraSections:empty{
+      display:none;
     }
 
     .loading-card{
       min-height:150px;
-      border-radius:24px;
       overflow:hidden;
+      border-radius:24px;
     }
 
     .loading-card::after{
@@ -951,13 +1038,11 @@
       100%{transform:translateX(-100%)}
     }
 
+    /* GENERATED TAILWIND CONTENT */
     .text-white{color:var(--ink)!important}
-    .text-gray-300{color:var(--muted)!important}
-    .text-gray-400{color:var(--muted)!important}
-    .text-gray-500{color:var(--faint)!important}
-    .text-gray-600{color:var(--faint)!important}
-    .text-indigo-400,
-    .text-indigo-500{color:var(--primary)!important}
+    .text-gray-300,.text-gray-400{color:var(--muted)!important}
+    .text-gray-500,.text-gray-600{color:var(--faint)!important}
+    .text-indigo-400,.text-indigo-500{color:var(--primary)!important}
     .border-white\/5{border-color:var(--line)!important}
     .bg-white\/5,
     .bg-white\/\[0\.02\],
@@ -977,6 +1062,7 @@
     @media(max-width:960px){
       .top-layout{
         grid-template-columns:1fr;
+        gap:14px;
       }
 
       .priority-card{
@@ -991,24 +1077,29 @@
         grid-template-columns:repeat(2,1fr);
       }
 
-      #extraSections .grid,
-      .resources-grid{
+      .resources-grid,
+      #extraSections .grid{
         grid-template-columns:1fr;
       }
     }
 
     @media(max-width:560px){
       .wrap{
-        width:min(100% - 24px,1120px);
+        width:min(100% - 24px,1140px);
       }
 
       .page{
-        padding-top:18px;
+        padding-top:16px;
+      }
+
+      .hero-card,
+      .priority-card{
+        border-radius:26px;
       }
 
       .hero-content{
-        padding:22px;
         min-height:auto;
+        padding:22px;
       }
 
       .uni-title{
@@ -1016,33 +1107,49 @@
       }
 
       .student-actions{
-        flex-direction:column;
+        display:grid;
+        grid-template-columns:1fr 1fr;
       }
 
-      .student-action{
-        width:100%;
+      .student-action.primary{
+        grid-column:1/-1;
       }
 
       .quick-nav{
-        top:64px;
-        border-radius:18px;
+        top:68px;
+        margin-bottom:24px;
+        border-radius:17px;
+      }
+
+      .student-section{
+        margin-bottom:30px;
       }
 
       .section-head{
-        flex-direction:column;
         align-items:flex-start;
+        flex-direction:column;
+      }
+
+      .section-title{
+        font-size:21px;
+      }
+
+      .section-subtitle{
+        font-size:12px;
+      }
+
+      .score-card,
+      .about-card{
+        border-radius:24px;
       }
 
       .stats-grid{
-        gap:10px;
+        grid-template-columns:1fr 1fr;
+        gap:9px;
       }
 
       .stat-card{
-        padding:15px;
-      }
-
-      .stat-value{
-        font-size:15px;
+        padding:14px;
       }
 
       .about-layout{
@@ -1065,204 +1172,13 @@
         scroll-behavior:auto;
       }
     }
-  
-
-    /* =========================================================
-       SAFE ORGANIZATION LAYER
-       تنسيق بصري فقط — بدون تغيير IDs أو البيانات أو JavaScript
-       ========================================================= */
-
-    body{
-      transition:background .3s ease,color .3s ease;
-    }
-
-    .page{
-      padding-top:24px;
-    }
-
-    .top-layout{
-      gap:20px;
-    }
-
-    .hero-card,
-    .priority-card{
-      min-height:300px;
-    }
-
-    .hero-content{
-      min-height:300px;
-    }
-
-    .priority-card{
-      background:
-        radial-gradient(300px 180px at 100% 0%,color-mix(in srgb,var(--primary) 9%,transparent),transparent 72%),
-        var(--card-glass);
-    }
-
-    .quick-nav{
-      margin-top:20px;
-      margin-bottom:28px;
-    }
-
-    .quick-nav-inner{
-      padding:8px;
-    }
-
-    .quick-link{
-      min-height:38px;
-    }
-
-    .student-section{
-      position:relative;
-      margin-bottom:34px;
-      padding-bottom:8px;
-    }
-
-    .student-section:not(:last-child)::after{
-      content:"";
-      position:absolute;
-      right:0;
-      left:0;
-      bottom:-17px;
-      height:1px;
-      background:linear-gradient(
-        90deg,
-        transparent,
-        var(--line),
-        transparent
-      );
-      pointer-events:none;
-    }
-
-    .section-head{
-      margin-bottom:16px;
-    }
-
-    .section-title{
-      font-size:23px;
-      line-height:1.45;
-    }
-
-    .section-subtitle{
-      max-width:760px;
-    }
-
-    .score-card,
-    .about-card{
-      box-shadow:var(--shadow);
-    }
-
-    .stats-grid{
-      align-items:stretch;
-    }
-
-    .stat-card{
-      min-height:142px;
-      display:flex;
-      flex-direction:column;
-    }
-
-    .stat-value{
-      margin-top:auto;
-      padding-top:7px;
-    }
-
-    #collegesGrid{
-      align-items:stretch;
-    }
-
-    #collegesGrid .glass-card{
-      height:100%;
-    }
-
-    #ratiosContainer{
-      display:grid;
-      gap:12px;
-    }
-
-    #resourcesSection:empty,
-    #extraSections:empty{
-      display:none;
-    }
-
-    #resourcesSection:not(:empty),
-    #extraSections:not(:empty){
-      scroll-margin-top:120px;
-    }
-
-    .resource-card{
-      height:100%;
-    }
-
-    .uni-title{
-      overflow-wrap:anywhere;
-    }
-
-    @media(max-width:960px){
-      .top-layout{
-        gap:14px;
-      }
-
-      .priority-card{
-        min-height:auto;
-      }
-
-      .student-section{
-        margin-bottom:30px;
-      }
-    }
-
-    @media(max-width:560px){
-      .page{
-        padding-top:16px;
-      }
-
-      .top-layout{
-        gap:12px;
-      }
-
-      .hero-card,
-      .priority-card{
-        border-radius:26px;
-      }
-
-      .hero-content{
-        min-height:auto;
-      }
-
-      .quick-nav{
-        margin-bottom:24px;
-      }
-
-      .student-section{
-        margin-bottom:28px;
-      }
-
-      .section-title{
-        font-size:21px;
-      }
-
-      .section-subtitle{
-        font-size:12.5px;
-      }
-
-      .score-card,
-      .about-card{
-        border-radius:24px;
-      }
-
-      .stats-grid{
-        grid-template-columns:1fr 1fr;
-      }
-    }
-
   </style>
 </head>
 
 <body>
 
   <nav class="nav">
-    <div class="wrap py-3 flex items-center justify-between gap-3">
+    <div class="wrap nav-in">
       <a href="index.html" class="brand">
         <div class="brand-logo">
           <svg viewBox="0 0 100 100" fill="none" aria-hidden="true">
@@ -1294,8 +1210,8 @@
 
   <main class="wrap page">
 
-    <section id="overview" class="top-layout">
-      <div class="hero-card">
+    <section id="overview" class="top-layout student-section">
+      <article class="hero-card">
         <div class="hero-content">
           <div>
             <div id="uniLogoWrap" class="uni-logo-wrap hidden">
@@ -1307,9 +1223,7 @@
               ملف الجامعة
             </div>
 
-            <h1 id="uniName" class="uni-title">
-              --
-            </h1>
+            <h1 id="uniName" class="uni-title">--</h1>
 
             <p id="uniLocation" class="location-line">
               <i class="fa-solid fa-location-dot"></i>
@@ -1318,23 +1232,23 @@
           </div>
 
           <div class="student-actions">
-            <a href="#scoreBlock" class="student-action primary">
-              <i class="fa-solid fa-calculator"></i>
-              ابدأ من موزونتك
-            </a>
-
-            <a href="#collegesSection" class="student-action secondary">
+            <a href="#collegesSection" class="student-action primary">
               <i class="fa-solid fa-layer-group"></i>
-              شوف التخصصات
+              ابدأ من التخصصات
             </a>
 
             <a href="#ratiosSection" class="student-action secondary">
               <i class="fa-solid fa-chart-line"></i>
               نسب القبول
             </a>
+
+            <a href="#scoreBlock" class="student-action secondary">
+              <i class="fa-solid fa-calculator"></i>
+              موزونتك
+            </a>
           </div>
         </div>
-      </div>
+      </article>
 
       <aside class="priority-card">
         <div>
@@ -1342,31 +1256,31 @@
             <div class="priority-icon">
               <i class="fa-solid fa-route"></i>
             </div>
-            <span>وش تشوف أول؟</span>
+            <span>رتّب قرارك كطالب</span>
           </div>
 
           <div class="priority-list">
             <div class="priority-item">
               <i class="fa-solid fa-1"></i>
               <div>
-                <b>الموزونة</b>
-                <span>أهم رقم يحدد هل دخولك واقعي أو يحتاج بدائل.</span>
+                <b>هل تخصصك موجود؟</b>
+                <span>ابدأ من الكليات والتخصصات، لأنها أهم نقطة قبل أي مقارنة.</span>
               </div>
             </div>
 
             <div class="priority-item">
               <i class="fa-solid fa-2"></i>
               <div>
-                <b>التخصصات</b>
-                <span>تأكد أن الجامعة فيها المسار اللي تبيه قبل تتحمس لها.</span>
+                <b>هل القبول واقعي؟</b>
+                <span>راجع النسب السابقة، ثم قارنها بموزونتك المسجلة.</span>
               </div>
             </div>
 
             <div class="priority-item">
               <i class="fa-solid fa-3"></i>
               <div>
-                <b>الشروط والسكن</b>
-                <span>بعد القبول والنسبة، شوف التفاصيل اللي تأثر على قرارك.</span>
+                <b>هل تناسبك الجامعة؟</b>
+                <span>راجع الملفات، الشروط، السكن وبقية التفاصيل قبل القرار.</span>
               </div>
             </div>
           </div>
@@ -1381,21 +1295,6 @@
           نظرة عامة
         </a>
 
-        <a href="#scoreBlock" class="quick-link">
-          <i class="fa-solid fa-calculator"></i>
-          موزونتك
-        </a>
-
-        <a href="#statsBlock" class="quick-link">
-          <i class="fa-solid fa-gauge-high"></i>
-          مؤشرات سريعة
-        </a>
-
-        <a href="#aboutBlock" class="quick-link">
-          <i class="fa-solid fa-circle-info"></i>
-          عن الجامعة
-        </a>
-
         <a href="#collegesSection" class="quick-link">
           <i class="fa-solid fa-layer-group"></i>
           التخصصات
@@ -1403,7 +1302,12 @@
 
         <a href="#ratiosSection" class="quick-link">
           <i class="fa-solid fa-chart-simple"></i>
-          النسب
+          نسب القبول
+        </a>
+
+        <a href="#scoreBlock" class="quick-link">
+          <i class="fa-solid fa-calculator"></i>
+          موزونتك
         </a>
 
         <a href="#resourcesSection" class="quick-link">
@@ -1415,15 +1319,80 @@
           <i class="fa-solid fa-file-lines"></i>
           التفاصيل
         </a>
+
+        <a href="#aboutBlock" class="quick-link">
+          <i class="fa-solid fa-circle-info"></i>
+          عن الجامعة
+        </a>
+
+        <a href="#statsBlock" class="quick-link">
+          <i class="fa-solid fa-gauge-high"></i>
+          المؤشرات
+        </a>
       </div>
     </nav>
+
+    <section id="collegesSection" class="student-section">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">
+            <i class="fa-solid fa-1"></i>
+            الخطوة الأولى
+          </div>
+
+          <h2 class="section-title">
+            الكليات والتخصصات
+          </h2>
+
+          <p class="section-subtitle">
+            تأكد أولًا أن الجامعة تقدم التخصص الذي تريده، ثم انتقل لنسب القبول والموزونة.
+          </p>
+        </div>
+
+        <span class="section-chip">
+          <i class="fa-solid fa-database"></i>
+          من قاعدة البيانات
+        </span>
+      </div>
+
+      <div id="collegesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="glass-card loading-card"></div>
+        <div class="glass-card loading-card hidden md:block"></div>
+      </div>
+    </section>
+
+    <section id="ratiosSection" class="student-section hidden">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">
+            <i class="fa-solid fa-2"></i>
+            الخطوة الثانية
+          </div>
+
+          <h2 class="section-title">
+            نسب قبول العام الماضي
+          </h2>
+
+          <p class="section-subtitle">
+            استخدم النسب كمرجع للمقارنة، ولا تعتبرها ضمانًا؛ لأنها تتغير حسب السنة والمسار والمنافسة.
+          </p>
+        </div>
+
+        <span class="section-chip">
+          <i class="fa-solid fa-shield-halved"></i>
+          مرجع استرشادي
+        </span>
+      </div>
+
+      <div id="ratiosContainer" class="space-y-3"></div>
+    </section>
 
     <section id="scoreBlock" class="student-section">
       <div class="section-head">
         <div>
           <div class="section-kicker">
-            <i class="fa-solid fa-star"></i>
-            الأهم للطالب
+            <i class="fa-solid fa-3"></i>
+            الخطوة الثالثة
           </div>
 
           <h2 class="section-title">
@@ -1431,7 +1400,7 @@
           </h2>
 
           <p class="section-subtitle">
-            تظهر النتيجة هنا بعد إدخال درجاتك في الصفحة الرئيسية. هذا يساعدك تعرف وضعك بسرعة.
+            تظهر النتيجة هنا بعد إدخال درجاتك في الصفحة الرئيسية، لتقارنها بنسب القبول السابقة.
           </p>
         </div>
 
@@ -1450,8 +1419,8 @@
             </h3>
 
             <p>
-              النسبة المعروضة هي موزونتك حسب أوزان هذه الجامعة أو المسار الافتراضي المسجل في قاعدة البيانات.
-              قارنها مع نسب القبول السابقة، ثم راجع الشروط والتخصصات قبل اتخاذ القرار.
+              النسبة المعروضة هي موزونتك حسب الأوزان المسجلة لهذه الجامعة أو المسار الافتراضي.
+              قارنها مع النسب السابقة، ثم راجع الشروط الرسمية قبل اتخاذ القرار.
             </p>
           </div>
 
@@ -1461,9 +1430,7 @@
               موزونتك المتوقعة
             </div>
 
-            <h2 id="finalResult" class="result-number">
-              00.00%
-            </h2>
+            <h2 id="finalResult" class="result-number">00.00%</h2>
 
             <div id="weightLabels" class="flex flex-wrap justify-center gap-2"></div>
           </div>
@@ -1471,20 +1438,55 @@
       </section>
     </section>
 
+    <section id="resourcesSection" class="student-section"></section>
+
+    <section id="extraSections" class="student-section"></section>
+
+    <section id="aboutBlock" class="student-section">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">
+            <i class="fa-solid fa-circle-info"></i>
+            معلومات عامة
+          </div>
+
+          <h2 class="section-title">
+            عن الجامعة
+          </h2>
+
+          <p class="section-subtitle">
+            نبذة مختصرة تساعدك على فهم طبيعة الجامعة ومكانها بعد مراجعة المعلومات العملية.
+          </p>
+        </div>
+      </div>
+
+      <div class="about-card glass-card">
+        <div class="about-layout">
+          <div class="about-icon">
+            <i class="fa-solid fa-building-columns"></i>
+          </div>
+
+          <div>
+            <p id="uniAbout">--</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="statsBlock" class="student-section">
       <div class="section-head">
         <div>
           <div class="section-kicker">
             <i class="fa-solid fa-gauge-high"></i>
-            مؤشرات القرار
+            مؤشرات مساندة
           </div>
 
           <h2 class="section-title">
-            أرقام سريعة قبل التفاصيل
+            أرقام ومؤشرات إضافية
           </h2>
 
           <p class="section-subtitle">
-            هذه المؤشرات تعطيك تصور سريع عن قوة الجامعة وصعوبة الدخول ومخرجاتها.
+            اجعل هذه المؤشرات عاملًا مساعدًا فقط بعد توفر التخصص ومناسبة شروط القبول.
           </p>
         </div>
       </div>
@@ -1523,98 +1525,6 @@
         </div>
       </div>
     </section>
-
-    <section id="aboutBlock" class="student-section">
-      <div class="section-head">
-        <div>
-          <div class="section-kicker">
-            <i class="fa-solid fa-circle-info"></i>
-            افهم الجامعة
-          </div>
-
-          <h2 class="section-title">
-            عن الجامعة
-          </h2>
-
-          <p class="section-subtitle">
-            نبذة مختصرة تساعدك تعرف طبيعة الجامعة ومكانها وقوتها العامة.
-          </p>
-        </div>
-      </div>
-
-      <div class="about-card glass-card">
-        <div class="about-layout">
-          <div class="about-icon">
-            <i class="fa-solid fa-building-columns"></i>
-          </div>
-
-          <div>
-            <p id="uniAbout">
-              --
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="collegesSection" class="student-section">
-      <div class="section-head">
-        <div>
-          <div class="section-kicker">
-            <i class="fa-solid fa-layer-group"></i>
-            أهم قسم بعد الموزونة
-          </div>
-
-          <h2 class="section-title">
-            الكليات والتخصصات
-          </h2>
-
-          <p class="section-subtitle">
-            شوف التخصصات المتاحة حسب الكلية، وتأكد أن خيارك موجود قبل تقارن بين الجامعات.
-          </p>
-        </div>
-
-        <span class="section-chip">
-          <i class="fa-solid fa-database"></i>
-          من قاعدة البيانات
-        </span>
-      </div>
-
-      <div id="collegesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="glass-card loading-card"></div>
-        <div class="glass-card loading-card hidden md:block"></div>
-      </div>
-    </section>
-
-    <section id="ratiosSection" class="student-section hidden">
-      <div class="section-head">
-        <div>
-          <div class="section-kicker">
-            <i class="fa-solid fa-chart-simple"></i>
-            للمقارنة الواقعية
-          </div>
-
-          <h2 class="section-title">
-            نسب قبول العام الماضي
-          </h2>
-
-          <p class="section-subtitle">
-            استخدمها كمرجع للمقارنة، ولا تعتبرها ضمانًا؛ لأن النسب تختلف حسب السنة والمسار والمنافسة.
-          </p>
-        </div>
-
-        <span class="section-chip">
-          <i class="fa-solid fa-shield-halved"></i>
-          تحتاج تحقق سنوي
-        </span>
-      </div>
-
-      <div id="ratiosContainer" class="space-y-3"></div>
-    </section>
-
-    <section id="resourcesSection" class="student-section"></section>
-
-    <section id="extraSections" class="student-section"></section>
 
   </main>
 
