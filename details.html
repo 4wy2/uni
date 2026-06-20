@@ -1065,6 +1065,197 @@
         scroll-behavior:auto;
       }
     }
+  
+
+    /* =========================================================
+       SAFE ORGANIZATION LAYER
+       تنسيق بصري فقط — بدون تغيير IDs أو البيانات أو JavaScript
+       ========================================================= */
+
+    body{
+      transition:background .3s ease,color .3s ease;
+    }
+
+    .page{
+      padding-top:24px;
+    }
+
+    .top-layout{
+      gap:20px;
+    }
+
+    .hero-card,
+    .priority-card{
+      min-height:300px;
+    }
+
+    .hero-content{
+      min-height:300px;
+    }
+
+    .priority-card{
+      background:
+        radial-gradient(300px 180px at 100% 0%,color-mix(in srgb,var(--primary) 9%,transparent),transparent 72%),
+        var(--card-glass);
+    }
+
+    .quick-nav{
+      margin-top:20px;
+      margin-bottom:28px;
+    }
+
+    .quick-nav-inner{
+      padding:8px;
+    }
+
+    .quick-link{
+      min-height:38px;
+    }
+
+    .student-section{
+      position:relative;
+      margin-bottom:34px;
+      padding-bottom:8px;
+    }
+
+    .student-section:not(:last-child)::after{
+      content:"";
+      position:absolute;
+      right:0;
+      left:0;
+      bottom:-17px;
+      height:1px;
+      background:linear-gradient(
+        90deg,
+        transparent,
+        var(--line),
+        transparent
+      );
+      pointer-events:none;
+    }
+
+    .section-head{
+      margin-bottom:16px;
+    }
+
+    .section-title{
+      font-size:23px;
+      line-height:1.45;
+    }
+
+    .section-subtitle{
+      max-width:760px;
+    }
+
+    .score-card,
+    .about-card{
+      box-shadow:var(--shadow);
+    }
+
+    .stats-grid{
+      align-items:stretch;
+    }
+
+    .stat-card{
+      min-height:142px;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .stat-value{
+      margin-top:auto;
+      padding-top:7px;
+    }
+
+    #collegesGrid{
+      align-items:stretch;
+    }
+
+    #collegesGrid .glass-card{
+      height:100%;
+    }
+
+    #ratiosContainer{
+      display:grid;
+      gap:12px;
+    }
+
+    #resourcesSection:empty,
+    #extraSections:empty{
+      display:none;
+    }
+
+    #resourcesSection:not(:empty),
+    #extraSections:not(:empty){
+      scroll-margin-top:120px;
+    }
+
+    .resource-card{
+      height:100%;
+    }
+
+    .uni-title{
+      overflow-wrap:anywhere;
+    }
+
+    @media(max-width:960px){
+      .top-layout{
+        gap:14px;
+      }
+
+      .priority-card{
+        min-height:auto;
+      }
+
+      .student-section{
+        margin-bottom:30px;
+      }
+    }
+
+    @media(max-width:560px){
+      .page{
+        padding-top:16px;
+      }
+
+      .top-layout{
+        gap:12px;
+      }
+
+      .hero-card,
+      .priority-card{
+        border-radius:26px;
+      }
+
+      .hero-content{
+        min-height:auto;
+      }
+
+      .quick-nav{
+        margin-bottom:24px;
+      }
+
+      .student-section{
+        margin-bottom:28px;
+      }
+
+      .section-title{
+        font-size:21px;
+      }
+
+      .section-subtitle{
+        font-size:12.5px;
+      }
+
+      .score-card,
+      .about-card{
+        border-radius:24px;
+      }
+
+      .stats-grid{
+        grid-template-columns:1fr 1fr;
+      }
+    }
+
   </style>
 </head>
 
