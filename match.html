@@ -168,6 +168,28 @@ nav{position:sticky;top:0;z-index:40;backdrop-filter:blur(16px);background:color
 .ins.action{background:color-mix(in srgb,var(--gold) 9%,transparent);border-color:color-mix(in srgb,var(--gold) 28%,transparent)}
 .ins.action i{color:var(--gold-deep)}
 
+/* what-if simulator */
+.whatif{border:1px dashed var(--line-strong);border-radius:22px;padding:16px 18px;margin-bottom:18px;background:var(--card)}
+.wi-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.wi-title{font-size:13.5px;font-weight:900;color:var(--ink);display:flex;align-items:center;gap:8px}
+.wi-title i{color:var(--primary)}
+.wi-reset{font-family:inherit;font-size:11.5px;font-weight:800;color:var(--muted);background:var(--card-2);border:1px solid var(--line);padding:6px 12px;border-radius:30px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:.15s}
+.wi-reset:hover{border-color:var(--line-strong);color:var(--primary)}
+.wi-steppers{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.wi-step{text-align:center;background:var(--card-2);border:1px solid var(--line);border-radius:16px;padding:11px 8px}
+.wi-step>span{display:block;font-size:11px;font-weight:800;color:var(--faint);letter-spacing:1px;margin-bottom:9px}
+.wi-ctrl{display:flex;align-items:center;justify-content:center;gap:8px}
+.wi-ctrl button{width:32px;height:32px;border-radius:11px;border:1px solid var(--line);background:var(--card);color:var(--primary);font-size:18px;font-weight:900;cursor:pointer;line-height:1;transition:.15s}
+.wi-ctrl button:hover{border-color:var(--primary-mid);background:color-mix(in srgb,var(--primary) 10%,transparent)}
+.wi-ctrl button:active{transform:scale(.92)}
+.wi-ctrl b{min-width:42px;font-size:17px;font-weight:900;color:var(--ink)}
+.wi-impact{margin-top:13px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;font-weight:700;border-radius:14px;padding:11px 13px;line-height:1.6}
+.wi-impact b{font-weight:900}
+.wi-impact.up{color:var(--green);background:var(--green-soft);border:1px solid color-mix(in srgb,var(--green) 28%,transparent)}
+.wi-impact.down{color:var(--red);background:var(--red-soft);border:1px solid color-mix(in srgb,var(--red) 28%,transparent)}
+.wi-impact.same{color:var(--muted);background:var(--card-2);border:1px solid var(--line)}
+.wi-impact .wi-eff{color:var(--faint);font-weight:700;font-size:11.5px}
+
 /* states */
 .state{text-align:center;padding:54px 20px;color:var(--muted)}
 .state .ic{width:64px;height:64px;border-radius:22px;display:grid;place-items:center;margin:0 auto 16px;font-size:26px;color:var(--primary);background:color-mix(in srgb,var(--primary) 10%,transparent);border:1px solid var(--line-strong)}
@@ -266,6 +288,28 @@ footer b{color:var(--muted);font-weight:700}
     <div class="smart-insights" id="smartInsights"></div>
   </section>
 
+  <section class="whatif" id="whatif" style="display:none">
+    <div class="wi-head">
+      <span class="wi-title"><i class="fa-solid fa-flask"></i> ماذا لو؟ جرّب ترفع درجاتك</span>
+      <button class="wi-reset" id="wiReset" onclick="resetSim()" style="display:none"><i class="fa-solid fa-rotate-left"></i> صفّر</button>
+    </div>
+    <div class="wi-steppers">
+      <div class="wi-step">
+        <span>قدرات</span>
+        <div class="wi-ctrl"><button onclick="bump('q',-1)" aria-label="إنقاص قدرات">−</button><b id="wiQ">+0</b><button onclick="bump('q',1)" aria-label="زيادة قدرات">+</button></div>
+      </div>
+      <div class="wi-step">
+        <span>تحصيلي</span>
+        <div class="wi-ctrl"><button onclick="bump('t',-1)" aria-label="إنقاص تحصيلي">−</button><b id="wiT">+0</b><button onclick="bump('t',1)" aria-label="زيادة تحصيلي">+</button></div>
+      </div>
+      <div class="wi-step">
+        <span>ثانوي</span>
+        <div class="wi-ctrl"><button onclick="bump('s',-1)" aria-label="إنقاص ثانوي">−</button><b id="wiS">+0</b><button onclick="bump('s',1)" aria-label="زيادة ثانوي">+</button></div>
+      </div>
+    </div>
+    <div class="wi-impact" id="wiImpact" style="display:none"></div>
+  </section>
+
   <div class="legend" id="legend" style="display:none">
     <span class="lg ok"><span class="dot"></span> فرصتك عالية</span>
     <span class="lg mid"><span class="dot"></span> قريبة — على الحدود</span>
@@ -295,18 +339,26 @@ let GROUPS = [];                  // [{key,label,offers:[{university_id,college_
 let RATIOS = {};                  // "uniId::normName"  /  "uniId::#code"  ->  ratioRow (إثراء فقط)
 let selectedKey = null;
 let gender = "general";
+let sim = {q:0,t:0,s:0};          // محاكاة "ماذا لو" — منفصلة عن الدرجات الحقيقية
 const $ = id => document.getElementById(id);
 
 /* ═══ أدوات ═══ */
 function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
 function clamp(v){if(v==="")return"";let n=Number(v);if(isNaN(n))return"";return String(Math.min(100,Math.max(0,n)))}
+function clampN(n){return Math.min(100,Math.max(0,n))}
 function num(v){const n=Number(v);return isNaN(n)?null:n}
 // يدعم 0.30 و 30 معاً
 function normW(v){const n=Number(v);if(isNaN(n))return 0;return n>1?n/100:n}
 function scores(){return{q:parseFloat(localStorage.getItem("qodrat"))||0,t:parseFloat(localStorage.getItem("tahsili"))||0,s:parseFloat(localStorage.getItem("school"))||0}}
+// الدرجات الفعّالة = الحقيقية + المحاكاة
+function eff(){const b=scores();return{q:clampN(b.q+sim.q),t:clampN(b.t+sim.t),s:clampN(b.s+sim.s)}}
 function hasScores(){const{q,t,s}=scores();return q>0||t>0||s>0}
 // تطبيع اسم التخصص للمطابقة بين الجامعات
 function normName(s){return String(s||"").replace(/[ًٌٍَُِّْـ]/g,"").replace(/[أإآ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").replace(/\s+/g," ").trim().toLowerCase()}
+
+/* محاكاة "ماذا لو" */
+function bump(k,d){ sim[k]=Math.min(30,Math.max(-30,sim[k]+d)); if(selectedKey) renderResults(); }
+function resetSim(){ sim={q:0,t:0,s:0}; if(selectedKey) renderResults(); }
 
 /* ═══ الثيم ═══ */
 function toggleTheme(){const next=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";document.documentElement.setAttribute("data-theme",next);localStorage.setItem("theme",next);syncIcon()}
@@ -322,9 +374,9 @@ function onScore(){
 }
 
 /* ═══ الموزونة لكل جامعة ═══ */
-function mozFor(uni){
+function mozFor(uni, sc){
   if(!uni||!uni.weights) return null;
-  const{q,t,s}=scores(), w=uni.weights;
+  const{q,t,s}=sc||eff(), w=uni.weights;
   return q*normW(w.qodrat)+t*normW(w.tahsili)+s*normW(w.school);
 }
 /* نسبة القبول حسب الجنس المختار */
@@ -393,6 +445,7 @@ function renderResults(){
     $("legend").style.display="none";
     $("disclaimer").style.display="none";
     $("smartBox").style.display="none";
+    $("whatif").style.display="none";
     $("resGrid").innerHTML=`<div class="state"><div class="ic"><i class="fa-solid fa-keyboard"></i></div><b>أدخل درجاتك أولاً</b><p>عبّي القدرات والتحصيلي والثانوي فوق، وبنرتّب لك الجامعات حسب موزونتك مباشرة.</p></div>`;
     $("q").focus();
     return;
@@ -420,6 +473,7 @@ function renderResults(){
   $("legend").style.display=withRatio.length?"flex":"none";
   $("disclaimer").style.display=withRatio.length?"flex":"none";
   renderSmart(uniq, withRatio);
+  renderWhatif(withRatio);
 
   const labelOf={ok:"فرصتك عالية",mid:"قريبة",no:"أقل من القبول"};
   const iconOf ={ok:"fa-circle-check",mid:"fa-circle-half-stroke",no:"fa-circle-xmark"};
@@ -459,7 +513,7 @@ function renderSmart(uniq, withRatio){
   // ما فيه نسب = ما نقدر نحلّل فرص؛ نخفي التحليل
   if(!withRatio.length){ box.style.display="none"; return; }
 
-  const {q,t,s}=scores();
+  const {q,t,s}=eff();
 
   // 1) تصنيف الفرص: تأمين / مناسبة / طموح
   const safe   = withRatio.filter(x=>(x.moz-x.cut)>=3);
@@ -523,6 +577,39 @@ function renderSmart(uniq, withRatio){
 
   $("smartInsights").innerHTML=ins.join("");
   box.style.display="block";
+}
+
+/* ═══ محاكاة "ماذا لو" — تفاعلية ═══ */
+function renderWhatif(withRatio){
+  const wi=$("whatif");
+  if(!withRatio.length){ wi.style.display="none"; return; }
+  wi.style.display="block";
+
+  // تحديث الأرقام على الأزرار
+  const e=eff();
+  [["q","wiQ"],["t","wiT"],["s","wiS"]].forEach(([k,id])=>{
+    $(id).textContent=(sim[k]>=0?"+":"")+sim[k];
+  });
+
+  const active = sim.q||sim.t||sim.s;
+  $("wiReset").style.display=active?"inline-flex":"none";
+
+  if(!active){ $("wiImpact").style.display="none"; return; }
+
+  // كم جامعة "في المتناول" (تأمين/مناسبة) قبل وبعد المحاكاة؟
+  const qual=sc=>withRatio.filter(x=>{const m=mozFor(x.uni,sc); return m!=null && m>=x.cut-MARGIN;}).length;
+  const before=qual(scores()), after=qual(e), d=after-before;
+
+  let html, cls;
+  if(d>0){ cls="up"; html=`<i class="fa-solid fa-arrow-trend-up"></i> بهالدرجات تفتح لك <b>${d}</b> جامعة إضافية في متناولك`; }
+  else if(d<0){ cls="down"; html=`<i class="fa-solid fa-arrow-trend-down"></i> بهالدرجات تخسر <b>${-d}</b> جامعة من متناولك`; }
+  else { cls="same"; html=`<i class="fa-solid fa-equals"></i> نفس عدد الجامعات — بس موزونتك تغيّرت`; }
+
+  html+=` <span class="wi-eff">· بالمحاكاة: قدرات ${e.q} · تحصيلي ${e.t} · ثانوي ${e.s}</span>`;
+  const box=$("wiImpact");
+  box.className="wi-impact "+cls;
+  box.style.display="flex";
+  box.innerHTML=html;
 }
 
 /* ═══ حالات أولية ═══ */
